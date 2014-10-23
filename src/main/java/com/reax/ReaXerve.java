@@ -4,14 +4,11 @@ import org.nustaq.kontraktor.Actor;
 import org.nustaq.kontraktor.Actors;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
+import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.impl.ElasticScheduler;
-import org.nustaq.kontraktor.remoting.RemoteRefRegistry;
-import org.nustaq.kontraktor.remoting.http.netty.wsocket.WSocketActorServer;
-import org.nustaq.kontraktor.remoting.tcp.TCPActorServer;
-import org.nustaq.netty2go.NettyWSHttpServer;
+import org.nustaq.kontraktor.remoting.http.netty.wsocket.ActorWSServer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +22,7 @@ public class ReaXerve extends Actor<ReaXerve> {
 
     ElasticScheduler clientScheduler;
 
+    @Local
     public void $init( int numClientThreads ) {
         sessions = new HashMap<>();
         clientScheduler = new ElasticScheduler(numClientThreads,5000);
@@ -82,10 +80,12 @@ public class ReaXerve extends Actor<ReaXerve> {
             }
         }
 
-        ReaXerve act = Actors.AsActor(ReaXerve.class);
-        act.$init(2);
+        ReaXerve xerver = Actors.AsActor(ReaXerve.class);
+        xerver.$init(2);
 
-        WSocketActorServer server = new WSocketActorServer( act, new File("./"), RemoteRefRegistry.Coding.MinBin );
+        // start websocket server (default path /websocket)
+        File contentRoot = new File("./");
+        ActorWSServer server = ActorWSServer.startAsRestWSServer(port, xerver, contentRoot, xerver.getScheduler());
 //        server.setFileMapper( (f) -> {
 //            if ( f != null && f.getName() != null ) {
 //                if ( f.getName().equals("minbin.js") ) {
@@ -98,7 +98,7 @@ public class ReaXerve extends Actor<ReaXerve> {
 //            }
 //            return f;
 //        });
-        new NettyWSHttpServer(port, server).run();
     }
+
 
 }
