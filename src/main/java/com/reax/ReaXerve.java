@@ -29,7 +29,7 @@ public class ReaXerve extends Actor<ReaXerve> {
     }
 
     /**
-     * to avoid the need for anonymous clients to create a websocket connection prior logon,
+     * to avoid the need for anonymous clients to create a websocket connection prior to login,
      * this is exposed as a webservice and is called using $.get(). The Id returned then can be
      * used to obtain a valid session id for the websocket connection.
      *

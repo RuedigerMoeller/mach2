@@ -16,7 +16,6 @@ import java.util.Date;
 public class ReaXession extends Actor<ReaXession> implements RemotableActor {
 
     long creationTime = System.currentTimeMillis();
-    long lastHB = creationTime;
     String sessionId;
     ReaXerve app;
 
