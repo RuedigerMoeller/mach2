@@ -4,6 +4,8 @@ import org.nustaq.kontraktor.Actor;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
 
+import java.util.Date;
+
 /**
  * Created by ruedi on 23.10.2014.
  */
@@ -19,5 +21,9 @@ public class ReaXession extends Actor<ReaXession> {
 
     public Future<String> $getId() {
         return new Promise<>(sessionId);
+    }
+
+    public Future $getCreationTime() {
+        return new Promise<>(new Date(creationTime).toString() );
     }
 }

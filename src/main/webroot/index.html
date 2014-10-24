@@ -15,25 +15,65 @@
 <b>Call Actor Rest Get</b>
 <pre>
 $.getJSON('rest/$authenticate/user/password', function (data) {
-    document.write(data);
+    model.restGetResult(JSON.stringify(data));
 }).error(function(e) {
-    document.write('error '+e);;
+    model.restGetResult('error '+e);
 });
 </pre>
 
 <b>Result:</b>
 <p data-bind="text: restGetResult"></p>
+<b>Session res</b>
+<p data-bind="text: restGetSession"></p>
+<b>Creation</b>
+<p data-bind="text: restSessionCreation"></p>
 <script>
     var model = {
-        restGetResult: ko.observable('')
+        restGetResult: ko.observable(''),
+        restGetSession: ko.observable(''),
+        restSessionCreation: ko.observable('')
     };
     ko.applyBindings(model);
 
-    $.getJSON('rest/$authenticate/user/password', function (data) {
-        model.restGetResult(JSON.stringify(data));
-    }).error(function(e) {
-        model.restGetResult('error '+e);
+//    $.getJSON('rest/$authenticate/user/password', function (data) {
+//        model.restGetResult(JSON.stringify(data));
+//    }).error(function(e) {
+//        model.restGetResult('error '+e);
+//    });
+
+//    var xhr = new XMLHttpRequest();
+//    xhr.onload = function (e) {
+//        if (xhr.readyState === 4) {
+//            if (xhr.status === 200) {
+//                model.restGetResult(xhr.responseText);
+//            } else {
+//                model.restGetResult('error '+xhr.statusText);
+//            }
+//        }
+//    };
+//    xhr.onerror = function (e) {
+//        model.restGetResult('error '+xhr.statusText);
+//    };
+//    xhr.open( "GET", 'rest/$authenticate/user/password', true );
+//    xhr.send( null );
+
+    Kontraktor.restGET('$authenticate/user/password').then( function (sessionHandle,e) {
+        if ( e == null ) {
+            model.restGetResult(JSON.stringify(sessionHandle));
+            Kontraktor.connectHome(function() {
+                Kontraktor.call(1,'$getSession',true,[sessionHandle]).then( function(rsessionActorId,e) {
+                    model.restGetSession(JSON.stringify(rsessionActorId));
+                    Kontraktor.call(rsessionActorId, "$getCreationTime", true, []).then( function(r,e) {
+                        model.restSessionCreation(r);
+                    });
+                });
+            });
+        } else {
+            console.log(typeof e);
+            model.restGetResult("res:"+sessionActorId+" error:"+e);
+        }
     });
+
 </script>
 
 

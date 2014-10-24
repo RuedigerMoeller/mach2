@@ -26,7 +26,7 @@ public class ReaXerve extends Actor<ReaXerve> {
     }
 
     /**
-     * to avoid the need for anonymous clients to already create a websocket connection,
+     * to avoid the need for anonymous clients to create a websocket connection prior logon,
      * this is exposed as a webservice and is called using $.get(). The Id returned then can be
      * used to obtain a valid session id for the websocket connection.
      *
@@ -56,11 +56,10 @@ public class ReaXerve extends Actor<ReaXerve> {
 
 
     /**
-     * startup server
+     * startup server + map some files for development
      * @param arg
      * @throws Exception
      */
-
     public static void main( String arg[] ) throws Exception {
         if ( arg.length > 1 ) {
             System.out.println("Expect port as first argument");
@@ -81,7 +80,7 @@ public class ReaXerve extends Actor<ReaXerve> {
         final ElasticScheduler scheduler = new ElasticScheduler(2, 1000);
         xerver.$init(scheduler); // 2 threads, q size 1000
 
-        // start websocket server (default path /websocket)
+        // start websocket server (default path for ws traffic /websocket)
         File contentRoot = new File("./");
         ActorWSServer server = ActorWSServer.startAsRestWSServer(port, xerver, contentRoot, scheduler);
 
@@ -91,14 +90,14 @@ public class ReaXerve extends Actor<ReaXerve> {
                 if ( f.getName().equals("minbin.js") ) {
                     File file = new File("C:\\work\\GitHub\\fast-serialization\\src\\main\\javascript\\minbin.js");
                     if ( ! file.exists() ) {
-                        return new File("/home/ruedi/IdeaProjects/fast-serialization/src/main/javascript/minbin.js");
+                        return new File("/home/moelrue/IdeaProjects/gh/fast-serialization/src/main/javascript/minbin.js");
                     }
                     return file;
                 }
                 if ( f.getName().equals("kontraktor.js") ) {
                     File file = new File("C:\\work\\GitHub\\abstractor\\netty-kontraktor\\src\\main\\javascript\\kontraktor.js");
                     if ( ! file.exists() ) {
-                        return new File("/home/ruedi/IdeaProjects/fast-serialization/src/main/javascript/minbin.js");
+                        return new File("/home/moelrue/IdeaProjects/gh/kontraktor/netty-kontraktor/src/main/javascript/kontraktor.js");
                     }
                     return file;
                 }
