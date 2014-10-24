@@ -1,6 +1,7 @@
 package com.reax;
 
 import org.nustaq.kontraktor.*;
+import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.impl.ElasticScheduler;
 import org.nustaq.kontraktor.remoting.http.netty.wsocket.ActorWSServer;
@@ -8,16 +9,18 @@ import org.nustaq.kontraktor.remoting.http.netty.wsocket.ActorWSServer;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Created by ruedi on 23.10.2014.
  */
+@GenRemote
 public class ReaXerve extends Actor<ReaXerve> {
 
     Map<String,ReaXession> sessions;
     long sessionIdCounter = 1;
 
-    Scheduler clientScheduler;
+    Scheduler clientScheduler; // set of threads processing client requests
 
     @Local
     public void $init( Scheduler clientScheduler ) {
@@ -50,8 +53,14 @@ public class ReaXerve extends Actor<ReaXerve> {
         return new Promise<>(sessions.get(id));
     }
 
-    public void $clientTerminated(ReaXession session) {
-        session.$getId().then((id, err) -> sessions.remove(id));
+    @Local
+    public Future $clientTerminated(ReaXession session) {
+        Promise p = new Promise();
+        session.$getId().then((id, err) -> {
+            sessions.remove(id);
+            p.signal();
+        });
+        return p;
     }
 
 
@@ -81,29 +90,29 @@ public class ReaXerve extends Actor<ReaXerve> {
         xerver.$init(scheduler); // 2 threads, q size 1000
 
         // start websocket server (default path for ws traffic /websocket)
-        File contentRoot = new File("./");
-        ActorWSServer server = ActorWSServer.startAsRestWSServer(port, xerver, contentRoot, scheduler);
+        ActorWSServer server = ActorWSServer.startAsRestWSServer(port, xerver, new File("./"), scheduler);
 
         // DEV avoid copying js libs
-        server.setFileMapper( f -> {
-            if ( f != null && f.getName() != null ) {
-                if ( f.getName().equals("minbin.js") ) {
+        Function<File, File> fileMapper = f -> {
+            if (f != null && f.getName() != null) {
+                if (f.getName().equals("minbin.js")) {
                     File file = new File("C:\\work\\GitHub\\fast-serialization\\src\\main\\javascript\\minbin.js");
-                    if ( ! file.exists() ) {
-                        return new File("/home/moelrue/IdeaProjects/gh/fast-serialization/src/main/javascript/minbin.js");
+                    if (!file.exists()) {
+                        return new File("/home/ruedi/IdeaProjects/fast-serialization/src/main/javascript/minbin.js");
                     }
                     return file;
                 }
-                if ( f.getName().equals("kontraktor.js") ) {
+                if (f.getName().equals("kontraktor.js")) {
                     File file = new File("C:\\work\\GitHub\\abstractor\\netty-kontraktor\\src\\main\\javascript\\kontraktor.js");
-                    if ( ! file.exists() ) {
-                        return new File("/home/moelrue/IdeaProjects/gh/kontraktor/netty-kontraktor/src/main/javascript/kontraktor.js");
+                    if (!file.exists()) {
+                        return new File("/home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/javascript/kontraktor.js");
                     }
                     return file;
                 }
             }
             return f;
-        });
+        };
+//        server.setFileMapper(fileMapper);
 
     }
 

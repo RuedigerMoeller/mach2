@@ -3,20 +3,27 @@ package com.reax;
 import org.nustaq.kontraktor.Actor;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
+import org.nustaq.kontraktor.annotations.GenRemote;
+import org.nustaq.kontraktor.annotations.Local;
+import org.nustaq.kontraktor.remoting.RemotableActor;
 
 import java.util.Date;
 
 /**
  * Created by ruedi on 23.10.2014.
  */
-public class ReaXession extends Actor<ReaXession> {
+@GenRemote
+public class ReaXession extends Actor<ReaXession> implements RemotableActor {
 
     long creationTime = System.currentTimeMillis();
     long lastHB = creationTime;
     String sessionId;
+    ReaXerve app;
 
-    public void $init(String sessionId, String user, ReaXerve self) {
+    @Local
+    public void $init(String sessionId, String user, ReaXerve app) {
         this.sessionId = sessionId;
+        this.app = app;
     }
 
     public Future<String> $getId() {
@@ -25,5 +32,11 @@ public class ReaXession extends Actor<ReaXession> {
 
     public Future $getCreationTime() {
         return new Promise<>(new Date(creationTime).toString() );
+    }
+
+    @Override
+    @Local
+    public void $hasBeenUnpublished() {
+        app.$clientTerminated(self()).then(() -> self().$stop());
     }
 }

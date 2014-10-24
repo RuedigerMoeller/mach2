@@ -9,6 +9,7 @@
 
     <script src="kontraktor.js"></script>
     <script src="minbin.js"></script>
+    <script src="reax-gen.js"></script>
 </head>
 <body>
 
@@ -35,38 +36,32 @@ $.getJSON('rest/$authenticate/user/password', function (data) {
     };
     ko.applyBindings(model);
 
-//    $.getJSON('rest/$authenticate/user/password', function (data) {
-//        model.restGetResult(JSON.stringify(data));
-//    }).error(function(e) {
-//        model.restGetResult('error '+e);
-//    });
-
-//    var xhr = new XMLHttpRequest();
-//    xhr.onload = function (e) {
-//        if (xhr.readyState === 4) {
-//            if (xhr.status === 200) {
-//                model.restGetResult(xhr.responseText);
-//            } else {
-//                model.restGetResult('error '+xhr.statusText);
-//            }
-//        }
-//    };
-//    xhr.onerror = function (e) {
-//        model.restGetResult('error '+xhr.statusText);
-//    };
-//    xhr.open( "GET", 'rest/$authenticate/user/password', true );
-//    xhr.send( null );
-
+    // call simple method via JSON on facade actor to avoid websocket without valid user
     Kontraktor.restGET('$authenticate/user/password').then( function (sessionHandle,e) {
         if ( e == null ) {
             model.restGetResult(JSON.stringify(sessionHandle));
+
+            // connect websocket
             Kontraktor.connectHome(function() {
-                Kontraktor.call(1,'$getSession',true,[sessionHandle]).then( function(rsessionActorId,e) {
-                    model.restGetSession(JSON.stringify(rsessionActorId));
-                    Kontraktor.call(rsessionActorId, "$getCreationTime", true, []).then( function(r,e) {
+                // on open this is called
+
+                // obtain session actor from facade (without generated stubs)
+//                Kontraktor.call(1,'$getSession',true,[sessionHandle]).then( function(rsessionActorId,e) {
+//                    model.restGetSession(JSON.stringify(rsessionActorId));
+//                    Kontraktor.call(rsessionActorId, "$getCreationTime", true, []).then( function(r,e) {
+//                        model.restSessionCreation(r);
+//                    });
+//                });
+
+                // same with generation
+                var facade = new JReaXerve(1);
+                facade.$getSession(sessionHandle).then( function(session, error) {
+                    model.restGetSession(JSON.stringify(session));
+                    session.$getCreationTime().then( function(r,e) {
                         model.restSessionCreation(r);
                     });
                 });
+
             });
         } else {
             console.log(typeof e);
