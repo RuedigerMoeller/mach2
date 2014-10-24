@@ -1,9 +1,6 @@
 package com.reax;
 
-import org.nustaq.kontraktor.Actor;
-import org.nustaq.kontraktor.Actors;
-import org.nustaq.kontraktor.Future;
-import org.nustaq.kontraktor.Promise;
+import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.impl.ElasticScheduler;
 import org.nustaq.kontraktor.remoting.http.netty.wsocket.ActorWSServer;
@@ -20,12 +17,12 @@ public class ReaXerve extends Actor<ReaXerve> {
     Map<String,ReaXession> sessions;
     long sessionIdCounter = 1;
 
-    ElasticScheduler clientScheduler;
+    Scheduler clientScheduler;
 
     @Local
-    public void $init( int numClientThreads ) {
+    public void $init( Scheduler clientScheduler ) {
         sessions = new HashMap<>();
-        clientScheduler = new ElasticScheduler(numClientThreads,5000);
+        this.clientScheduler = clientScheduler;
     }
 
     /**
@@ -81,23 +78,34 @@ public class ReaXerve extends Actor<ReaXerve> {
         }
 
         ReaXerve xerver = Actors.AsActor(ReaXerve.class);
-        xerver.$init(2);
+        final ElasticScheduler scheduler = new ElasticScheduler(2, 1000);
+        xerver.$init(scheduler); // 2 threads, q size 1000
 
         // start websocket server (default path /websocket)
         File contentRoot = new File("./");
-        ActorWSServer server = ActorWSServer.startAsRestWSServer(port, xerver, contentRoot, xerver.getScheduler());
-//        server.setFileMapper( (f) -> {
-//            if ( f != null && f.getName() != null ) {
-//                if ( f.getName().equals("minbin.js") ) {
-//                    File file = new File("C:\\work\\GitHub\\fast-serialization\\src\\main\\javascript\\minbin.js");
-//                    if ( ! file.exists() ) {
-//                        return new File("/home/ruedi/IdeaProjects/fast-serialization/src/main/javascript/minbin.js");
-//                    }
-//                    return file;
-//                }
-//            }
-//            return f;
-//        });
+        ActorWSServer server = ActorWSServer.startAsRestWSServer(port, xerver, contentRoot, scheduler);
+
+        // DEV avoid copying js libs
+        server.setFileMapper( f -> {
+            if ( f != null && f.getName() != null ) {
+                if ( f.getName().equals("minbin.js") ) {
+                    File file = new File("C:\\work\\GitHub\\fast-serialization\\src\\main\\javascript\\minbin.js");
+                    if ( ! file.exists() ) {
+                        return new File("/home/ruedi/IdeaProjects/fast-serialization/src/main/javascript/minbin.js");
+                    }
+                    return file;
+                }
+                if ( f.getName().equals("kontraktor.js") ) {
+                    File file = new File("C:\\work\\GitHub\\abstractor\\netty-kontraktor\\src\\main\\javascript\\kontraktor.js");
+                    if ( ! file.exists() ) {
+                        return new File("/home/ruedi/IdeaProjects/fast-serialization/src/main/javascript/minbin.js");
+                    }
+                    return file;
+                }
+            }
+            return f;
+        });
+
     }
 
 

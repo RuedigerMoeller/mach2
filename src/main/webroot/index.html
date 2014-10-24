@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/knockout-3.2.0.js"></script>
+
+    <script src="kontraktor.js"></script>
+    <script src="minbin.js"></script>
+</head>
+<body>
+
+<b>Call Actor Rest Get</b>
+<pre>
+$.getJSON('rest/$authenticate/user/password', function (data) {
+    document.write(data);
+}).error(function(e) {
+    document.write('error '+e);;
+});
+</pre>
+
+<b>Result:</b>
+<p data-bind="text: restGetResult"></p>
+<script>
+    var model = {
+        restGetResult: ko.observable('')
+    };
+    ko.applyBindings(model);
+
+    $.getJSON('rest/$authenticate/user/password', function (data) {
+        model.restGetResult(JSON.stringify(data));
+    }).error(function(e) {
+        model.restGetResult('error '+e);
+    });
+</script>
+
+
+</body>
+</html>
