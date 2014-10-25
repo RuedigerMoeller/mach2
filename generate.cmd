@@ -1,0 +1,1 @@
+java -cp out;lib\* minbin.gen.MBGen -p com.reax,org.nustaq.reallive.sys -f src\main\webroot\reax-gen.js
