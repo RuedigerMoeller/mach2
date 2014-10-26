@@ -30,18 +30,17 @@ public class ReaXerve extends Actor<ReaXerve> {
     long sessionIdCounter = 1;
 
     Scheduler clientScheduler; // set of threads processing client requests
-
     RealLive realLive;
 
     @Local
     public void $init( Scheduler clientScheduler ) {
         sessions = new HashMap<>();
-        realLive = new RLImpl().setDataDirectory("./reallive");
+        realLive = new RLImpl("./reallive");
         this.clientScheduler = clientScheduler;
         realLive.createTable(User.class);
         realLive.getTable("User").$put(
             "admin",
-            new User().init("admin","admin",new Date().toString(),new Date().toString(), UserRole.ADMIN),
+            new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN),
             0
         );
     }
@@ -58,11 +57,19 @@ public class ReaXerve extends Actor<ReaXerve> {
     public Future<String> $authenticate( String user, String pwd ) {
         if ( user != null && pwd != null ) // dummy auth
         {
-            ReaXession newSession = Actors.AsActor(ReaXession.class, clientScheduler);
-            String sessionId = "" + sessionIdCounter++; // can be more cryptic in the future
-            newSession.$init(sessionId, user, self(), realLive);
-            sessions.put(sessionId, newSession);
-            return new Promise<>(sessionId,null);
+            Promise p = new Promise();
+            realLive.getTable("User").$get(user.trim().toLowerCase()).then((userRecord, error) -> {
+                if ( userRecord != null && pwd.equals( ((User) userRecord).getPwd() )) {
+                    ReaXession newSession = Actors.AsActor(ReaXession.class, clientScheduler);
+                    String sessionId = "" + sessionIdCounter++; // can be more cryptic in the future
+                    newSession.$init(sessionId, (User) userRecord, self(), realLive);
+                    sessions.put(sessionId, newSession);
+                    p.receive(sessionId,null);
+                } else {
+                    p.receive(null,"authentication failure");
+                }
+            });
+            return p;
         }
         return new Promise<>(null,"authentication failure");
     }

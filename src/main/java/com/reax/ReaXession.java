@@ -1,5 +1,6 @@
 package com.reax;
 
+import com.reax.datamodel.User;
 import org.nustaq.kontraktor.Actor;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
@@ -7,6 +8,7 @@ import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.remoting.RemotableActor;
 import org.nustaq.reallive.RealLive;
+import org.nustaq.reallive.RealLiveClientWrapper;
 
 import java.util.Date;
 
@@ -21,12 +23,14 @@ public class ReaXession extends Actor<ReaXession> implements RemotableActor {
     String sessionId;
     ReaXerve app;
     RealLive realLive;
+    User user;
 
     @Local
-    public void $init(String sessionId, String user, ReaXerve app, RealLive realLive) {
+    public void $init(String sessionId, User user, ReaXerve app, RealLive realLive) {
         this.sessionId = sessionId;
         this.app = app;
-        this.realLive = realLive;
+        this.realLive = new RealLiveClientWrapper(realLive);
+        this.user = user;
     }
 
     public Future<String> $getId() {
