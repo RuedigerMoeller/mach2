@@ -4,23 +4,35 @@
     <meta charset="UTF-8">
     <title></title>
 
+    <!--<script id="login-template" type="text">-->
+        <!--<span data-bind="spin: doSpin()">-->
+            <!--<span data-bind="visible: !loggedIn()">-->
+                <!--<input placeholder="user" size="6" type="text" data-bind="value: user">-->
+                <!--<input placeholder="password" size="4" type="password" data-bind="value: pwd">-->
+                <!--<button data-bind="click: login, enable: !doSpin()">Log In</button>-->
+            <!--</span>-->
+            <!--<span data-bind="visible: loggedIn()">Welcome <b data-bind="text: user"></b></span>-->
+            <!--<b data-bind="hilight: true"><span data-bind="text: resultMsg" style="color: darkred;"></span></b>-->
+        <!--</span>-->
+    <!--</script>-->
+
+    <script src="templatetest.js">
+    </script>
+
     <script src="js/jquery-2.1.1.js"></script>
     <script src="js/knockout-3.2.0.js"></script>
+    <script src="js/spin.js"></script>
 
-    <script src="kontraktor.js"></script>
     <script src="minbin.js"></script>
+    <script src="kontraktor.js"></script>
+    <script src="real-live.js"></script>
     <script src="reax-gen.js"></script>
 </head>
 <body>
 
-<b>Call Actor Rest Get</b>
-<pre>
-$.getJSON('rest/$authenticate/user/password', function (data) {
-    model.restGetResult(JSON.stringify(data));
-}).error(function(e) {
-    model.restGetResult('error '+e);
-});
-</pre>
+<kr-login params="facade: 'JReaXerve'" ></kr-login>
+<br>
+<br>
 
 <b>Result:</b>
 <p data-bind="text: restGetResult"></p>
@@ -28,6 +40,7 @@ $.getJSON('rest/$authenticate/user/password', function (data) {
 <p data-bind="text: restGetSession"></p>
 <b>Creation</b>
 <p data-bind="text: restSessionCreation"></p>
+
 <script>
     var model = {
         restGetResult: ko.observable(''),
@@ -35,42 +48,7 @@ $.getJSON('rest/$authenticate/user/password', function (data) {
         restSessionCreation: ko.observable('')
     };
     ko.applyBindings(model);
-
-    // call simple method via JSON on facade actor to avoid websocket without valid user
-    Kontraktor.restGET('$authenticate/user/password').then( function (sessionHandle,e) {
-        if ( e == null ) {
-            model.restGetResult(JSON.stringify(sessionHandle));
-
-            // connect websocket
-            Kontraktor.connectHome(function() {
-                // on open this is called
-
-                // obtain session actor from facade (without generated stubs)
-//                Kontraktor.call(1,'$getSession',true,[sessionHandle]).then( function(rsessionActorId,e) {
-//                    model.restGetSession(JSON.stringify(rsessionActorId));
-//                    Kontraktor.call(rsessionActorId, "$getCreationTime", true, []).then( function(r,e) {
-//                        model.restSessionCreation(r);
-//                    });
-//                });
-
-                // same with generation
-                var facade = new JReaXerve(1);
-                facade.$getSession(sessionHandle).then( function(session, error) {
-                    model.restGetSession(JSON.stringify(session));
-                    session.$getCreationTime().then( function(r,e) {
-                        model.restSessionCreation(r);
-                    });
-                });
-
-            });
-        } else {
-            console.log(typeof e);
-            model.restGetResult("res:"+sessionActorId+" error:"+e);
-        }
-    });
-
 </script>
-
 
 </body>
 </html>
