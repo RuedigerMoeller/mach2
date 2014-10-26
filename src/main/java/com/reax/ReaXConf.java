@@ -8,5 +8,8 @@ import java.util.HashMap;
 public class ReaXConf {
 
     int port = 7777;
+    String resourcePath[];
+    String scripts[];
+    String templates[];
 
 }

@@ -4,50 +4,30 @@
     <meta charset="UTF-8">
     <title></title>
 
-    <!--<script id="login-template" type="text">-->
-        <!--<span data-bind="spin: doSpin()">-->
-            <!--<span data-bind="visible: !loggedIn()">-->
-                <!--<input placeholder="user" size="6" type="text" data-bind="value: user">-->
-                <!--<input placeholder="password" size="4" type="password" data-bind="value: pwd">-->
-                <!--<button data-bind="click: login, enable: !doSpin()">Log In</button>-->
-            <!--</span>-->
-            <!--<span data-bind="visible: loggedIn()">Welcome <b data-bind="text: user"></b></span>-->
-            <!--<b data-bind="hilight: true"><span data-bind="text: resultMsg" style="color: darkred;"></span></b>-->
-        <!--</span>-->
-    <!--</script>-->
+    <script src="templates.js"></script>
+    <script src="libs.js"></script>
+    <link rel="stylesheet" href="js/mybootstrap.css">
 
-    <script src="templatetest.js">
-    </script>
-
-    <script src="js/jquery-2.1.1.js"></script>
-    <script src="js/knockout-3.2.0.js"></script>
-    <script src="js/spin.js"></script>
-
-    <script src="minbin.js"></script>
-    <script src="kontraktor.js"></script>
-    <script src="real-live.js"></script>
-    <script src="reax-gen.js"></script>
 </head>
 <body>
 
-<kr-login params="facade: 'JReaXerve'" ></kr-login>
+<div data-bind="template: 'navbar-template'"></div>
+
 <br>
 <br>
 
-<b>Result:</b>
-<p data-bind="text: restGetResult"></p>
-<b>Session res</b>
-<p data-bind="text: restGetSession"></p>
-<b>Creation</b>
-<p data-bind="text: restSessionCreation"></p>
+<div data-bind="template: currentView()"></div>
 
 <script>
     var model = {
-        restGetResult: ko.observable(''),
-        restGetSession: ko.observable(''),
-        restSessionCreation: ko.observable('')
+        currentView: ko.observable("home-template")
     };
     ko.applyBindings(model);
+
+    $(window).on('hashchange', function() {
+        console.log("change site:"+window.location.hash.substring(1));
+        model.currentView(window.location.hash.substring(1)+"-template")
+    });
 </script>
 
 </body>

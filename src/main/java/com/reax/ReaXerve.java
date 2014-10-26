@@ -8,6 +8,7 @@ import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.impl.ElasticScheduler;
 import org.nustaq.kontraktor.remoting.Coding;
 import org.nustaq.kontraktor.remoting.SerializerType;
+import org.nustaq.kontraktor.remoting.http.ScriptComponentLoader;
 import org.nustaq.kontraktor.remoting.http.netty.wsocket.ActorWSServer;
 import org.nustaq.kson.Kson;
 import org.nustaq.kson.KsonDeserializer;
@@ -31,9 +32,11 @@ public class ReaXerve extends Actor<ReaXerve> {
 
     Scheduler clientScheduler; // set of threads processing client requests
     RealLive realLive;
+    ReaXConf conf;
 
     @Local
-    public void $init( Scheduler clientScheduler ) {
+    public void $init(Scheduler clientScheduler, ReaXConf appconf) {
+        this.conf = appconf;
         sessions = new HashMap<>();
         realLive = new RLImpl("./reallive");
         this.clientScheduler = clientScheduler;
@@ -106,7 +109,7 @@ public class ReaXerve extends Actor<ReaXerve> {
 
         ReaXerve xerver = Actors.AsActor(ReaXerve.class);
         final ElasticScheduler scheduler = new ElasticScheduler(2, 1000);
-        xerver.$init(scheduler); // 2 threads, q size 1000
+        xerver.$init(scheduler,appconf); // 2 threads, q size 1000
 
         // start websocket server (default path for ws traffic /websocket)
         ActorWSServer server = ActorWSServer.startAsRestWSServer(
@@ -120,40 +123,18 @@ public class ReaXerve extends Actor<ReaXerve> {
                 )
         );
 
-        // DEV mappings to avoid copying js libs
-        mapDEVLibLocations(server);
+        // install handler to automatically search and bundle jslibs + template snippets
+        ScriptComponentLoader loader = new ScriptComponentLoader().setResourcePath(appconf.resourcePath);
+        server.setVirtualfileMapper((f) -> {
+            if (f.getName().equals("libs.js")) {
+                return loader.mergeScripts(appconf.scripts);
+            } else if (f.getName().equals("templates.js")) {
+                return loader.mergeTemplateSnippets(appconf.templates);
+            }
+            return null;
+        });
     }
 
-    private static void mapDEVLibLocations(ActorWSServer server) {
-        // FIXME: implement js classpath and single request bulk loading
-        Function<File, File> fileMapper = f -> {
-            if (f != null && f.getName() != null) {
-                if (f.getName().equals("minbin.js")) {
-                    File file = new File("C:\\work\\GitHub\\fast-serialization\\src\\main\\javascript\\minbin.js");
-                    if (!file.exists()) {
-                        return new File("/home/ruedi/IdeaProjects/fast-serialization/src/main/javascript/minbin.js");
-                    }
-                    return file;
-                }
-                if (f.getName().equals("kontraktor.js")) {
-                    File file = new File("C:\\work\\GitHub\\abstractor\\netty-kontraktor\\src\\main\\webroot\\kontraktor.js");
-                    if (!file.exists()) {
-                        return new File("/home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/javascript/kontraktor.js");
-                    }
-                    return file;
-                }
-                if (f.getName().equals("real-live.js")) {
-                    File file = new File("C:\\work\\GitHub\\RealLive\\src\\js\\real-live.js");
-                    if (!file.exists()) {
-                        return new File("/home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/javascript/kontraktor.js");
-                    }
-                    return file;
-                }
-            }
-            return f;
-        };
-        server.setFileMapper(fileMapper);
-    }
 
     // grab prot from command line args
     private static int parseArgs(String[] arg) {

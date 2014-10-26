@@ -1,0 +1,25 @@
+<!-- override of kontraktor template -->
+<template id="login-template">
+    <div data-bind="spin: doSpin()">
+        <div data-bind="visible: !loggedIn()" style="padding-top: 12px;">
+            <table cellpadding="4px">
+                <tr>
+                    <td>
+                        <input placeholder="user" size="8" type="text" data-bind="value: user">
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <input placeholder="password" size="8" type="password" data-bind="value: pwd">
+                    </td>
+                    <td>&nbsp;&nbsp;</td>
+                    <td>
+                        <button class="btn-default" data-bind="click: login, enable: !doSpin()">Log In</button>
+                    </td>
+                    <td>&nbsp;&nbsp;</td>
+                </tr>
+            </table>
+        </div>
+    <div style="color: white;padding-top: 12px; padding-right: 12px;" data-bind="visible: loggedIn()">Welcome <b data-bind="text: user"></b></div>
+    <b data-bind="hilight: true"><span data-bind="text: resultMsg" style="color: white;"></span></b>
+    </div>
+</template>
