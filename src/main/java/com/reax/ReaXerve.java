@@ -59,7 +59,7 @@ public class ReaXerve extends Actor<ReaXerve> {
         {
             Promise p = new Promise();
             realLive.getTable("User").$get(user.trim().toLowerCase()).then((userRecord, error) -> {
-                if ( userRecord != null && pwd.equals( ((User) userRecord).getPwd() )) {
+                if ( userRecord != null && pwd.equals(((User) userRecord).getPwd())) {
                     ReaXession newSession = Actors.AsActor(ReaXession.class, clientScheduler);
                     String sessionId = "" + sessionIdCounter++; // can be more cryptic in the future
                     newSession.$init(sessionId, (User) userRecord, self(), realLive);
@@ -125,6 +125,7 @@ public class ReaXerve extends Actor<ReaXerve> {
     }
 
     private static void mapDEVLibLocations(ActorWSServer server) {
+        // FIXME: implement js classpath and single request bulk loading
         Function<File, File> fileMapper = f -> {
             if (f != null && f.getName() != null) {
                 if (f.getName().equals("minbin.js")) {
@@ -135,7 +136,14 @@ public class ReaXerve extends Actor<ReaXerve> {
                     return file;
                 }
                 if (f.getName().equals("kontraktor.js")) {
-                    File file = new File("C:\\work\\GitHub\\abstractor\\netty-kontraktor\\src\\main\\javascript\\kontraktor.js");
+                    File file = new File("C:\\work\\GitHub\\abstractor\\netty-kontraktor\\src\\main\\webroot\\kontraktor.js");
+                    if (!file.exists()) {
+                        return new File("/home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/javascript/kontraktor.js");
+                    }
+                    return file;
+                }
+                if (f.getName().equals("real-live.js")) {
+                    File file = new File("C:\\work\\GitHub\\RealLive\\src\\js\\real-live.js");
                     if (!file.exists()) {
                         return new File("/home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/javascript/kontraktor.js");
                     }

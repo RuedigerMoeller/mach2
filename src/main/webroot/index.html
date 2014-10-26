@@ -4,26 +4,32 @@
     <meta charset="UTF-8">
     <title></title>
 
+    <!--<script id="login-template" type="text">-->
+        <!--<span data-bind="spin: doSpin()">-->
+            <!--<span data-bind="visible: !loggedIn()">-->
+                <!--<input placeholder="user" size="6" type="text" data-bind="value: user">-->
+                <!--<input placeholder="password" size="4" type="password" data-bind="value: pwd">-->
+                <!--<button data-bind="click: login, enable: !doSpin()">Log In</button>-->
+            <!--</span>-->
+            <!--<span data-bind="visible: loggedIn()">Welcome <b data-bind="text: user"></b></span>-->
+            <!--<b data-bind="hilight: true"><span data-bind="text: resultMsg" style="color: darkred;"></span></b>-->
+        <!--</span>-->
+    <!--</script>-->
+
+    <script src="templatetest.js">
+    </script>
+
     <script src="js/jquery-2.1.1.js"></script>
     <script src="js/knockout-3.2.0.js"></script>
+    <script src="js/spin.js"></script>
 
-    <script src="kontraktor.js"></script>
     <script src="minbin.js"></script>
+    <script src="kontraktor.js"></script>
+    <script src="real-live.js"></script>
     <script src="reax-gen.js"></script>
 </head>
 <body>
 
-<!--<script type="text/html" id="login">-->
-    <!--<span data-bind="visible: !loggedIn()">-->
-        <!--<input placeholder="user" size="8" type="text" data-bind="value: user">-->
-        <!--&nbsp;<input placeholder="password" size="8" type="password" data-bind="value: pwd">-->
-        <!--&nbsp;<button data-bind="click: login">Log In</button>-->
-    <!--</span>-->
-    <!--<span data-bind="visible: loggedIn()">Welcome <b data-bind="text: user"></b></span>-->
-    <!--<b><span data-bind="text: resultMsg" style="color: darkred;"></span></b>-->
-<!--</script>-->
-
-<!--<kr-login params="facade: 'JReaXerve'" data-bind="template: { name: 'login' }"></kr-login>-->
 <kr-login params="facade: 'JReaXerve'" ></kr-login>
 <br>
 <br>

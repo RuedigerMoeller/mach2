@@ -9,6 +9,7 @@ import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.remoting.RemotableActor;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.RealLiveClientWrapper;
+import org.nustaq.reallive.sys.metadata.Metadata;
 
 import java.util.Date;
 
@@ -39,6 +40,10 @@ public class ReaXession extends Actor<ReaXession> implements RemotableActor {
 
     public Future $getCreationTime() {
         return new Promise<>(new Date(creationTime).toString() );
+    }
+
+    public Future<Metadata> $getRLMeta() {
+        return new Promise<>(realLive.getMetadata());
     }
 
     @Override

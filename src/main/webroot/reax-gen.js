@@ -5,9 +5,9 @@ var JReaXession = function(obj) {
     this._actorProxy = true;
 
 
-    this.$getCreationTime = function() {
+    this.$getRLMeta = function() {
         var call = MinBin.obj('call', {
-            method: '$getCreationTime',
+            method: '$getRLMeta',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
@@ -23,18 +23,27 @@ var JReaXession = function(obj) {
         });
         return Kontraktor.send(call,true);
     };
-    this.$stop = function() {
+    this.$getCreationTime = function() {
         var call = MinBin.obj('call', {
-            method: '$stop',
+            method: '$getCreationTime',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
         });
-        return Kontraktor.send(call);
+        return Kontraktor.send(call,true);
     };
-    this.$close = function() {
+    this.$getReport = function() {
         var call = MinBin.obj('call', {
-            method: '$close',
+            method: '$getReport',
+            receiverKey: this.receiverKey,
+            args: MinBin.jarray([
+            ])
+        });
+        return Kontraktor.send(call,true);
+    };
+    this.$stop = function() {
+        var call = MinBin.obj('call', {
+            method: '$stop',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
@@ -50,18 +59,18 @@ var JReaXession = function(obj) {
         });
         return Kontraktor.send(call,true);
     };
-    this.$getSubMonitorables = function() {
+    this.$close = function() {
         var call = MinBin.obj('call', {
-            method: '$getSubMonitorables',
+            method: '$close',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
         });
-        return Kontraktor.send(call,true);
+        return Kontraktor.send(call);
     };
-    this.$getReport = function() {
+    this.$getSubMonitorables = function() {
         var call = MinBin.obj('call', {
-            method: '$getReport',
+            method: '$getSubMonitorables',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
@@ -102,6 +111,16 @@ var JReaXerve = function(obj) {
     this._actorProxy = true;
 
 
+    this.$getSession = function(arg0) {
+        var call = MinBin.obj('call', {
+            method: '$getSession',
+            receiverKey: this.receiverKey,
+            args: MinBin.jarray([
+                arg0
+            ])
+        });
+        return Kontraktor.send(call,true);
+    };
     this.$authenticate = function(arg0, arg1) {
         var call = MinBin.obj('call', {
             method: '$authenticate',
@@ -113,12 +132,11 @@ var JReaXerve = function(obj) {
         });
         return Kontraktor.send(call,true);
     };
-    this.$getSession = function(arg0) {
+    this.$getReport = function() {
         var call = MinBin.obj('call', {
-            method: '$getSession',
+            method: '$getReport',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
-                arg0
             ])
         });
         return Kontraktor.send(call,true);
@@ -126,15 +144,6 @@ var JReaXerve = function(obj) {
     this.$stop = function() {
         var call = MinBin.obj('call', {
             method: '$stop',
-            receiverKey: this.receiverKey,
-            args: MinBin.jarray([
-            ])
-        });
-        return Kontraktor.send(call);
-    };
-    this.$close = function() {
-        var call = MinBin.obj('call', {
-            method: '$close',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
@@ -150,18 +159,18 @@ var JReaXerve = function(obj) {
         });
         return Kontraktor.send(call,true);
     };
-    this.$getSubMonitorables = function() {
+    this.$close = function() {
         var call = MinBin.obj('call', {
-            method: '$getSubMonitorables',
+            method: '$close',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
         });
-        return Kontraktor.send(call,true);
+        return Kontraktor.send(call);
     };
-    this.$getReport = function() {
+    this.$getSubMonitorables = function() {
         var call = MinBin.obj('call', {
-            method: '$getReport',
+            method: '$getSubMonitorables',
             receiverKey: this.receiverKey,
             args: MinBin.jarray([
             ])
