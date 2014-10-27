@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title></title>
 
-    <script src="templates.js"></script>
     <script src="libs.js"></script>
-    <link rel="stylesheet" href="../../../web/bootstrap/mybootstrap.css">
+    <script src="templates.js"></script>
+    <link rel="stylesheet" href="lookup/bootstrap/mybootstrap.css">
 
 </head>
 <body>
@@ -24,9 +24,10 @@
     };
     ko.applyBindings(model);
 
-    $(window).on('hashchange', function() {
-        console.log("change site:"+window.location.hash.substring(1));
-        model.currentView(window.location.hash.substring(1)+"-template")
+    Server.loggedIn.subscribe(function(value) {
+        Server.session().$query("TestRecord", "true", function(change,error) {
+            console.log(change);
+        });
     });
 </script>
 

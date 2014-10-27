@@ -13,15 +13,25 @@ public class User extends Record {
     String pwd;
     String lastLogin;
     String creationTime;
+    String email;
     UserRole role = UserRole.USER;
 
-    public User init(String name, String pwd, String lastLogin, String creationTime, UserRole role) {
+    public User init(String name, String pwd, String lastLogin, String creationTime, UserRole role, String email) {
         this.name = name;
         this.pwd = pwd;
         this.lastLogin = lastLogin;
         this.creationTime = creationTime;
         this.role = role;
+        this.email = email;
         return this;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getName() {

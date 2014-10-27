@@ -1,5 +1,6 @@
 package com.reax;
 
+import com.reax.datamodel.TestRecord;
 import com.reax.datamodel.User;
 import com.reax.datamodel.UserRole;
 import org.nustaq.kontraktor.*;
@@ -12,13 +13,13 @@ import org.nustaq.kontraktor.remoting.http.ScriptComponentLoader;
 import org.nustaq.kontraktor.remoting.http.netty.wsocket.ActorWSServer;
 import org.nustaq.kson.Kson;
 import org.nustaq.kson.KsonDeserializer;
+import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.impl.RLImpl;
+import org.nustaq.reallive.impl.storage.TestRec;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -40,12 +41,21 @@ public class ReaXerve extends Actor<ReaXerve> {
         sessions = new HashMap<>();
         realLive = new RLImpl("./reallive");
         this.clientScheduler = clientScheduler;
+
         realLive.createTable(User.class);
+        realLive.createTable(TestRecord.class);
+
         realLive.getTable("User").$put(
             "admin",
-            new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN),
+            new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN,"me@me.com"),
             0
         );
+
+        RLTable testTable = realLive.getTable("TestRecord");
+        for ( int i = 1; i < 1000; i++ ) {
+            testTable.$put("test_" + i, new TestRecord().init("name"+i,""+Math.random(),13,32,5*i),0);
+        }
+
     }
 
     /**
@@ -125,6 +135,16 @@ public class ReaXerve extends Actor<ReaXerve> {
 
         // install handler to automatically search and bundle jslibs + template snippets
         ScriptComponentLoader loader = new ScriptComponentLoader().setResourcePath(appconf.componentPath);
+
+        // e.g. src='lookup/dir/bootstrap.css will search for first dir/bootstrap.css on component path
+        server.setFileMapper( (f) -> {
+            if ( f.getPath().startsWith("./lookup") ) {
+                List<File> files = loader.lookupResource(f.getPath().substring("./lookup".length() + 1), new HashSet<>());
+                if ( files.size() > 0 )
+                    return files.get(0);
+            }
+            return f;
+        });
         server.setVirtualfileMapper((f) -> {
             if (f.getName().equals("libs.js")) {
                 return loader.mergeScripts(appconf.components);
