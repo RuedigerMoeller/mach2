@@ -2,41 +2,23 @@
 
     port: 7777
 
-    # locations to look for libs.js and templates.
-    # you can override snippets easily by placing your version in
-    # an upfront directory
-    resourcePath: [
-        ./
-        ./js
-        ./tpl
-        /home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/webroot
-        /home/ruedi/IdeaProjects/RealLive/src/js
-        /home/ruedi/IdeaProjects/fast-serialization/src/main/javascript
+    # look for dirs first
+    componentPath: [
+        .
+        app
+        /home/moelrue/IdeaProjects/gh/kontraktor/netty-kontraktor/src/main/web
+        /home/moelrue/IdeaProjects/gh/mach2/web
     ]
 
-    # libraries to load. libs.js is ressolved to these via ressource path + appends them to a single file
-    scripts: [
-        jquery-2.1.1.js
-        bootstrap3.2.0.js
-        knockout-3.2.0.js
-        spin.js
-
-        minbin.js
-        kontraktor.js
-        real-live.js
-
+    components: [
+        jquery
+        bootstrap
+        knockout
+        spin
+        real-live
+        kontraktor
         reax-gen.js
-    ]
 
-    # templates to load. templates.js is ressolved to these appended.
-    # FIXME: would be nice to have full directories/wildcards added
-    templates: [
-        login.tpl.html   #from kontraktor
-        navbar.tpl.html
-        home.tpl.html
-        charts.tpl.html
-        tables.tpl.html
-        admin.tpl.html
     ]
 
 }

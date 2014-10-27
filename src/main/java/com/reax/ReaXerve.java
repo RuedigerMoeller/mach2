@@ -124,12 +124,12 @@ public class ReaXerve extends Actor<ReaXerve> {
         );
 
         // install handler to automatically search and bundle jslibs + template snippets
-        ScriptComponentLoader loader = new ScriptComponentLoader().setResourcePath(appconf.resourcePath);
+        ScriptComponentLoader loader = new ScriptComponentLoader().setResourcePath(appconf.componentPath);
         server.setVirtualfileMapper((f) -> {
             if (f.getName().equals("libs.js")) {
-                return loader.mergeScripts(appconf.scripts);
+                return loader.mergeScripts(appconf.components);
             } else if (f.getName().equals("templates.js")) {
-                return loader.mergeTemplateSnippets(appconf.templates);
+                return loader.mergeTemplateSnippets(appconf.components);
             }
             return null;
         });
