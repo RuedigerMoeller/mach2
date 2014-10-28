@@ -1,7 +1,15 @@
 {
     TestRecord           : 'com.reax.datamodel.TestRecord'
     ReaXession           : 'com.reax.ReaXession'
-    ReaXerve             : 'com.reax.ReaXerve'
+    InvocationCallback   : 'org.nustaq.reallive.sys.messages.InvocationCallback'
+    RecordChange         : 'org.nustaq.reallive.RecordChange'
+    SysTable             : 'org.nustaq.reallive.sys.tables.SysTable'
+    TableMeta            : 'org.nustaq.reallive.sys.metadata.TableMeta'
     Metadata             : 'org.nustaq.reallive.sys.metadata.Metadata'
+    QueryTuple           : 'org.nustaq.reallive.sys.messages.QueryTuple'
     User                 : 'com.reax.datamodel.User'
+    Invocation           : 'org.nustaq.reallive.sys.messages.Invocation'
+    ReaXerve             : 'com.reax.ReaXerve'
+    ChangeBroadcast      : 'org.nustaq.reallive.ChangeBroadcast'
+    ColumnMeta           : 'org.nustaq.reallive.sys.metadata.ColumnMeta'
 }

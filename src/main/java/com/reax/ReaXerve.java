@@ -138,7 +138,7 @@ public class ReaXerve extends Actor<ReaXerve> {
 
         // e.g. src='lookup/dir/bootstrap.css will search for first dir/bootstrap.css on component path
         server.setFileMapper( (f) -> {
-            if ( f.getPath().startsWith("./lookup") ) {
+            if ( f.getPath().replace(File.separatorChar,'/').startsWith("./lookup") ) {
                 List<File> files = loader.lookupResource(f.getPath().substring("./lookup".length() + 1), new HashSet<>());
                 if ( files.size() > 0 )
                     return files.get(0);

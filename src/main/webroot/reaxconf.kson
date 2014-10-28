@@ -5,6 +5,7 @@
     # define lookup order. In case a filename contains '.', file lookup is done, else all js/html's inside a dir
     # will be added+concatenated (however no double files to enable file-level override)
     componentPath: [
+
         .
         app
 
@@ -13,14 +14,21 @@
         /home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/web
         /home/ruedi/IdeaProjects/fast-serialization/src/main/web
 
+        #nightflower
+        C:/work/GitHub/mach2/web
+        C:/work/GitHub/abstractor/netty-kontraktor/src/main/web
+        C:/work/GitHub/fast-serialization/src/main/web
+
         #office
         /home/moelrue/IdeaProjects/gh/kontraktor/netty-kontraktor/src/main/web
         /home/moelrue/IdeaProjects/gh/mach2/web
+        /home/moelrue/gh/IdeaProjects/fast-serialization/src/main/web
     ]
 
     # load order of javascript
     components: [
         jquery
+        datatables
         bootstrap
         knockout
         spin
