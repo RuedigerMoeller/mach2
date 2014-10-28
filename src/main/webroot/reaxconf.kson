@@ -12,7 +12,9 @@
         #home
         /home/ruedi/IdeaProjects/mach2/web
         /home/ruedi/IdeaProjects/abstractor/netty-kontraktor/src/main/web
+        /home/ruedi/IdeaProjects/mach2/web/datatables                       # for images
         /home/ruedi/IdeaProjects/fast-serialization/src/main/web
+        /home/ruedi/IdeaProjects/RealLive/src/web
 
         #nightflower
         C:/work/GitHub/mach2/web
@@ -30,6 +32,7 @@
     components: [
         jquery
         datatables
+        datatables/tabletools
         bootstrap
         knockout
         spin

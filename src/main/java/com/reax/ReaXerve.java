@@ -52,7 +52,7 @@ public class ReaXerve extends Actor<ReaXerve> {
         );
 
         RLTable testTable = realLive.getTable("TestRecord");
-        for ( int i = 1; i < 100; i++ ) {
+        for ( int i = 1; i < 500; i++ ) {
             testTable.$put("test_" + i, new TestRecord().init("name"+i,""+Math.random(),13,32,5*i),0);
         }
 
