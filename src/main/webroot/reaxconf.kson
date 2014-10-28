@@ -22,7 +22,8 @@
         #office
         /home/moelrue/IdeaProjects/gh/kontraktor/netty-kontraktor/src/main/web
         /home/moelrue/IdeaProjects/gh/mach2/web
-        /home/moelrue/gh/IdeaProjects/fast-serialization/src/main/web
+        /home/moelrue/IdeaProjects/gh/fast-serialization/src/main/web
+        /home/moelrue/IdeaProjects/gh/RealLive/src/web
     ]
 
     # load order of javascript
@@ -33,7 +34,7 @@
         knockout
         spin
         minbin
-        real-live
+        reallive
         kontraktor
         reax-gen.js
         app

@@ -21,16 +21,38 @@
 
 <div data-bind="template: currentView()"></div>
 
+<table id="table"></table>
+
 <script>
     var model = {
         currentView: ko.observable("home-template")
     };
     ko.applyBindings(model);
 
+    var t = $('table').DataTable(
+        {
+            "data": [],
+            "columns": [
+                { "title": "name" },
+                { "title": "other" },
+                { "title": "x" },
+                { "title": "y" },
+                { "title": "z" }
+            ]
+        }
+    );
+
     Server.loggedIn.subscribe(function(value) {
-        Server.session().$query("TestRecord", "true", function(change,error) {
-            console.log(change);
-        });
+        if ( value ) {
+            Server.session().$query("TestRecord", "true", function (change, error) {
+                console.log(change);
+                if ( change.type != RL_SNAPSHOT_DONE ) {
+                    t.row.add(change.newRecord);
+                } else {
+                    t.draw();
+                }
+            });
+        }
     });
 </script>
 
