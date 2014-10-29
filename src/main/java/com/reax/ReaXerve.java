@@ -17,6 +17,8 @@ import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.impl.RLImpl;
 import org.nustaq.reallive.impl.storage.TestRec;
+import org.nustaq.reallive.sys.config.ConfigReader;
+import org.nustaq.reallive.sys.config.SchemaConfig;
 
 import java.io.File;
 import java.util.*;
@@ -39,7 +41,8 @@ public class ReaXerve extends Actor<ReaXerve> {
     public void $init(Scheduler clientScheduler, ReaXConf appconf) {
         this.conf = appconf;
         sessions = new HashMap<>();
-        realLive = new RLImpl("./reallive");
+        realLive = new RLImpl("./reallive-data");
+
         this.clientScheduler = clientScheduler;
 
         realLive.createTable(User.class);
@@ -54,6 +57,13 @@ public class ReaXerve extends Actor<ReaXerve> {
         RLTable testTable = realLive.getTable("TestRecord");
         for ( int i = 1; i < 500; i++ ) {
             testTable.$put("test_" + i, new TestRecord().init("name"+i,""+Math.random(),13,32,5*i),0);
+        }
+
+        try {
+            SchemaConfig schemaProps = ConfigReader.readConfig("modelprops.kson");;
+            realLive.getMetadata().overrideWith(schemaProps); // FIXME: side effecting
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -139,7 +149,7 @@ public class ReaXerve extends Actor<ReaXerve> {
         // e.g. src='lookup/dir/bootstrap.css will search for first dir/bootstrap.css on component path
         server.setFileMapper( (f) -> {
             if ( f.getPath().replace(File.separatorChar,'/').startsWith("./lookup") ) {
-                List<File> files = loader.lookupResource(f.getPath().substring("./lookup".length() + 1), new HashSet<>());
+                List<File> files = loader.lookupResource(f.getPath().substring("./lookup".length() + 1), new HashSet<>(), new HashSet<>());
                 if ( files.size() > 0 )
                     return files.get(0);
             }

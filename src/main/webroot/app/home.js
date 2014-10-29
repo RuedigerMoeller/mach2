@@ -1,0 +1,3 @@
+var inithome = function() {
+
+};

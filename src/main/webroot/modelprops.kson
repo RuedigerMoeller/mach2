@@ -1,0 +1,17 @@
+schema {
+
+    globals: {
+        version:   { hidden: true }
+    }
+
+    tables: {
+        TestRecord: {
+            columns: {
+                recordKey: { displayWidth: 100px }
+                name: { displayWidth: 70px }
+            }
+        }
+
+    }
+
+}

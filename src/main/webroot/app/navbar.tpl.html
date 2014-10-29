@@ -1,4 +1,4 @@
-<template id="navbar-template">
+<template id="navbar">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="collapse navbar-collapse" ng-controller="NavCtrl">
             <ul class="nav navbar-nav" style="font-size: 1.3em; font-weight: bold;">
@@ -19,6 +19,6 @@
 <script>
     $(window).on('hashchange', function() {
         console.log("change site:"+window.location.hash.substring(1));
-        model.currentView(window.location.hash.substring(1)+"-template")
+        model.currentView(window.location.hash.substring(1))
     });
 </script>

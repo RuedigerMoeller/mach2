@@ -30,16 +30,6 @@
 
     # load order of javascript
     components: [
-        jquery
-        datatables
-        datatables/tabletools
-        bootstrap
-        knockout
-        spin
-        minbin
-        reallive
-        kontraktor
-        reax-gen.js
         app
     ]
 

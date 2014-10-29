@@ -14,72 +14,24 @@
 </head>
 <body>
 
-<div data-bind="template: 'navbar-template'"></div>
+<div data-bind="template: 'navbar'"></div>
 
 <br>
 <br>
 
-<div data-bind="template: currentView()"></div>
-
-<div style="padding-left: 100px; padding-right: 100px;">
-<table id="table" class="display stripe compact hover" cellspacing="0"></table>
-</div>
+<div style="padding-left: 30px; padding-top: 20px;" data-bind="template: { name: currentView(), afterRender: initView }"></div>
 
 <script>
     var model = {
-        currentView: ko.observable("home-template")
+        currentView: ko.observable("home"),
+        initView: function() {
+            if ( window[ 'init'+model.currentView() ] )
+                window[ 'init'+model.currentView() ].apply();
+        }
     };
     ko.applyBindings(model);
 
-    var t;
-    $(document).ready( function () {
-        t = $('table').DataTable({
-                dom: 'T<"clear">lfrtip',
-                tableTools: {
-                    "sRowSelect": "single",
-                    "aButtons": []
-                },
-                tabIndex: true,
-                searching: false,
-                paging: false,
-                //            scrollX: 800,
-                scrollY: 400,
-                autoWidth: true,
-                //            jQueryUI: true,
-                data: [],
-                columns: [
-                    { data: "name", title: "Name" },
-                    { data: "other", title: "Other" },
-                    { data: "x", title:"X" },
-                    { data: "y", title:"Y" },
-                    { data: "z", title:"Z" }
-                ]
-            }
-        );
-    });
-
-//    t.row.add( { name: "name", other: "oth", x: 3, y: 4, z:5 } );
-//    t.draw();
-
-    Server.loggedIn.subscribe(function(value) {
-        if ( value ) {
-            var count = 0;
-            Server.session().$query("TestRecord", "true", function (change, error) {
-                console.log(change);
-                if ( change.type != RL_SNAPSHOT_DONE ) {
-                    t.row.add(change.newRecord);
-                    count++;
-                    if ( count > 100 ) {
-                        t.draw();
-                        count = 0;
-                    }
-                } else {
-                    t.draw();
-                }
-            });
-        }
-    });
-</script>
+    </script>
 
 </body>
 </html>
