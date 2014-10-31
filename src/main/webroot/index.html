@@ -15,11 +15,18 @@
 <body>
 
 <div data-bind="template: 'navbar'"></div>
+<br>
+<br>
 
-<br>
-<br>
 
 <div style="padding-left: 30px; padding-top: 20px;" data-bind="template: { name: currentView(), afterRender: initView }"></div>
+bla
+<b data-bind="text: 'XX'"></b>
+<div data-bind="rlrecord: { table:'TestRecord', key:'12'}">
+    <b data-bind="text: 'test-text'"></b>
+    <b data-bind="text: test"></b>
+</div>
+<br>
 
 <script>
     var model = {

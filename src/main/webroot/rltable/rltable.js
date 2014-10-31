@@ -60,13 +60,13 @@ ko.components.register('rl-table', {
             this.tableElem = $(componentInfo.element).find('table');
 
             this.updateOrCreateTable = function( columDefArray ) {
-                if ( this.table ) {
-                    this.table.destroy(false);
-                    $(this.tableElem).find('th').remove();
-                    $(this.tableElem).find('td').remove();
+                if ( self.table ) {
+                    self.table.destroy(false);
+                    $(self.tableElem).find('th').remove();
+                    $(self.tableElem).find('td').remove();
                 }
 
-                this.table = this.tableElem.DataTable({
+                self.table = self.tableElem.DataTable({
                         dom: 'T<"clear">lfrtip',
                         tableTools: {
                             "sRowSelect": "single",
@@ -76,7 +76,7 @@ ko.components.register('rl-table', {
                         searching: false,
                         paging: false,
                         //            scrollX: 800,
-                        scrollY: 400,
+                        scrollY: params.height ? params.height : 400,
                         autoWidth: true,
                         //            jQueryUI: true,
                         data: [],
