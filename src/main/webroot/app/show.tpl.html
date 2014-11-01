@@ -1,0 +1,51 @@
+<template id="show">
+    <h3>RLRecord</h3>
+    <br>
+    <div style="background-color: #eee; padding: 8px;">
+        <b>TestRecord table</b><br><br>
+        <div data-bind="rlrecord: { table:'SysTable', key:'TestRecord' }">
+            <table data-bind="visible: $data().recordKey != null">
+                <tr>
+                    <td><b data-bind="text: $data().recordKey"></b></td>
+                </tr>
+                <tr>
+                    <td>number of elements:</td><td><div data-bind="text: $data().numElems, hilight: true"></div></td>
+                </tr>
+                <tr>
+                    <td>size (MB):</td><td data-bind="text: $data().sizeMB, hilight: true"></td>
+                </tr>
+            </table>
+            <!--<b data-bind="text: dummy()"></b>-->
+        </div>
+        <br>
+        <br>
+        <b>Current User</b><br><br>
+        <div data-bind="rlrecord: { table:'User', key: Server.userName() }">
+            <table data-bind="visible: $data().recordKey != null">
+                <tr>
+                    <td><b data-bind="text: $data().recordKey"></b></td>
+                </tr>
+                <tr>
+                    <td>email:</td><td><div data-bind="text: $data().email, hilight: true"></div></td>
+                </tr>
+                <tr>
+                    <td>role:</td><td data-bind="text: $data().role, hilight: true"></td>
+                </tr>
+            </table>
+            <!--<b data-bind="text: dummy()"></b>-->
+        </div>
+    </div>
+    <br>
+    <br>
+
+    <h3>RLTable</h3>
+    <br>
+    <div style="padding-right: 50px;">
+        <rl-table params="table: 'SysTable', query: 'true', height: 150" ></rl-table>
+    </div>
+    <br>
+    <br>
+
+
+
+</template>
