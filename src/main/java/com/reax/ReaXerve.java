@@ -6,45 +6,33 @@ import com.reax.datamodel.UserRole;
 import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
-import org.nustaq.kontraktor.impl.ElasticScheduler;
-import org.nustaq.kontraktor.remoting.Coding;
-import org.nustaq.kontraktor.remoting.SerializerType;
-import org.nustaq.kontraktor.remoting.http.ScriptComponentLoader;
-import org.nustaq.kontraktor.remoting.http.netty.wsocket.ActorWSServer;
+import org.nustaq.machweb.MachWeb;
 import org.nustaq.kson.Kson;
-import org.nustaq.kson.KsonDeserializer;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.impl.RLImpl;
-import org.nustaq.reallive.impl.storage.TestRec;
 import org.nustaq.reallive.sys.config.ConfigReader;
 import org.nustaq.reallive.sys.config.SchemaConfig;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Created by ruedi on 23.10.2014.
  */
 @GenRemote
-public class ReaXerve extends Actor<ReaXerve> {
+public class ReaXerve extends MachWeb<ReaXerve,ReaXession> {
 
-    Map<String,ReaXession> sessions;
-    long sessionIdCounter = 1;
-
-    Scheduler clientScheduler; // set of threads processing client requests
-    RealLive realLive;
-    ReaXConf conf;
+    protected RealLive realLive;
 
     @Local
-    public void $init(Scheduler clientScheduler, ReaXConf appconf) {
-        this.conf = appconf;
-        sessions = new HashMap<>();
+    public void $init(Scheduler clientScheduler) {
+        super.$init(clientScheduler);
+        initRealLive();
+    }
+
+    protected void initRealLive() {
         realLive = new RLImpl("./reallive-data");
-
-        this.clientScheduler = clientScheduler;
-
         realLive.createTable(User.class);
         realLive.createTable(TestRecord.class);
 
@@ -60,57 +48,54 @@ public class ReaXerve extends Actor<ReaXerve> {
         }
 
         try {
-            SchemaConfig schemaProps = ConfigReader.readConfig("modelprops.kson");;
+            SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");;
             realLive.getMetadata().overrideWith(schemaProps); // FIXME: side effecting
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        delayed( 5000, () -> $changeStuff() );
     }
 
-    /**
-     * to avoid the need for anonymous clients to create a websocket connection prior to login,
-     * this is exposed as a webservice and is called using $.get(). The Id returned then can be
-     * used to obtain a valid session id for the websocket connection.
-     *
-     * @param user
-     * @param pwd
-     * @return
-     */
-    public Future<String> $authenticate( String user, String pwd ) {
-        if ( user != null && pwd != null ) // dummy auth
-        {
-            Promise p = new Promise();
-            realLive.getTable("User").$get(user.trim().toLowerCase()).then((userRecord, error) -> {
-                if ( userRecord != null && pwd.equals(((User) userRecord).getPwd())) {
-                    ReaXession newSession = Actors.AsActor(ReaXession.class, clientScheduler);
-                    String sessionId = "" + sessionIdCounter++; // can be more cryptic in the future
-                    newSession.$init(sessionId, (User) userRecord, self(), realLive);
-                    sessions.put(sessionId, newSession);
-                    p.receive(sessionId,null);
-                } else {
-                    p.receive(null,"authentication failure");
-                }
-            });
-            return p;
-        }
-        return new Promise<>(null,"authentication failure");
+    int stuffCount = 0;
+    public void $changeStuff() {
+        if ( isStopped() )
+            return;
+        RLTable<User> user = realLive.getTable("User");
+        user.$get("admin").then((u, e) -> {
+            user.prepareForUpdate(u);
+            u.setEmail("" + Math.random());
+            u.$apply(0);
+            if ( stuffCount == 0 ) {
+                user.$put("Pok", new User().init("Pok", "asd", "-", "..", UserRole.MARKET_OWNER, "...."), 0);
+                stuffCount++;
+            } else {
+                user.$remove("Pok", 0 );
+                stuffCount = 0;
+            }
+            delayed(5000, () -> $changeStuff());
+        });
     }
 
-    public Future<ReaXession> $getSession(String id) {
-        return new Promise<>(sessions.get(id));
-    }
-
-    @Local
-    public Future $clientTerminated(ReaXession session) {
+    @Override
+    protected Future<Object> isLoginValid(String user, String pwd) {
         Promise p = new Promise();
-        session.$getId().then((id, err) -> {
-            sessions.remove(id);
-            p.signal();
+        realLive.getTable("User").$get(user.trim().toLowerCase()).then((userRecord, error) -> {
+            if ( userRecord != null && pwd.equals(((User) userRecord).getPwd())) {
+                p.receive(userRecord,null);
+            } else {
+                p.receive(false,"authentication failure");
+            }
         });
         return p;
     }
 
+    @Override
+    protected ReaXession createSessionActor(String sessionId, Scheduler clientScheduler, Object userRecord) {
+        ReaXession actor = Actors.AsActor(ReaXession.class, clientScheduler);
+        actor.$init((User)userRecord,realLive);
+        return actor;
+    }
 
     /**
      * startup server + map some files for development
@@ -118,72 +103,14 @@ public class ReaXerve extends Actor<ReaXerve> {
      * @throws Exception
      */
     public static void main( String arg[] ) throws Exception {
-
-        ReaXConf appconf = (ReaXConf) new Kson().readObject(new File("reaxconf.kson"), ReaXConf.class.getName());
-
-        int port = parseArgs(arg);
-        if ( port <= 0 )
-            port = appconf.port;
-
-        HashMap<String,String> shortClassNameMapping = (HashMap<String, String>) new Kson().readObject(new File("name-map.kson"),HashMap.class);
-
-        ReaXerve xerver = Actors.AsActor(ReaXerve.class);
-        final ElasticScheduler scheduler = new ElasticScheduler(2, 1000);
-        xerver.$init(scheduler,appconf); // 2 threads, q size 1000
-
-        // start websocket server (default path for ws traffic /websocket)
-        ActorWSServer server = ActorWSServer.startAsRestWSServer(
-                port,
-                xerver,         // facade actor
-                new File("./"), // content root
-                scheduler,      // Scheduler determining per client q size + number of worker threads
-                new Coding(
-                    SerializerType.MinBin,
-                    conf -> shortClassNameMapping.forEach( (k,v) -> conf.registerCrossPlatformClassMapping(k,v) )
-                )
-        );
-
-        // install handler to automatically search and bundle jslibs + template snippets
-        ScriptComponentLoader loader = new ScriptComponentLoader().setResourcePath(appconf.componentPath);
-
-        // e.g. src='lookup/dir/bootstrap.css will search for first dir/bootstrap.css on component path
-        server.setFileMapper( (f) -> {
-            if ( f.getPath().replace(File.separatorChar,'/').startsWith("./lookup") ) {
-                List<File> files = loader.lookupResource(f.getPath().substring("./lookup".length() + 1), new HashSet<>(), new HashSet<>());
-                if ( files.size() > 0 )
-                    return files.get(0);
-            }
-            return f;
-        });
-        server.setVirtualfileMapper((f) -> {
-            if (f.getName().equals("libs.js")) {
-                return loader.mergeScripts(appconf.components);
-            } else if (f.getName().equals("templates.js")) {
-                return loader.mergeTemplateSnippets(appconf.components);
-            }
-            return null;
-        });
-    }
-
-
-    // grab prot from command line args
-    private static int parseArgs(String[] arg) {
-        int port = 0;
-        if ( arg.length > 1 ) {
-            System.out.println("Expect port as first argument");
-            System.exit(1);
-        }
-        if ( arg.length > 0 ) {
-            try {
-                port = Integer.parseInt(arg[0]);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                System.out.println("Expect port as first argument");
+        Object o = new Kson().readObject(new File("initialdata/user.kson"), User[].class);
+        ReaXerve server = Actors.AsActor(ReaXerve.class);
+        server.$main(arg).then( (r,e) -> {
+            if ( e != null ) {
+                ((Exception)e).printStackTrace();
                 System.exit(1);
             }
-        }
-        return port;
+        });
     }
-
 
 }

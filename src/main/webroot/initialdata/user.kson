@@ -1,0 +1,31 @@
+[
+    {
+        recordKey: ruedi
+        name: ruedi
+        pwd: a
+        email: r@x.com
+        role: ADMIN
+    }
+    {
+        recordKey: heiko
+        name: heiko
+        pwd: a
+        email: x@r.com
+        role: ADMIN
+    }
+    {
+        recordKey: user
+        name: user
+        pwd: a
+        email: user@r.com
+        role: USER
+    }
+    {
+        recordKey: owner
+        name: owner
+        pwd: a
+        email: owner@r.com
+        role: MARKET_OWNER
+    }
+
+]

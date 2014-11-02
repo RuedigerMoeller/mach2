@@ -8,6 +8,8 @@ import org.nustaq.kontraktor.Promise;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.remoting.RemotableActor;
+import org.nustaq.kontraktor.util.Log;
+import org.nustaq.machweb.MachWebSession;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.RealLiveClientWrapper;
 import org.nustaq.reallive.Subscription;
@@ -17,24 +19,20 @@ import org.nustaq.reallive.sys.messages.QueryTuple;
 import org.nustaq.reallive.sys.metadata.Metadata;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
  * Created by ruedi on 23.10.2014.
  */
 @GenRemote
-public class ReaXession extends Actor<ReaXession> implements RemotableActor {
+public class ReaXession extends MachWebSession<ReaXerve,ReaXession> {
 
-    long creationTime = System.currentTimeMillis();
-    String sessionId;
-    ReaXerve app;
     RealLive realLive;
     User user;
 
     @Local
-    public void $init(String sessionId, User user, ReaXerve app, RealLive realLive) {
-        this.sessionId = sessionId;
-        this.app = app;
+    public void $init(User user, RealLive realLive) {
         this.realLive = new RealLiveClientWrapper(realLive);
         this.user = user;
     }
@@ -42,22 +40,37 @@ public class ReaXession extends Actor<ReaXession> implements RemotableActor {
     //////////////////////////////////////////////////////
     // RealLive access (to be isolated)
 
-    HashSet<Callback> subscriptions = new HashSet<>();
+    HashMap<String,Subscription> subscriptions = new HashMap<>();
+    int subsCount = 1;
 
-    // expect [tableName,recordkey]
-    public void $subscribeKey(String table, String recordKey, Callback cb) {
+    public Future<String> $subscribeKey(String table, String recordKey, Callback cb) {
         Subscription subs = realLive.stream(table).subscribeKey( recordKey, (change) -> cb.receive(change,CONT) );
-        subscriptions.add(cb);
+        String key = "subs" + subsCount++;
+        subscriptions.put(key, subs);
+        return new Promise<>(key);
     }
 
-//    // expect [tableName,filterString]
-//    Object subscribe(Invocation<QueryTuple> inv) {
-//        QueryTuple argument = inv.getArgument();
-//        Subscription subs = getRLDB().stream("" + argument.getTableName()).subscribe( new JSQuery(argument.getQuerySource()), (change) -> sendReply(inv, change));
-//        subscriptions.put(inv.getCbId(),subs);
-//        return NO_RESULT;
-//    }
-//
+    public Future<String> $subscribe(String table, String query, Callback cb) {
+        Subscription subs = realLive.stream(table).subscribe(new JSQuery(query), (change) -> cb.receive(change, CONT));
+        String key = "subs" + subsCount++;
+        subscriptions.put(key, subs);
+        return new Promise<>(key);
+    }
+
+    public void $unsubscribe(String subsKey) {
+        Subscription subs = subscriptions.get(subsKey);
+        if ( subs != null ) {
+            realLive.getTable(subs.getTableKey()).stream().unsubscribe(subs);
+            subscriptions.remove(subsKey);
+        } else {
+            Log.Warn(this,"no subscription for unsubscribe found for key "+subsKey);
+        }
+    }
+
+    public Future<Metadata> $getRLMeta() {
+        return new Promise<>(realLive.getMetadata());
+    }
+
 //    // expect [tableName,filterString]
 //    Object listen(Invocation<QueryTuple> inv) {
 //        QueryTuple argument = inv.getArgument();
@@ -77,21 +90,4 @@ public class ReaXession extends Actor<ReaXession> implements RemotableActor {
     //
     //////////////////////////////////////////////////////
 
-    public Future<String> $getId() {
-        return new Promise<>(sessionId);
-    }
-
-    public Future $getCreationTime() {
-        return new Promise<>(new Date(creationTime).toString() );
-    }
-
-    public Future<Metadata> $getRLMeta() {
-        return new Promise<>(realLive.getMetadata());
-    }
-
-    @Override
-    @Local
-    public void $hasBeenUnpublished() {
-        app.$clientTerminated(self()).then(() -> self().$stop());
-    }
 }

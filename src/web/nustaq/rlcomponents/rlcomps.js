@@ -1,59 +1,25 @@
 
-var highlightElem = function(element, color) {
-    if (!element.hicount && element.hicount != 0) {
-        element.hicount = 1;
-    } else {
-        element.hicount++;
-    }
-    element.style.backgroundColor = '#FFF3B0';
-    if ( color )
-        element.style.color = '#000';
-    (function () {
-        var current = element;
-        var prevKey = element;
-        setTimeout(function () {
-            if (current.hicount <= 1 || prevKey != current) {
-                current.style.backgroundColor = 'rgba(230,230,230,0.0)';
-                if ( color )
-                    current.style.color = color;
-                current.hicount = 0;
-            } else {
-                current.hicount--;
-            }
-        }, 3000);
-    }())
-};
-
-ko.bindingHandlers.hilight = {
-    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var self = element;
-        $(element).bind('DOMSubtreeModified', function(event) {
-            if (element.innerHTML != self.lastValue ) {
-                var col = valueAccessor();
-                if ( col != true ) {
-                    highlightElem(element,col);
-                } else {
-                    highlightElem(element);
-                }
-                self.lastValue = element.innerHTML;
-            }
-        });
-        self.lastValue = element.innerHTML;
-    },
-    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-    }
-};
-
 // <div data-bind='rlrecord: { table: '', key: '' }'
 ko.bindingHandlers.rlrecord = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
 
+        var callback = null;
         var functionsOnUnsubscribe = [];
         var self = this;
         var currentParams = valueAccessor();
-        for ( var i = 0; i < functionsOnUnsubscribe.length; i++ ) {
-            functionsOnUnsubscribe[i].apply(self);
-        }
+
+        var disposal = function() {
+            for (var i = 0; i < functionsOnUnsubscribe.length; i++) {
+                functionsOnUnsubscribe[i].apply(self);
+            }
+        };
+
+        disposal.apply();
+
+        ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+            console.log("disposal of rlrecord called");
+            disposal.apply();
+        });
 
         var table = currentParams.table;
         if ( ko.isObservable(table) ) {
@@ -73,7 +39,7 @@ ko.bindingHandlers.rlrecord = {
         var recordObj = ko.observable({recordKey:null});
 
         Server.doOnceLoggedIn( function() {
-            Server.session().$subscribeKey(table, key, function( change,err) {
+            Server.session().$subscribeKey(table, key, callback = function( change,err) {
                 switch (change.type) {
                     case RL_ADD:
                     {
@@ -104,6 +70,11 @@ ko.bindingHandlers.rlrecord = {
                     }
                     break;
                 }
+            }).then( function(skey, e) {
+                functionsOnUnsubscribe.push(function() {
+                    Server.session().$unsubscribe(skey);
+                    Server.unregisterCB(callback);
+                });
             });
         });
 
@@ -122,3 +93,20 @@ ko.bindingHandlers.rlrecord = {
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
     }
 };
+
+function RLObservableResultSet(table,query) {
+    RLResultSet.call(this);
+    this.list = ko.observableArray();
+    this.clearList = function() {
+        this.list.splice(0,this.getList().length);
+    };
+    this.getList = function () {
+        return this.list();
+    };
+    if ( table && query )
+        this.subscribe(table,query);
+}
+RLObservableResultSet.prototype = new RLResultSet();
+
+
+

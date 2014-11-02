@@ -20,20 +20,33 @@
 
 
 <div style="padding-left: 30px; padding-top: 20px;" data-bind="template: { name: currentView(), afterRender: initView }"></div>
-
 <br>
 
+<div data-bind="foreach: user">
+    <b data-bind="text: name"></b><br>
+</div>
+
 <script>
+    var rs = new RLObservableResultSet();
+
     var model = {
         currentView: ko.observable("home"),
         initView: function() {
             if ( window[ 'init'+model.currentView() ] )
                 window[ 'init'+model.currentView() ].apply();
-        }
+        },
+        user: rs.list
     };
     ko.applyBindings(model);
 
-    </script>
+    Server.doOnceLoggedIn( function(bool) {
+        rs.subscribe("User", "true");
+        rs.onSnapFin( function() {
+            console.log( JSON.stringify( rs.getList() ) );
+        });
+    });
+
+</script>
 
 </body>
 </html>

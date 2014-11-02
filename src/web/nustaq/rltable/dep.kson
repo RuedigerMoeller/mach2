@@ -1,0 +1,2 @@
+# ko table component connected to a reallive query
+[ kontraktor-ko, datatables/tabletools, reallive ]

@@ -34,6 +34,23 @@
             </table>
             <!--<b data-bind="text: dummy()"></b>-->
         </div>
+        <br>
+        <br>
+        <b>User Table</b><br><br>
+        <div data-bind="rlrecord: { table:'SysTable', key: 'User' }">
+            <table data-bind="visible: $data().recordKey != null">
+                <tr>
+                    <td><b data-bind="text: $data().recordKey"></b></td>
+                </tr>
+                <tr>
+                    <td>number of elements:</td><td><div data-bind="text: $data().numElems, hilight: true"></div></td>
+                </tr>
+                <tr>
+                    <td>size (MB):</td><td data-bind="text: $data().sizeMB, hilight: true"></td>
+                </tr>
+            </table>
+            <!--<b data-bind="text: dummy()"></b>-->
+        </div>
     </div>
     <br>
     <br>
