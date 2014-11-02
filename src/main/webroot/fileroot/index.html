@@ -22,12 +22,9 @@
 <div style="padding-left: 30px; padding-top: 20px;" data-bind="template: { name: currentView(), afterRender: initView }"></div>
 <br>
 
-<div data-bind="foreach: user">
-    <b data-bind="text: name"></b><br>
-</div>
-
 <script>
     var rs = new RLObservableResultSet();
+    var tableRS = new RLObservableResultSet();
 
     var model = {
         currentView: ko.observable("home"),
@@ -35,15 +32,14 @@
             if ( window[ 'init'+model.currentView() ] )
                 window[ 'init'+model.currentView() ].apply();
         },
-        user: rs.list
+        user: rs.list,
+        tables: tableRS.list
     };
     ko.applyBindings(model);
 
     Server.doOnceLoggedIn( function(bool) {
         rs.subscribe("User", "true");
-        rs.onSnapFin( function() {
-            console.log( JSON.stringify( rs.getList() ) );
-        });
+        tableRS.subscribe("SysTable", "true");
     });
 
 </script>

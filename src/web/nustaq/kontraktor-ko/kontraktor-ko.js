@@ -90,7 +90,7 @@ if ( typeof ko !== 'undefined') {
     ////////// requires spin.js //////////////////////////////
     ko.bindingHandlers.spin = {
         init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-            this.spinner = new Spinner();
+            this.spinner = new Spinner( { radius: 3, length: 5, width:2 } );
         },
         update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
             if ( valueAccessor() ) {

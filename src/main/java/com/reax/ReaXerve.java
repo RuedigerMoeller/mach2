@@ -6,6 +6,7 @@ import com.reax.datamodel.UserRole;
 import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
+import org.nustaq.kontraktor.util.Log;
 import org.nustaq.machweb.MachWeb;
 import org.nustaq.kson.Kson;
 import org.nustaq.reallive.RLTable;
@@ -33,14 +34,33 @@ public class ReaXerve extends MachWeb<ReaXerve,ReaXession> {
 
     protected void initRealLive() {
         realLive = new RLImpl("./reallive-data");
+
         realLive.createTable(User.class);
         realLive.createTable(TestRecord.class);
 
-        realLive.getTable("User").$put(
-            "admin",
-            new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN,"me@me.com"),
-            0
-        );
+        try {
+            User defaultUser[] = (User[]) new Kson().readObject(new File("initialdata/user.kson"), User[].class);
+            for (int i = 0; i < defaultUser.length; i++) {
+                User user = defaultUser[i];
+                if ( user.getRecordKey() != null ) {
+                    realLive.getTable("User").$put(
+                        user.getRecordKey(),
+                        user,
+                        0
+                    );
+                } else {
+                    Log.Warn(this, "Import: "+user+" is missing recordKey attribute");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            realLive.getTable("User").$put(
+                "admin",
+                new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN, "me@me.com"),
+                0
+            );
+        }
+
 
         RLTable testTable = realLive.getTable("TestRecord");
         for ( int i = 1; i < 500; i++ ) {
@@ -84,7 +104,7 @@ public class ReaXerve extends MachWeb<ReaXerve,ReaXession> {
             if ( userRecord != null && pwd.equals(((User) userRecord).getPwd())) {
                 p.receive(userRecord,null);
             } else {
-                p.receive(false,"authentication failure");
+                p.receive(null,"authentication failure");
             }
         });
         return p;
@@ -103,7 +123,6 @@ public class ReaXerve extends MachWeb<ReaXerve,ReaXession> {
      * @throws Exception
      */
     public static void main( String arg[] ) throws Exception {
-        Object o = new Kson().readObject(new File("initialdata/user.kson"), User[].class);
         ReaXerve server = Actors.AsActor(ReaXerve.class);
         server.$main(arg).then( (r,e) -> {
             if ( e != null ) {

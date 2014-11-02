@@ -12,6 +12,7 @@ ko.bindingHandlers.rlrecord = {
             for (var i = 0; i < functionsOnUnsubscribe.length; i++) {
                 functionsOnUnsubscribe[i].apply(self);
             }
+            disposal.length = 0;
         };
 
         disposal.apply();
@@ -21,10 +22,12 @@ ko.bindingHandlers.rlrecord = {
             disposal.apply();
         });
 
+        var subscribeFun;
+
         var table = currentParams.table;
         if ( ko.isObservable(table) ) {
             table.subscribe(function(newValue) {
-
+                table = currentParams.table();
             });
             table = currentParams.table();
         }
@@ -32,13 +35,16 @@ ko.bindingHandlers.rlrecord = {
         var key = currentParams.key;
         if ( ko.isObservable(key) ) {
             key.subscribe(function(newKey) {
-
+                key = currentParams.key();
+                disposal.apply();
+                subscribeFun.apply();
+                console.log("KEY CHANGED: "+table+" "+key);
             });
-            key = currentParams.table();
+            key = currentParams.key();
         }
         var recordObj = ko.observable({recordKey:null});
 
-        Server.doOnceLoggedIn( function() {
+        subscribeFun = function() { Server.doOnceLoggedIn( function() {
             Server.session().$subscribeKey(table, key, callback = function( change,err) {
                 switch (change.type) {
                     case RL_ADD:
@@ -74,9 +80,16 @@ ko.bindingHandlers.rlrecord = {
                 functionsOnUnsubscribe.push(function() {
                     Server.session().$unsubscribe(skey);
                     Server.unregisterCB(callback);
+                    // FIXME: unsubscribe needed
+//                    if ( ko.isObservable(currentParams.table))
+//                        currentParams.table.dispose();
+//                    if ( ko.isObservable(currentParams.key) )
+//                        currentParams.key.dispose();
                 });
             });
-        });
+        })};
+
+        subscribeFun.apply();
 
         // Make a modified binding context, with a extra properties, and apply it to descendant elements
         var childBindingContext = bindingContext.createChildContext(
@@ -91,6 +104,7 @@ ko.bindingHandlers.rlrecord = {
         return { controlsDescendantBindings: true };
     },
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        console.log("rlrecord update"+valueAccessor());
     }
 };
 
@@ -103,6 +117,11 @@ function RLObservableResultSet(table,query) {
     this.getList = function () {
         return this.list();
     };
+
+    this.postUpdate = function( change, record ) {
+        return JSON.parse(JSON.stringify(record));
+    };
+
     if ( table && query )
         this.subscribe(table,query);
 }

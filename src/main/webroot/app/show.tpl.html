@@ -20,7 +20,7 @@
         <br>
         <br>
         <b>Current User</b><br><br>
-        <div data-bind="rlrecord: { table:'User', key: Server.userName() }">
+        <div data-bind="rlrecord: { table:'User', key: Server.userName }">
             <table data-bind="visible: $data().recordKey != null">
                 <tr>
                     <td><b data-bind="text: $data().recordKey"></b></td>
@@ -62,7 +62,49 @@
     </div>
     <br>
     <br>
+    <h3>ObservableResultSet</h3>
+    <br>
+    <div data-bind="foreach: tables">
+        <table
+            style="width: 500px;"
+            onMouseOver="this.style.backgroundColor='#eee'"
+            onMouseOut="this.style.backgroundColor='#fff'">
+        <tr>
+            <td style="width: 75px;"><img src="table.gif" width="64" height="64"></td><td><b style="font-size: large;" data-bind="text: recordKey"></b></td>
+        </tr>
+        <tr>
+            <td></td><td style="width: 90px;">description:</td><td data-bind="text: description"></td>
+        </tr>
+        <tr>
+            <td></td><td style="width: 90px;">size (MB):</td><td data-bind="text: sizeMB"></td>
+        </tr>
+        <tr>
+            <td></td><td style="width: 90px;">free (MB):</td><td data-bind="text: freeMB"></td>
+        </tr>
+        <tr>
+            <td></td><td style="width: 90px;">Rows:</td><td data-bind="text: numElems"></td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        </table>
+    </div>
 
-
+    <br>
+    <div data-bind="foreach: user">
+        <table
+            style="width: 500px;"
+            onMouseOver="this.style.backgroundColor='#eee'"
+            onMouseOut="this.style.backgroundColor='#fff'">
+        <tr>
+            <td style="width: 75px;"><img src="user.jpg" width="64" height="64"></td><td><b style="font-size: large;" data-bind="text: recordKey"></b></td>
+        </tr>
+        <tr>
+            <td></td><td style="width: 90px;">email:</td><td data-bind="text: email"></td>
+        </tr>
+        <tr>
+            <td></td><td style="width: 90px;">role:</td><td data-bind="text: role"></td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        </table>
+    </div>
 
 </template>

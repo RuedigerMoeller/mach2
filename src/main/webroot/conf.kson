@@ -1,6 +1,10 @@
+# see class ServerConf
 {
 
     port: 7777
+
+    clientThreads:   2
+    clientQSize:   100
 
     # specify a list of packages containing remoted classes
     scan4Remote: [ com.reax ]

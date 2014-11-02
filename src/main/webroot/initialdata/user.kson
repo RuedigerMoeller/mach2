@@ -1,5 +1,12 @@
 [
     {
+        recordKey: admin
+        name: admin
+        pwd: a
+        email: me@me.com
+        role: ADMIN
+    }
+    {
         recordKey: ruedi
         name: ruedi
         pwd: a

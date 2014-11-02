@@ -188,6 +188,11 @@ function RLResultSet( table, query ) {
                         //var oldValue = change.appliedChange.oldVal[i];
                         //var error = rec[fieldName] != oldValue;
                     }
+                    var postUpdate = self.postUpdate(change, rec);
+                    if ( rec !== postUpdate ) {
+                        self.map[change.recordKey] = postUpdate;
+                        self.list.replace(rec,postUpdate);
+                    }
                 }
 //                console.log(rec);
             } break;
@@ -195,6 +200,11 @@ function RLResultSet( table, query ) {
         if (this.postChangeHook) {
             this.postChangeHook.call(null,change,this.snapFin);
         }
+    };
+
+    this.postUpdate = function( change, record ) {
+        //JSON.parse(JSON.stringify(rec));
+        return record;
     };
 
     this.getChangedFieldNames = function(change) {
