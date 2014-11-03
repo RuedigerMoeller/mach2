@@ -1,32 +1,26 @@
 package com.reax;
 
 import com.reax.datamodel.User;
-import org.nustaq.kontraktor.Actor;
 import org.nustaq.kontraktor.Callback;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
-import org.nustaq.kontraktor.remoting.RemotableActor;
 import org.nustaq.kontraktor.util.Log;
-import org.nustaq.machweb.MachWebSession;
+import org.nustaq.fork.FourKSession;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.RealLiveClientWrapper;
 import org.nustaq.reallive.Subscription;
 import org.nustaq.reallive.queries.JSQuery;
-import org.nustaq.reallive.sys.messages.Invocation;
-import org.nustaq.reallive.sys.messages.QueryTuple;
 import org.nustaq.reallive.sys.metadata.Metadata;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Created by ruedi on 23.10.2014.
  */
 @GenRemote
-public class ReaXession extends MachWebSession<ReaXerve,ReaXession> {
+public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
 
     RealLive realLive;
     User user;

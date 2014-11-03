@@ -7,7 +7,7 @@ import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.util.Log;
-import org.nustaq.machweb.MachWeb;
+import org.nustaq.fork.FourK;
 import org.nustaq.kson.Kson;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;
@@ -22,7 +22,7 @@ import java.util.*;
  * Created by ruedi on 23.10.2014.
  */
 @GenRemote
-public class ReaXerve extends MachWeb<ReaXerve,ReaXession> {
+public class ReaXerve extends FourK<ReaXerve,ReaXession> {
 
     protected RealLive realLive;
 
