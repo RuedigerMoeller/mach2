@@ -119,9 +119,22 @@ function RLObservableResultSet(table,query) {
     };
 
     this.postUpdate = function( change, record ) {
-        return JSON.parse(JSON.stringify(record));
+        return record;
+        //return JSON.parse(JSON.stringify(record));
     };
 
+    this.sortBy = function( column ) {
+        this.insertFun = function( list, record ) {
+            var len = list.length;
+            for ( var i = 0; i < len; i++ ) {
+                if ( list[i][column] > record[column] ) {
+                    return i;
+                }
+            }
+            return len;
+        };
+        return this;
+    };
     if ( table && query )
         this.subscribe(table,query);
 }

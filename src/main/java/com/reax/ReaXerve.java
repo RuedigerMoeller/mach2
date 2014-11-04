@@ -87,10 +87,10 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             u.setEmail("" + Math.random());
             u.$apply(0);
             if ( stuffCount == 0 ) {
-                user.$put("Pok", new User().init("Pok", "asd", "-", "..", UserRole.MARKET_OWNER, "...."), 0);
+                user.$put("pok", new User().init("pok", "asd", "-", "..", UserRole.MARKET_OWNER, "...."), 0);
                 stuffCount++;
             } else {
-                user.$remove("Pok", 0 );
+                user.$remove("pok", 0 );
                 stuffCount = 0;
             }
             delayed(5000, () -> $changeStuff());

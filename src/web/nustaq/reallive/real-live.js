@@ -86,6 +86,7 @@ function RLResultSet( table, query ) {
     this.subsId = null;
     this.subsCB = null;
     this.snapFinFun = null;
+    this.insertFun = 0; // function(list,newItem) defining insert point in list.
 
     this.subscribe = function( table, query ) {
         self.unsubscribe();
@@ -150,16 +151,24 @@ function RLResultSet( table, query ) {
                     console.log('double add rec '+change.recordKey);
                 }
                 this.map[rec.recordKey] = rec;
-                this.list.push(rec);
+                if ( this.insertFun ) {
+                    var idx = this.insertFun.apply(this,[this.getList(),rec]);
+                    this.list.splice(idx,0,rec);
+                } else {
+                    this.list.push(rec);
+                }
             } break;
             case RL_REMOVE: {
 //                console.log( "remove "+change.recordKey);
                 var rec = this.map[change.recordKey];
                 if ( rec !== 'undefined') {
                     delete this.map[change.recordKey];
-                    for ( var x = 0; x < this.getList().length; x++) {
+                    var length = this.getList().length;
+                    var x;
+                    for ( x = 0; x < length; x++) {
                         if ( this.getList()[x].recordKey == change.recordKey ) {
                             this.list.splice(x,1);
+                            length--;
                         }
                     }
 //                    if (this.map[change.recordKey]) {

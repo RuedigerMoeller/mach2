@@ -1,5 +1,6 @@
 {
     TestRecord           : 'com.reax.datamodel.TestRecord'
+    FourK                : 'org.nustaq.fork.FourK'
     ReaXession           : 'com.reax.ReaXession'
     InvocationCallback   : 'org.nustaq.reallive.sys.messages.InvocationCallback'
     RecordChange         : 'org.nustaq.reallive.RecordChange'
@@ -8,7 +9,6 @@
     Metadata             : 'org.nustaq.reallive.sys.metadata.Metadata'
     QueryTuple           : 'org.nustaq.reallive.sys.messages.QueryTuple'
     User                 : 'com.reax.datamodel.User'
-    MachWeb              : 'org.nustaq.fork.MachWeb'
     Invocation           : 'org.nustaq.reallive.sys.messages.Invocation'
     ReaXerve             : 'com.reax.ReaXerve'
     ChangeBroadcast      : 'org.nustaq.reallive.ChangeBroadcast'

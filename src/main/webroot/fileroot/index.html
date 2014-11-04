@@ -23,7 +23,7 @@
 <br>
 
 <script>
-    var rs = new RLObservableResultSet();
+    var rs = new RLObservableResultSet().sortBy('recordKey');
     var tableRS = new RLObservableResultSet();
 
     var model = {
@@ -33,7 +33,18 @@
                 window[ 'init'+model.currentView() ].apply();
         },
         user: rs.list,
-        tables: tableRS.list
+        tables: tableRS.list,
+
+        showElem: function(elem) {
+            if (elem.nodeType === 1)
+                $(elem).hide().fadeIn(200);
+        },
+        hideElem: function(elem) {
+            if (elem.nodeType === 1)
+                $(elem).fadeOut(200,function() { $(elem).remove();
+                });
+        }
+
     };
     ko.applyBindings(model);
 
