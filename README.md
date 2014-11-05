@@ -1,2 +1,1 @@
-mach2
-=====
+PoC evolution of reax1. switched from angular to knockout.js
