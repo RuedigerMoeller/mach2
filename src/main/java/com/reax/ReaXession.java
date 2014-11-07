@@ -7,7 +7,7 @@ import org.nustaq.kontraktor.Promise;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.util.Log;
-import org.nustaq.fork.FourKSession;
+import org.nustaq.fourk.FourKSession;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.RealLiveClientWrapper;
 import org.nustaq.reallive.Subscription;
@@ -84,4 +84,13 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     //
     //////////////////////////////////////////////////////
 
+
+    @Override
+    public void $hasBeenUnpublished() {
+        subscriptions.values().forEach( (subs) -> {
+            realLive.getTable(subs.getTableKey()).stream().unsubscribe(subs);
+        });
+        subscriptions.clear();
+        super.$hasBeenUnpublished();
+    }
 }

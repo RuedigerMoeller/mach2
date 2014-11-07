@@ -7,7 +7,7 @@ import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.util.Log;
-import org.nustaq.fork.FourK;
+import org.nustaq.fourk.FourK;
 import org.nustaq.kson.Kson;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;

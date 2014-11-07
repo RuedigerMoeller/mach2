@@ -1,6 +1,5 @@
 {
     TestRecord           : 'com.reax.datamodel.TestRecord'
-    FourK                : 'org.nustaq.fork.FourK'
     ReaXession           : 'com.reax.ReaXession'
     InvocationCallback   : 'org.nustaq.reallive.sys.messages.InvocationCallback'
     RecordChange         : 'org.nustaq.reallive.RecordChange'
@@ -13,4 +12,5 @@
     ReaXerve             : 'com.reax.ReaXerve'
     ChangeBroadcast      : 'org.nustaq.reallive.ChangeBroadcast'
     ColumnMeta           : 'org.nustaq.reallive.sys.metadata.ColumnMeta'
+    FourK                : 'org.nustaq.fourk.FourK'
 }
