@@ -42,4 +42,13 @@
         app
     ]
 
+    # ignored if empty for an actor
+    allowedMethods: {
+        ReaXerve : [ $getSession $authenticate ]
+    }
+
+    # ignored if empty for an actor
+    forbiddenMethods: {
+        ActorName: [ bla ]
+    }
 }
