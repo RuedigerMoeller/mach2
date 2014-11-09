@@ -1,5 +1,7 @@
 package com.reax;
 
+import com.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import com.reax.datamodel.Asset;
 import com.reax.datamodel.TestRecord;
 import com.reax.datamodel.User;
 import com.reax.datamodel.UserRole;
@@ -35,8 +37,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
     protected void initRealLive() {
         realLive = new RLImpl("./reallive-data");
 
-        realLive.createTable(User.class);
-        realLive.createTable(TestRecord.class);
+        scanModelClasses( User.class.getPackage().getName() ).forEach( clazz -> realLive.createTable(clazz) );
 
         try {
             User defaultUser[] = (User[]) new Kson().readObject(new File("initialdata/user.kson"), User[].class);
@@ -68,13 +69,26 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         }
 
         try {
-            SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");;
+            SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");
             realLive.getMetadata().overrideWith(schemaProps); // FIXME: side effecting
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         delayed( 5000, () -> $changeStuff() );
+    }
+
+    List<Class> scanModelClasses( String packageSepByComma ) {
+        ArrayList<Class> records = new ArrayList<>();
+        new FastClasspathScanner( packageSepByComma.split(",") )
+                .matchClassesWithAnnotation( GenRemote.class, (clazz) -> {
+                    try {
+                        records.add(clazz);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).scan();
+        return records;
     }
 
     int stuffCount = 0;

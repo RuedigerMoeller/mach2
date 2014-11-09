@@ -3,11 +3,12 @@ package com.reax.datamodel;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.Record;
+import org.nustaq.reallive.sys.annotations.Description;
 
 /**
  * Created by ruedi on 25.10.2014.
  */
-@GenRemote
+@GenRemote @Description("refers to a user. Can have different roles.")
 public class User extends Record {
     String name;
     String pwd;
