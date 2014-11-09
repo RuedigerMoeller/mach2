@@ -1,32 +1,31 @@
 package com.reax.datamodel;
 
 import org.nustaq.kontraktor.annotations.GenRemote;
-import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.*;
 
 /**
  * Created by ruedi on 18.07.14.
  *
- * mnemonic is key
+ * key = synthetic id
+ *
  */
 @GenRemote
-@KeyLen(40) // instr template id # marketid
+@KeyLen(8) // instr template id # marketid
 public class Instrument extends Record {
 
-    @ColOrder(3)
     String description;
-    @ColOrder(5) @DisplayWidth("50px")
     long expiryDate;
-    @ColOrder(4)
     String expiryDateString;
-    @RenderStyle("Qty") @ColOrder(1) @BGColor("rgba(0,0,0,0.2)") @DisplayWidth("110px")
     int contractsTraded;
-    @RenderStyle("Price") @ColOrder(2) @BGColor("rgba(0,0,255,0.2)") @DisplayWidth("110px")
     int volumeTraded;
 
+    @Description("market this instrument belongs to")
     String marketPlace;
-    String instrumentName;
+    @Description("owning user of market this instrument belongs to")
+    String owner;
+    @Description("mnemonic")
+    String name;
 
     public Instrument() {
     }
@@ -46,12 +45,12 @@ public class Instrument extends Record {
         this.marketPlace = marketPlace;
     }
 
-    public String getInstrumentName() {
-        return instrumentName;
+    public String getName() {
+        return name;
     }
 
-    public void setInstrumentName(String instrumentName) {
-        this.instrumentName = instrumentName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getContractsTraded() {
@@ -94,4 +93,11 @@ public class Instrument extends Record {
         this.expiryDateString = expiryDateString;
     }
 
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 }

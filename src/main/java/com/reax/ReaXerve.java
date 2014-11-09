@@ -13,6 +13,7 @@ import org.nustaq.fourk.FourK;
 import org.nustaq.kson.Kson;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;
+import org.nustaq.reallive.Record;
 import org.nustaq.reallive.impl.RLImpl;
 import org.nustaq.reallive.sys.config.ConfigReader;
 import org.nustaq.reallive.sys.config.SchemaConfig;
@@ -37,31 +38,15 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
     protected void initRealLive() {
         realLive = new RLImpl("./reallive-data");
 
-        scanModelClasses( User.class.getPackage().getName() ).forEach( clazz -> realLive.createTable(clazz) );
+        scanModelClasses( User.class.getPackage().getName() ).forEach(clazz -> realLive.createTable(clazz));
 
-        try {
-            User defaultUser[] = (User[]) new Kson().readObject(new File("initialdata/user.kson"), User[].class);
-            for (int i = 0; i < defaultUser.length; i++) {
-                User user = defaultUser[i];
-                if ( user.getRecordKey() != null ) {
-                    realLive.getTable("User").$put(
-                        user.getRecordKey(),
-                        user,
-                        0
-                    );
-                } else {
-                    Log.Warn(this, "Import: "+user+" is missing recordKey attribute");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            realLive.getTable("User").$put(
+        importInitialData(User.class);
+
+        realLive.getTable("User").$put(
                 "admin",
                 new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN, "me@me.com"),
                 0
-            );
-        }
-
+        );
 
         RLTable testTable = realLive.getTable("TestRecord");
         for ( int i = 1; i < 500; i++ ) {
@@ -76,6 +61,26 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         }
 
         delayed( 5000, () -> $changeStuff() );
+    }
+
+    private void importInitialData( Class<? extends Record> clz) {
+        try {
+            Record records[] = (Record[]) new Kson().readObject(new File("initialdata/"+clz.getSimpleName().toLowerCase()+".kson"), clz);
+            for (int i = 0; i < records.length; i++) {
+                Record record = records[i];
+                if ( record.getRecordKey() != null ) {
+                    realLive.getTable(clz.getSimpleName()).$put(
+                            record.getRecordKey(),
+                            record,
+                            0
+                    );
+                } else {
+                    Log.Warn(this, "Import: " + record + " is missing recordKey attribute");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     List<Class> scanModelClasses( String packageSepByComma ) {

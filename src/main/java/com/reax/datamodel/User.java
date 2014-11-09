@@ -10,6 +10,8 @@ import org.nustaq.reallive.sys.annotations.Description;
  */
 @GenRemote @Description("refers to a user. Can have different roles.")
 public class User extends Record {
+
+    String adminName; // refers to owner in case
     String name;
     String pwd;
     String lastLogin;

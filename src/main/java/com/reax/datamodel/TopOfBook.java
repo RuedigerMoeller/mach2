@@ -2,38 +2,31 @@ package com.reax.datamodel;
 
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
-import org.nustaq.reallive.sys.annotations.*;
 
 import java.text.DateFormat;
 import java.util.Date;
 
 /**
  * Created by ruedi on 18.07.14.
+ *
+ * Top of book entry for a single intstrument (instrument id = recordKey)
  */
 @GenRemote
-public class Market extends Record {
+public class TopOfBook extends Record {
 
-    @RenderStyle("Price") @BGColor("rgba(8,8,77,0.8)") @DisplayWidth("60px") @ColOrder(2) @TextColor("#fff")
     int bid;
-    @RenderStyle("Price") @BGColor("rgba(77,8,8,0.8)") @DisplayWidth("60px") @ColOrder(3) @TextColor("#fff")
     int ask;
-    @RenderStyle("Qty") @ColOrder(1) @DisplayWidth("60px")
     int bidQty;
-    @RenderStyle("Qty") @ColOrder(4) @DisplayWidth("60px")
     int askQty;
 
-    @RenderStyle("Price") @ColOrder(5) @DisplayWidth("60px")
     int lastPrc;
-    @RenderStyle("Qty") @ColOrder(6) @DisplayWidth("60px")
     int lastQty;
 
-    @Hidden
     long lastMatch;
-    @DisplayWidth("160px") @DisplayName("Time")
-    String lastMatchTimeUTC;
+    String lastMatchStr;
     String state = "TRADE";
 
-    public Market() {
+    public TopOfBook() {
     }
 
     public String getState() {
@@ -44,7 +37,7 @@ public class Market extends Record {
         this.state = state;
     }
 
-    public Market(String key, int bid, int ask, int bidQty, int askQty, int lastPrc, int lastQty, long lastMatch, String lastMatchTimeUTC) {
+    public TopOfBook(String key, int bid, int ask, int bidQty, int askQty, int lastPrc, int lastQty, long lastMatch, String lastMatchTimeUTC) {
         super(key);
         this.bid = bid;
         this.ask = ask;
@@ -53,7 +46,7 @@ public class Market extends Record {
         this.lastPrc = lastPrc;
         this.lastQty = lastQty;
         this.lastMatch = lastMatch;
-        this.lastMatchTimeUTC = lastMatchTimeUTC;
+        this.lastMatchStr = lastMatchTimeUTC;
     }
 
     public int getBid() {
@@ -112,16 +105,16 @@ public class Market extends Record {
         this.lastMatch = lastMatch; setLastTradeStringFrom(lastMatch);
     }
 
-    public String getLastMatchTimeUTC() {
-        return lastMatchTimeUTC;
+    public String getLastMatchStr() {
+        return lastMatchStr;
     }
 
-    public void setLastMatchTimeUTC(String lastMatchTimeUTC) {
-        this.lastMatchTimeUTC = lastMatchTimeUTC;
+    public void setLastMatchStr(String lastMatchStr) {
+        this.lastMatchStr = lastMatchStr;
     }
 
     public void setLastTradeStringFrom(long timeStringFrom) {
-        this.lastMatchTimeUTC = DateFormat.getDateTimeInstance().format(new Date(timeStringFrom));
+        this.lastMatchStr = DateFormat.getDateTimeInstance().format(new Date(timeStringFrom));
     }
 
 }

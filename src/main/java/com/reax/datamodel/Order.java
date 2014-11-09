@@ -16,28 +16,19 @@ import java.util.Date;
 @GenRemote
 public class Order extends Record {
 
-    @ColOrder(2) @DisplayWidth("120px")
     String instrumentKey;
+    String instrumentMnem;
 
-    @ColOrder(1)
-    @RenderStyle("BS") @DisplayWidth("60px") @DisplayName("B/S")
     boolean buy; // else sell
 
-    @ColOrder(3)
-    @RenderStyle("Price") @DisplayWidth("80px")
     int limitPrice;
-    @ColOrder(4)
-    @RenderStyle("Qty")
     int qty;
 
     String text;
 
-    @Hidden
     String traderKey;
 
-    @Hidden
     long creationTime;
-
     String creationTimeString;
 
     public long getCreationTime() {
@@ -47,6 +38,14 @@ public class Order extends Record {
     public void setCreationTime(long creationTime) {
         this.creationTime = creationTime;
         setTimeStringFrom(creationTime);
+    }
+
+    public String getInstrumentMnem() {
+        return instrumentMnem;
+    }
+
+    public void setInstrumentMnem(String instrumentMnem) {
+        this.instrumentMnem = instrumentMnem;
     }
 
     public String getCreationTimeString() {

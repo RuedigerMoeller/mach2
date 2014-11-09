@@ -10,7 +10,7 @@ import org.nustaq.reallive.Record;
 public class MarketPlace extends Record {
 
     String admin;
-    String marketPlaceName;
+    String description;
 
     public String getAdmin() {
         return admin;
@@ -20,11 +20,11 @@ public class MarketPlace extends Record {
         this.admin = admin;
     }
 
-    public String getMarketPlaceName() {
-        return marketPlaceName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setMarketPlaceName(String marketPlaceName) {
-        this.marketPlaceName = marketPlaceName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
