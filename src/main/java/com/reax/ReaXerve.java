@@ -1,10 +1,7 @@
 package com.reax;
 
 import com.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import com.reax.datamodel.Asset;
-import com.reax.datamodel.TestRecord;
-import com.reax.datamodel.User;
-import com.reax.datamodel.UserRole;
+import com.reax.datamodel.*;
 import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
@@ -40,13 +37,15 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
 
         scanModelClasses( User.class.getPackage().getName() ).forEach(clazz -> realLive.createTable(clazz));
 
-        importInitialData(User.class);
-
         realLive.getTable("User").$put(
                 "admin",
                 new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN, "me@me.com"),
                 0
         );
+
+        importInitialData(User.class);
+        importInitialData(MarketPlace.class);
+        importInitialData(Instrument.class);
 
         RLTable testTable = realLive.getTable("TestRecord");
         for ( int i = 1; i < 500; i++ ) {
@@ -65,7 +64,8 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
 
     private void importInitialData( Class<? extends Record> clz) {
         try {
-            Record records[] = (Record[]) new Kson().readObject(new File("initialdata/"+clz.getSimpleName().toLowerCase()+".kson"), clz);
+            Class acl = Class.forName("[L"+clz.getName()+";");
+            Record records[] = (Record[]) new Kson().readObject(new File("initialdata/"+clz.getSimpleName().toLowerCase()+".kson"), acl);
             for (int i = 0; i < records.length; i++) {
                 Record record = records[i];
                 if ( record.getRecordKey() != null ) {

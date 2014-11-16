@@ -95,6 +95,7 @@ function RLResultSet( table, query ) {
         }).then( function(subsId, err) {
             self.subsId = subsId;
         });
+        return this;
     };
 
     this.query = function( table, query ) {
@@ -137,6 +138,16 @@ function RLResultSet( table, query ) {
 
     this.getList = function() {
         return this.list;
+    };
+
+    // rec =
+    this.containsRec = function (searchFun) {
+        var l = this.getList();
+        for ( i = 0; i < l.length; l++ ) {
+            if ( searchFun.apply( null, [l[i]] ) )
+                return true;
+        }
+        return false;
     };
 
     this.push = function(change) {

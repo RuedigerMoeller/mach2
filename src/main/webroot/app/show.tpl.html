@@ -64,23 +64,23 @@
     <br>
     <h3>ObservableResultSet</h3>
     <br>
-    <div data-bind="foreach: { data: user, beforeRemove: hideElem, afterAdd: showElem }">
-        <table
-            style="width: 500px;"
-            onMouseOver="this.style.backgroundColor='#eee'"
-            onMouseOut="this.style.backgroundColor='#fff'">
-        <tr>
-            <td style="width: 75px;"><img src="user.jpg" width="64" height="64"></td><td><b style="font-size: large;" data-bind="text: recordKey"></b></td>
-        </tr>
-        <tr>
-            <td></td><td style="width: 90px;">email:</td><td data-bind="text: email"></td>
-        </tr>
-        <tr>
-            <td></td><td style="width: 90px;">role:</td><td data-bind="text: role"></td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-        </table>
-    </div>
+    <!--<div data-bind="foreach: { data: user, beforeRemove: hideElem, afterAdd: showElem }">-->
+        <!--<table-->
+            <!--style="width: 500px;"-->
+            <!--onMouseOver="this.style.backgroundColor='#eee'"-->
+            <!--onMouseOut="this.style.backgroundColor='#fff'">-->
+        <!--<tr>-->
+            <!--<td style="width: 75px;"><img src="user.jpg" width="64" height="64"></td><td><b style="font-size: large;" data-bind="text: recordKey"></b></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td></td><td style="width: 90px;">email:</td><td data-bind="text: email"></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td></td><td style="width: 90px;">role:</td><td data-bind="text: role"></td>-->
+        <!--</tr>-->
+        <!--<tr><td>&nbsp;</td></tr>-->
+        <!--</table>-->
+    <!--</div>-->
     <br>
     <div data-bind="foreach: tables">
         <table

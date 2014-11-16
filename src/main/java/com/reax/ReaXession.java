@@ -12,6 +12,8 @@ import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.RealLiveClientWrapper;
 import org.nustaq.reallive.Subscription;
 import org.nustaq.reallive.queries.JSQuery;
+import org.nustaq.reallive.sys.config.ConfigReader;
+import org.nustaq.reallive.sys.config.SchemaConfig;
 import org.nustaq.reallive.sys.metadata.Metadata;
 
 import java.util.HashMap;
@@ -62,6 +64,13 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     }
 
     public Future<Metadata> $getRLMeta() {
+        // DEV ONLY: read for each login
+        try {
+            SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");
+            realLive.getMetadata().overrideWith(schemaProps); // FIXME: side effecting
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return new Promise<>(realLive.getMetadata());
     }
 

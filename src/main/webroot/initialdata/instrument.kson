@@ -1,0 +1,146 @@
+[
+
+    #################################################
+    # marketplace templates BundesLiga 2014
+
+    {
+        recordKey: fcbayern
+        name: 'FC Bayern München'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: wolfsburg
+        name: 'VfL Wolfsburg'
+        marketPlace: buli2014
+    }
+
+
+    {
+        recordKey: gladbach
+        name: 'Borussia Mönchengladbach'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: hannover96
+        name: 'Hannover 96'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: hoffenheim
+        name: 'TSG 1899 Hoffenheim'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: leverkusen
+        name: 'Bayer 04 Leverkusen'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: augsburg
+        name: 'FC Augsburg'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: mainz
+        name: '1. FSV Mainz 05'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: paderborn
+        name: 'SC Paderborn 07'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: koeln
+        name: '1. FC Köln'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: schalke
+        name: 'FC Schalke 04'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: frankfurt
+        name: 'Eintracht Frankfurt'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: freiburg
+        name: 'Sport-Club Freiburg'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: hertha
+        name: 'Hertha BSC'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: dortmund
+        name: 'Borussia Dortmund'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: bremen
+        name: 'SV Werder Bremen'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: hamburg
+        name: 'Hamburger SV'
+        marketPlace: buli2014
+    }
+
+    {
+        recordKey: stuttgart
+        name: 'VfB Stuttgart'
+        marketPlace: buli2014
+    }
+
+    # END marketplace templates BundesLiga 2014
+    #################################################
+
+    #################################################
+    # marketplace templates EM 2016
+
+    {
+        recordKey: germany
+        name: 'Germany'
+        marketPlace: em2016
+    }
+
+    {
+        recordKey: dutch
+        name: 'Netherlands'
+        marketPlace: em2016
+    }
+
+    {
+        recordKey: france
+        name: 'France'
+        marketPlace: em2016
+    }
+
+    {
+        recordKey: italy
+        name: 'Italy'
+        marketPlace: em2016
+    }
+
+
+]

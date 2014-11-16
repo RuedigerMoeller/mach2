@@ -9,11 +9,20 @@ import org.nustaq.reallive.Record;
 @GenRemote
 public class MarketPlace extends Record {
 
+    String templateId; // the recId it was derived from
     String admin;
     String description;
 
     public String getAdmin() {
         return admin;
+    }
+
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
     public void setAdmin(String admin) {

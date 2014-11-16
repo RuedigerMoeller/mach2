@@ -1,3 +1,27 @@
 <template id="admin">
-    <h1>Admin</h1>
+    <div data-bind="with: adminController">
+
+        <br>
+        <b>Marketplace Templates</b>
+        <br>
+        <div style="padding-right: 50px;">
+            <rl-table params="table: 'MarketPlace', query: 'it.admin==´admin´', height: 100, selectTo: selectedMPTemplate" ></rl-table>
+        </div>
+        <br>
+        <br>
+
+        <b>My Marketplaces</b>
+        <br>
+        <div style="padding-right: 50px;">
+            <rl-table params="table: 'MarketPlace', query: 'it.admin==´'+$parent.userName()+'´', height: 100, onSelection: onMarketPlaceSelection" ></rl-table>
+        </div>
+        <br>
+
+        <b>Instruments</b>
+        <br>
+        <div style="padding-right: 50px;">
+            <rl-table params="table: 'Instrument', query: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´', height: 250" ></rl-table>
+        </div>
+        <br>
+    </div>
 </template>

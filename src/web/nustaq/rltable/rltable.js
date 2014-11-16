@@ -3,15 +3,50 @@
 var RLTableConfiguration = {
     applyModelColumn2TableColumn: null  // function ( columnModel, tableColDefinition )
 };
-
+// supported params: query, table, onSelection: function, height, selectTo: observable selection list, selectRowTo: observable row
 ko.components.register('rl-table', {
     template: { element: 'rltabletemplate' },
     viewModel: {
         createViewModel: function(params,componentInfo) {
-            var self = this;
+            var self = {};
+            var ttools = null;
 
-            this.query = function( tableName, query ) {
-                var count = 0;
+            self.onTableClick = function(nodes) {
+                if ( this.fnGetSelected ) {
+                    if ( ttools == null ) {
+                        ttools = this;
+                    } else {
+                        return;
+                    }
+                }
+                else if ( ttools == null ) {
+                    return;
+                }
+                var selection = ttools.fnGetSelected();
+                var selectedRows = [];
+                for ( var i = 0; i < selection.length; i++) {
+                    var item = self.table.row(selection[i]._DT_RowIndex).data();
+                    selectedRows.push(item);
+                }
+                if ( params && params.onSelection ) {
+                    params.onSelection.apply(self,[selectedRows])
+                }
+                if ( params && params.selectTo ) {
+                    params.selectTo(selectedRows);
+                }
+                if ( params && params.selectRowTo ) {
+                    params.selectRowTo(selectedRows);
+                }
+            };
+
+            if ( ko.isObservable( params.query ) ) {
+                params.query.subscribe( function(newQuery) {
+                    console.log("query changed "+newQuery);
+                    self.pureQuery(params.table, params.query );
+                });
+            }
+
+            self.query = function( tableName, query ) {
 
                 var tableMeta = Server.meta().tables[tableName];
 
@@ -41,7 +76,18 @@ ko.components.register('rl-table', {
                 }
 
                 self.updateOrCreateTable(colConfig);
+                self.pureQuery(tableName,query)
+            };
+
+            self.pureQuery = function( tableName, query ) {
+                var count = 0;
                 var t = self.table;
+                t.clear();
+                if ( typeof(query) == 'function') {
+                    query = query.apply();
+                }
+                query = query.replace("´","'"); // workaround quoting limits
+                query = query.replace("´","'"); // workaround quoting limits
                 Server.session().$query(tableName, query, function (change, error) {
                     //console.log(change);
                     if (change.type != RL_SNAPSHOT_DONE) {
@@ -57,9 +103,9 @@ ko.components.register('rl-table', {
                 });
             };
 
-            this.tableElem = $(componentInfo.element).find('table');
+            self.tableElem = $(componentInfo.element).find('table');
 
-            this.updateOrCreateTable = function( columDefArray ) {
+            self.updateOrCreateTable = function( columDefArray ) {
                 if ( self.table ) {
                     self.table.destroy(false);
                     $(self.tableElem).find('th').remove();
@@ -70,7 +116,9 @@ ko.components.register('rl-table', {
                         dom: 'T<"clear">lfrtip',
                         tableTools: {
                             "sRowSelect": "single",
-                            "aButtons": []
+                            "aButtons": [],
+                            "fnRowSelected": self.onTableClick,
+                            "fnRowDeSelected": self.onTableClick
                         },
                         tabIndex: true,
                         searching: false,
@@ -105,6 +153,7 @@ ko.components.register('rl-table', {
                     });
                 }
             }
+            return self;
 
         }
 

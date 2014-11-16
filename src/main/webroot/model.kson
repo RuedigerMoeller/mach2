@@ -7,8 +7,16 @@ schema {
     tables: {
         TestRecord: {
             columns: {
-                recordKey: { displayWidth: 100px }
-                name: { displayWidth: 70px }
+                recordKey: { displayWidth: 100 }
+                name: { displayWidth: 70 }
+            }
+        }
+        User: {
+            columns: {
+                recordKey: { displayWidth: 70 }
+                name: { displayWidth: 80 }
+                adminName: { displayWidth: 80 }
+                role: { displayWidth: 95 }
             }
         }
 

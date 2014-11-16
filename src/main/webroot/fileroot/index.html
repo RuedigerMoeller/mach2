@@ -7,6 +7,8 @@
 
     <link rel="stylesheet" href="lookup/bootstrap/mybootstrap.css">
     <link rel="stylesheet" href="lookup/datatables/jquery.dataTables.css">
+    <!--<link rel="stylesheet" href="lookup/jqgrid/as_bootstrap.css">-->
+    <!--<link rel="stylesheet" href="lookup/jqgrid/ui.jqgrid.css">-->
 
     <script src="libs.js"></script>
     <script src="templates.js"></script>
@@ -23,18 +25,29 @@
 <br>
 
 <script>
-    var rs = new RLObservableResultSet().sortBy('recordKey');
     var tableRS = new RLObservableResultSet();
+    var assignedMarkets = new RLObservableResultSet();
 
     var model = {
+        adminController: {
+            onMarketPlaceSelection: function(selectedRows) {
+                console.log("adminController MP change");
+                if ( selectedRows.length > 0 ) {
+                    model.adminController.selectedMP(selectedRows[0])
+                } else {
+                    model.adminController.selectedMP({ recordKey: '' })
+                }
+            },
+            selectedMP: ko.observable({ recordKey: '' }), // currently selected marketPlace in MP table
+            selectedMPTemplate: ko.observable(null)       // currently selected template(s) from Template table
+        },
         currentView: ko.observable("home"),
         initView: function() {
             if ( window[ 'init'+model.currentView() ] )
                 window[ 'init'+model.currentView() ].apply();
         },
-        user: rs.list,
         tables: tableRS.list,
-
+        assignedMarkets: assignedMarkets,
         showElem: function(elem) {
             if (elem.nodeType === 1)
                 $(elem).hide().fadeIn(200);
@@ -43,14 +56,18 @@
             if (elem.nodeType === 1)
                 $(elem).fadeOut(200,function() { $(elem).remove();
                 });
+        },
+        userName: Server.userName,
+        isMarketAssigned: function (marketRec) {
+            // fixme: add original Id
+            assignedMarkets.containsRec(function(rec) { return rec.recordKey == marketRec.templateId });
         }
-
     };
     ko.applyBindings(model);
 
     Server.doOnceLoggedIn( function(bool) {
-        rs.subscribe("User", "true");
         tableRS.subscribe("SysTable", "true");
+        assignedMarkets.subscribe("MarketPlace", "it.admin=='"+Server.userName()+"'");
     });
 
 </script>

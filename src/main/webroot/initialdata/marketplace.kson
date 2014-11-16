@@ -1,0 +1,14 @@
+[
+    {
+        recordKey: buli2014
+        admin: admin
+        description: 'Wer wird Meister ? Bundesliga 2014'
+    }
+
+    {
+        recordKey: em2016
+        admin: admin
+        description: 'Wer wird Europameister 2016 ?'
+    }
+
+]
