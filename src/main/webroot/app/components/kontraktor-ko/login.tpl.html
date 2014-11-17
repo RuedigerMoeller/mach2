@@ -5,15 +5,15 @@
             <table cellpadding="4px">
                 <tr>
                     <td>
-                        <input placeholder="user" size="8" type="text" data-bind="value: user">
+                        <input class="form-control" placeholder="user" size="8" type="text" data-bind="value: user">
                     </td>
                     <td>&nbsp;</td>
                     <td>
-                        <input placeholder="password" size="8" type="password" data-bind="value: pwd">
+                        <input class="form-control" placeholder="password" size="8" type="password" data-bind="value: pwd">
                     </td>
                     <td>&nbsp;&nbsp;</td>
                     <td>
-                        <button class="btn-default" data-bind="click: login, enable: !doSpin()">Log In</button>
+                        <button type="button" class="btn btn-primary" data-bind="click: login, enable: !doSpin()">Log In</button>
                     </td>
                     <td>&nbsp;&nbsp;</td>
                 </tr>

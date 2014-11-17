@@ -1,5 +1,6 @@
 # see class ServerConf
 {
+    #devmode: false
 
     port: 7777
 
@@ -41,6 +42,8 @@
     components: [
         app
     ]
+
+    # network exposed messages
 
     # ignored if empty for an actor
     allowedMethods: {
