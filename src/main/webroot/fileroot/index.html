@@ -22,6 +22,7 @@
     <tr>
     <td class="drawer" style="vertical-align: top; width: 50px; background-color: #84f; padding: 8px; height: 100%; transition: width .3s ease-in-out;">
         <div data-bind="foreach: navs">
+            <td>
             <a data-bind="attr: { href: link }">
                 <b style="font-size: large;"
                    data-bind="text: title"
@@ -31,13 +32,14 @@
                    >
                 </b>
             </a>
-            <br>
-            <br>
+            </td>
         </div>
     </td>
-    <td style="vertical-align: top; ">
-        <div style="padding-left: 30px; padding-top: 20px; width: 800px;" data-bind="template: { name: currentView(), afterRender: initView }"></div>
-    </td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top; ">
+            <div style="padding-left: 30px; padding-top: 20px; width: 800px;" data-bind="template: { name: currentView(), afterRender: initView }"></div>
+        </td>
     </tr>
 </table>
 
