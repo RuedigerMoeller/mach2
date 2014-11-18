@@ -1,5 +1,7 @@
 package com.reax;
 
+import com.reax.datamodel.Instrument;
+import com.reax.datamodel.MarketPlace;
 import com.reax.datamodel.User;
 import org.nustaq.kontraktor.Callback;
 import org.nustaq.kontraktor.Future;
@@ -8,6 +10,7 @@ import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.util.Log;
 import org.nustaq.fourk.FourKSession;
+import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;
 import org.nustaq.reallive.RealLiveClientWrapper;
 import org.nustaq.reallive.Subscription;
@@ -93,7 +96,41 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     //
     //////////////////////////////////////////////////////
 
+    public Future $instantiateMarketPlace(String mpRecordKey) {
+        Promise p = new Promise();
 
+        RLTable<MarketPlace> mpTable = realLive.getTable("MarketPlace");
+        RLTable<Instrument> instrTable = realLive.getTable("Instrument");
+
+        mpTable.$get(mpRecordKey).onResult( place -> {
+            place.setAdmin( user.getRecordKey() );
+            String newMPKey = place.getRecordKey() + "#" + user.getRecordKey();
+            mpTable.$put(newMPKey, place, 0);
+            instrTable.stream().filter(
+                ins -> {
+                    if ( "admin".equals(ins.getOwner()) && mpRecordKey.equals(ins.getMarketPlace()) ) {
+                        return true;
+                    }
+                    return false;
+                },
+                change -> {
+                    if ( change.isAdd() ) {
+                        Instrument tpl = change.getRecord();
+                        tpl.setOwner(user.getRecordKey());
+                        tpl.setMarketPlace(newMPKey);
+                        instrTable.$add(tpl, 0);
+                    } else
+                    if ( ! change.isARU() ) {
+                        p.receive("ok", null); // signal finish
+                    }
+                });
+        });
+        return p;
+    }
+
+    /**
+     * clean up after session close
+     */
     @Override
     public void $hasBeenUnpublished() {
         subscriptions.values().forEach( (subs) -> {

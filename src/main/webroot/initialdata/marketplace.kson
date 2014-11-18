@@ -2,13 +2,15 @@
     {
         recordKey: buli2014
         admin: admin
-        description: 'Wer wird Meister ? Bundesliga 2014'
+        description: 'Bundesliga 2014: Wer wird Meister ?'
+        longDescription: "Bla bla blubb BALAA !!"
     }
 
     {
         recordKey: em2016
         admin: admin
         description: 'Wer wird Europameister 2016 ?'
+        longDescription: "Bla bla blubb !"
     }
 
 ]

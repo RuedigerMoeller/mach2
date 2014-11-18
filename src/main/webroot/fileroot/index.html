@@ -7,8 +7,9 @@
 
     <link rel="stylesheet" href="lookup/bootstrap/mybootstrap.css">
     <link rel="stylesheet" href="lookup/datatables/jquery.dataTables.css">
-    <!--<link rel="stylesheet" href="lookup/jqgrid/as_bootstrap.css">-->
-    <!--<link rel="stylesheet" href="lookup/jqgrid/ui.jqgrid.css">-->
+
+    <!-- dynamically computed by webserver -->
+
     <script src="libs.js"></script>
     <script src="templates.js"></script>
     <style>
@@ -33,6 +34,7 @@
 
     var tableRS = new RLObservableResultSet();
     var assignedMarkets = new RLObservableResultSet();
+    var availableMarkets = new RLObservableResultSet();
 
     var model = {
         // navbar menu
@@ -45,6 +47,13 @@
 
         // admin controller
         adminController: {
+            addMarketPlace: function(mp) {
+                console.log('marketplace added:'+mp);
+                Server.session().$instantiateMarketPlace(mp.recordKey).then(function(r,e) {
+                    console.log("instantiated "+[r,e]);
+                });
+                availableMarkets.removeKey(mp.recordKey);
+            },
             onMarketPlaceSelection: function(selectedRows) {
                 console.log("adminController MP change");
                 if ( selectedRows.length > 0 ) {
@@ -60,7 +69,8 @@
         // appwide
         currentView: ko.observable("home"),
         tables: tableRS.list,
-        assignedMarkets: assignedMarkets,
+        assignedMarkets: assignedMarkets.list,
+        availableMarkets: availableMarkets.list,
         userName: Server.userName,
 
         initView: function() {
@@ -87,6 +97,7 @@
     Server.doOnceLoggedIn( function(bool) {
         tableRS.subscribe("SysTable", "true");
         assignedMarkets.subscribe("MarketPlace", "it.admin=='"+Server.userName()+"'");
+        availableMarkets.subscribe("MarketPlace", "true");
     });
 
     window.location.hash="#home";

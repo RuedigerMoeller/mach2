@@ -150,6 +150,23 @@ function RLResultSet( table, query ) {
         return false;
     };
 
+    this.removeKey = function(recordKey) {
+        var rec = this.map[recordKey];
+        if ( rec !== 'undefined') {
+            delete this.map[recordKey];
+            var length = this.getList().length;
+            var x;
+            for ( x = 0; x < length; x++) {
+                if ( this.getList()[x].recordKey == recordKey ) {
+                    this.list.splice(x,1);
+                    length--;
+                }
+            }
+        } else {
+            console.log('could not find removed rec '+recordKey+" "+this.map[recordKey]);
+        }
+    };
+
     this.push = function(change) {
         if (this.preChangeHook) {
             this.preChangeHook.call(null,change,this.snapFin);
@@ -171,23 +188,7 @@ function RLResultSet( table, query ) {
             } break;
             case RL_REMOVE: {
 //                console.log( "remove "+change.recordKey);
-                var rec = this.map[change.recordKey];
-                if ( rec !== 'undefined') {
-                    delete this.map[change.recordKey];
-                    var length = this.getList().length;
-                    var x;
-                    for ( x = 0; x < length; x++) {
-                        if ( this.getList()[x].recordKey == change.recordKey ) {
-                            this.list.splice(x,1);
-                            length--;
-                        }
-                    }
-//                    if (this.map[change.recordKey]) {
-//                        console.log("FAIL-------------------------------REMOVE MAP "+change.recordKey);
-//                    }
-                } else {
-                    console.log('could not find removed rec '+change.recordKey+" "+this.map[change.recordKey]);
-                }
+                self.removeKey(change.recordKey);
             } break;
             case RL_SNAPSHOT_DONE:
                 this.snapFin = true;

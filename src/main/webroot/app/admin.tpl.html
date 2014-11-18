@@ -1,11 +1,9 @@
 <template id="admin">
     <div data-bind="with: adminController">
 
-        <br>
-        <b>Marketplace Templates</b>
-        <br>
-        <div style="padding-right: 50px;">
-            <rl-table params="table: 'MarketPlace', query: 'it.admin==´admin´', height: 100, selectTo: selectedMPTemplate" ></rl-table>
+        <div data-bind="foreach: $parent.availableMarkets">
+            <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.addMarketPlace"
+                  ></span>
         </div>
         <br>
         <br>

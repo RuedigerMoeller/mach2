@@ -1,9 +1,15 @@
 <template id="navbar-tpl">
+    <style>
+        .navbar-ko-bg {
+            background-color: #427;
+        }
+        .navbar-ko-bg-sel {
+            background-color: #315;
+        }
+    </style>
     <table data-bind="navdrawer" style="width: 100%;">
-        <tr data-bind="foreach: navs" class="drawer" style="height: 45px; vertical-align: top; background-color: #84f; padding: 8px; width: 100%; transition: height .3s ease-in-out;">
-            <td data-bind="attr: { style: 'background-color: ' + ($parent.currentView() == link.substring(1) ? '#63a;' : '#84f;') + ' padding: 8px; text-align: left;' }">
-
-                <!--<b data-bind="text: 'background-color: '+ (window.location.hash == link ? '#63a;' : '#84f;') "></b>-->
+        <tr data-bind="foreach: navs" class="drawer navbar-ko-bg" style="height: 45px; vertical-align: top; padding: 8px; width: 100%; transition: height .3s ease-in-out;">
+            <td data-bind="attr: { style: 'padding: 8px; text-align: left;', class: ($parent.currentView() == link.substring(1) ? 'navbar-ko-bg-sel' : 'navbar-ko-bg') }">
                 <div>
                     <a data-bind="attr: { href: link }, if: enabled">
                         <b style="font-size: large; color: #ddd; "

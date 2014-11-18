@@ -17,6 +17,7 @@
         .
         app
         app/override
+        app/components
 
         #home
         ../../web

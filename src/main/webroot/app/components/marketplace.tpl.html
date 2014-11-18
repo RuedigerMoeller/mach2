@@ -1,0 +1,22 @@
+<template id="marketplace-tpl">
+    <table
+        style="width: 400px;
+               display: inline-table;
+               -webkit-border-radius: 10px;
+               -moz-border-radius: 10px;
+               border-radius: 10px;
+               margin: 4px;
+               padding: 8px;
+               background: #eee; transition: background-color .3s;"
+        onMouseOver="this.style.backgroundColor='#ddd'"
+        onMouseOut="this.style.backgroundColor='#eee'">
+    <tr>
+        <td style="width: 30px; padding: 8px;"><img align="Center" src="img/marketplace.png" width="64" height="64"></td>
+        <td align="left"><b style="font-size: large;" data-bind="text: description"></b></td>
+    </tr>
+    <tr>
+        <td></td><td data-bind="text: longDescription"></td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+    </table>
+</template>

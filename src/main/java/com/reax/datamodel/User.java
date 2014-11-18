@@ -29,6 +29,14 @@ public class User extends Record {
         return this;
     }
 
+    public String getAdminName() {
+        return adminName;
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
+    }
+
     public String getEmail() {
         return email;
     }

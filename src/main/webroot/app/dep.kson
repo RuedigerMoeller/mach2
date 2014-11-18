@@ -1,9 +1,10 @@
 [
     bootstrap
-    reallive
-    kontraktor
-    generated.js
-    rltable
-    rlcomponents
-    navpane-ko
+    reallive      # data basics
+    kontraktor    # communication+encoding
+    generated.js  # generated server interface
+    rltable       # table control integrated with real live
+    rlcomponents  # some real live components (observable result set, rlrecord)
+    navpane-ko    # navpane tag for ko
+    components    # applevel components
 ]
