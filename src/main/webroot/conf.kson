@@ -5,7 +5,7 @@
     port: 7777
 
     clientThreads:   2
-    clientQSize:   100
+    clientQSize:   500
 
     # specify a list of packages containing remoted classes
     scan4Remote: [ com.reax ]
@@ -16,7 +16,7 @@
 
         .
         app
-        app/components
+        app/override
 
         #home
         ../../web

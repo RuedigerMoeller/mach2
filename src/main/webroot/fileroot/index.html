@@ -18,42 +18,32 @@
 </head>
 <body>
 
-<table data-bind="navdrawer" style="height: 100%;">
-    <tr>
-    <td class="drawer" style="vertical-align: top; width: 50px; background-color: #84f; padding: 8px; height: 100%; transition: width .3s ease-in-out;">
-        <div data-bind="foreach: navs">
-            <td>
-            <a data-bind="attr: { href: link }">
-                <b style="font-size: large;"
-                   data-bind="text: title"
-                   onmouseover="this.style.color='#fff'"
-                   onmouseout="this.style.color='#000'"
-                   style="transition: color .6s ease-in-out;"
-                   >
-                </b>
-            </a>
-            </td>
-        </div>
-    </td>
-    </tr>
-    <tr>
-        <td style="vertical-align: top; ">
-            <div style="padding-left: 30px; padding-top: 20px; width: 800px;" data-bind="template: { name: currentView(), afterRender: initView }"></div>
+<navpane-ko params="{ navModel: navs, currentView: currentView }"></navpane-ko>
+
+<table style="width: 100%;">
+    <tr style="width: 100%;">
+        <td style="vertical-align: top; width: 100%;">
+            <div style="padding-left: 30px; padding-top: 20px; padding-right: 30px; "
+                 data-bind="template: { name: currentView(), afterRender: initView }"></div>
         </td>
     </tr>
 </table>
 
 <script>
+
     var tableRS = new RLObservableResultSet();
     var assignedMarkets = new RLObservableResultSet();
 
     var model = {
+        // navbar menu
         navs: ko.observableArray([
-            ko.observable({ title: 'Home',    link:'#home'}),
-            ko.observable({ title: 'Market',  link:'#show' }),
-            ko.observable({ title: 'Admin',   link:'#admin' }),
-            ko.observable({ title: 'Showcase',link:'#show' }),
+            { title: 'Home',    link:'#home',  enabled: true },
+            { title: 'Market',  link:'#tables',  enabled: Server.loggedIn },
+            { title: 'Admin',   link:'#admin', enabled: Server.loggedIn },
+            { title: 'Showcase',link:'#show',  enabled: Server.loggedIn },
         ]),
+
+        // admin controller
         adminController: {
             onMarketPlaceSelection: function(selectedRows) {
                 console.log("adminController MP change");
@@ -66,13 +56,17 @@
             selectedMP: ko.observable({ recordKey: '' }), // currently selected marketPlace in MP table
             selectedMPTemplate: ko.observable(null)       // currently selected template(s) from Template table
         },
+
+        // appwide
         currentView: ko.observable("home"),
+        tables: tableRS.list,
+        assignedMarkets: assignedMarkets,
+        userName: Server.userName,
+
         initView: function() {
             if ( window[ 'init'+model.currentView() ] )
                 window[ 'init'+model.currentView() ].apply();
         },
-        tables: tableRS.list,
-        assignedMarkets: assignedMarkets,
         showElem: function(elem) {
             if (elem.nodeType === 1)
                 $(elem).hide().fadeIn(200);
@@ -82,7 +76,6 @@
                 $(elem).fadeOut(200,function() { $(elem).remove();
                 });
         },
-        userName: Server.userName,
         isMarketAssigned: function (marketRec) {
             // fixme: add original Id
             assignedMarkets.containsRec(function(rec) { return rec.recordKey == marketRec.templateId });
@@ -90,10 +83,13 @@
     };
     ko.applyBindings(model);
 
+    // subscribe sets on login
     Server.doOnceLoggedIn( function(bool) {
         tableRS.subscribe("SysTable", "true");
         assignedMarkets.subscribe("MarketPlace", "it.admin=='"+Server.userName()+"'");
     });
+
+    window.location.hash="#home";
 
 </script>
 

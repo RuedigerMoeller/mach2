@@ -5,11 +5,11 @@
             <table cellpadding="4px">
                 <tr>
                     <td>
-                        <input class="form-control" placeholder="user" size="8" type="text" data-bind="value: user">
+                        <input class="form-control" placeholder="user" size="8" type="text" style="width: 80px;" data-bind="value: user">
                     </td>
                     <td>&nbsp;</td>
                     <td>
-                        <input class="form-control" placeholder="password" size="8" type="password" data-bind="value: pwd">
+                        <input class="form-control" placeholder="password" size="8" type="password" style="width: 80px;" data-bind="value: pwd">
                     </td>
                     <td>&nbsp;&nbsp;</td>
                     <td>
@@ -19,7 +19,7 @@
                 </tr>
             </table>
         </div>
-    <div style="color: white;padding-top: 12px; padding-right: 12px;" data-bind="visible: loggedIn()">Welcome <b data-bind="text: user"></b></div>
+    <div style="color: white;padding-top: 12px; padding-right: 12px;" data-bind="visible: loggedIn()">Welcome <b data-bind="text: $root.user"></b></div>
     <b><span data-bind="text: resultMsg" style="color: white;"></span></b>
     </div>
 </template>
