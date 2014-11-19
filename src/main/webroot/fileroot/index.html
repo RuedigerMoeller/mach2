@@ -86,9 +86,9 @@
                 $(elem).fadeOut(200,function() { $(elem).remove();
                 });
         },
-        isMarketAssigned: function (marketRec) {
+        isMarketAssigned: function (marketPlaceKey) {
             // fixme: add original Id
-            assignedMarkets.containsRec(function(rec) { return rec.recordKey == marketRec.templateId });
+            return assignedMarkets.containsKey( marketPlaceKey + '#' + model.userName() );
         }
     };
     ko.applyBindings(model);
@@ -96,8 +96,9 @@
     // subscribe sets on login
     Server.doOnceLoggedIn( function(bool) {
         tableRS.subscribe("SysTable", "true");
-        assignedMarkets.subscribe("MarketPlace", "it.admin=='"+Server.userName()+"'");
-        availableMarkets.subscribe("MarketPlace", "true");
+        assignedMarkets.subscribe("MarketPlace", "it.admin=='"+Server.userName()+"'").onSnapFin( function() {
+            availableMarkets.subscribe("MarketPlace", "it.admin=='admin'", function(record) { return ! model.isMarketAssigned(record.recordKey) } );
+        });
     });
 
     window.location.hash="#home";

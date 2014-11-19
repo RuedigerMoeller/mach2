@@ -5,14 +5,20 @@ ko.bindingHandlers.navdrawer = {
         var drawer = $(element).find(".drawer");
         var drawerVisible = ko.observable({ drawerVisible: false });
         var height = drawer.height();
+        var closeUnderway = false;
         drawer.on(
             {
                 mouseenter: function () {
                     drawer.height(height*2);
-                    setTimeout( function() { drawerVisible({ drawerVisible: true });}, 350)
+                    closeUnderway = false;
+                    setTimeout( function() {
+                        if (!closeUnderway)
+                            drawerVisible({ drawerVisible: true });
+                    }, 350);
                 },
                 mouseleave: function () {
                     drawer.height(height);
+                    closeUnderway = true;
                     drawerVisible({ drawerVisible: false });
                 }
             });

@@ -7,12 +7,14 @@
         recordKey: fcbayern
         name: 'FC Bayern München'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: wolfsburg
         name: 'VfL Wolfsburg'
         marketPlace: buli2014
+        owner: admin
     }
 
 
@@ -20,96 +22,112 @@
         recordKey: gladbach
         name: 'Borussia Mönchengladbach'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: hannover96
         name: 'Hannover 96'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: hoffenheim
         name: 'TSG 1899 Hoffenheim'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: leverkusen
         name: 'Bayer 04 Leverkusen'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: augsburg
         name: 'FC Augsburg'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: mainz
         name: '1. FSV Mainz 05'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: paderborn
         name: 'SC Paderborn 07'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: koeln
         name: '1. FC Köln'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: schalke
         name: 'FC Schalke 04'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: frankfurt
         name: 'Eintracht Frankfurt'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: freiburg
         name: 'Sport-Club Freiburg'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: hertha
         name: 'Hertha BSC'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: dortmund
         name: 'Borussia Dortmund'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: bremen
         name: 'SV Werder Bremen'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: hamburg
         name: 'Hamburger SV'
         marketPlace: buli2014
+        owner: admin
     }
 
     {
         recordKey: stuttgart
         name: 'VfB Stuttgart'
         marketPlace: buli2014
+        owner: admin
     }
 
     # END marketplace templates BundesLiga 2014
@@ -122,24 +140,28 @@
         recordKey: germany
         name: 'Germany'
         marketPlace: em2016
+        owner: admin
     }
 
     {
         recordKey: dutch
         name: 'Netherlands'
         marketPlace: em2016
+        owner: admin
     }
 
     {
         recordKey: france
         name: 'France'
         marketPlace: em2016
+        owner: admin
     }
 
     {
         recordKey: italy
         name: 'Italy'
         marketPlace: em2016
+        owner: admin
     }
 
 

@@ -88,9 +88,15 @@ function RLResultSet( table, query ) {
     this.snapFinFun = null;
     this.insertFun = 0; // function(list,newItem) defining insert point in list.
 
-    this.subscribe = function( table, query ) {
+    // fnFronendquery: filterfunction(record)
+    this.subscribe = function( table, query, fnFrontendQuery ) {
         self.unsubscribe();
         Server.session().$subscribe( table, query, self.subscb = function(change,e) {
+            if ( fnFrontendQuery && change.type == RL_ADD ) {
+                if ( !fnFrontendQuery.apply(self,[change.newRecord]) ) {
+                    return;
+                }
+            }
             self.push(change);
         }).then( function(subsId, err) {
             self.subsId = subsId;
@@ -148,6 +154,10 @@ function RLResultSet( table, query ) {
                 return true;
         }
         return false;
+    };
+
+    this.containsKey = function (key) {
+        return self.map[key] != null;
     };
 
     this.removeKey = function(recordKey) {

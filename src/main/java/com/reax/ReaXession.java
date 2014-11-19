@@ -118,7 +118,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
                         Instrument tpl = change.getRecord();
                         tpl.setOwner(user.getRecordKey());
                         tpl.setMarketPlace(newMPKey);
-                        instrTable.$add(tpl, 0);
+                        instrTable.$put(tpl.getRecordKey()+"#"+user.getRecordKey(),tpl, 0);
                     } else
                     if ( ! change.isARU() ) {
                         p.receive("ok", null); // signal finish
