@@ -7,5 +7,5 @@
     rlcomponents  # some real live components (observable result set, rlrecord)
     navpane-ko    # navpane tag for ko
     components    # applevel components
-    mynewcomp
+    rlgrid
 ]

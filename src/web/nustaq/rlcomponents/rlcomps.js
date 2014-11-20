@@ -1,4 +1,10 @@
 
+//ko.bindingHandlers.scrollme = {
+//    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+//        element.style = 'height:'+valueAccessor()+'px;border:1px solid #ccc; overflow:auto;';
+//    }
+//};
+
 // <div data-bind='rlrecord: { table: '', key: '' }'
 ko.bindingHandlers.rlrecord = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
