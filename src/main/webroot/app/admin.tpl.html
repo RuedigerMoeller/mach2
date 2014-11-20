@@ -1,6 +1,7 @@
 <template id="admin">
     <div data-bind="with: adminController">
 
+        <b>Available Marketplaces</b>
         <div data-bind="foreach: $parent.availableMarkets">
             <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.addMarketPlace"
                   ></span>

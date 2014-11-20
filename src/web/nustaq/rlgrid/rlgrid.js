@@ -1,6 +1,6 @@
 
 ko.components.register('rl-grid', {
-    template: { element: 'rlgridtemplate' },
+//    template: { element: 'rlgridtemplate' },
     viewModel: {
         createViewModel: function(params,componentInfo) {
             return new RLGridModel(params,componentInfo);
@@ -8,24 +8,25 @@ ko.components.register('rl-grid', {
     }
 });
 
-var rlgrid_rowIdCnt = 1;
-
 // table
 function RLGridModel(params,componentInfo) {
     var self = this;
 
-    self.tableElem = $(componentInfo.element).find('table');
-    self.tableElem.id = "_rl_"+rlgrid_rowIdCnt++;
+    self.tableElem = $(componentInfo.element);
     self.table = null;
 
-    self.createColumnModel = function(tableName) {
+    self.initTable = function( tableName ) {
+        self.tableElem.empty();
+        self.tableElem.append("<table>");
+    };
+
+    self.createColumns = function(tableName) {
         var tableMeta = Server.meta().tables[tableName];
 
         if ( ! tableMeta )
             return;
 
         var colNames = tableMeta.visibleColumnNames;
-        var colConfig = [];
         for (var i = 0; i < colNames.length; i++) {
             var cn = colNames[i];
             var colMeta = tableMeta.columns[cn];
@@ -33,19 +34,10 @@ function RLGridModel(params,componentInfo) {
             if ( ! title ) {
                 title = colMeta.name;
             }
-            var colDef = { name: colMeta.name, label: title };
-
             if ( colMeta.displayWidth ) {
                 colDef.width = colMeta.displayWidth;
             }
-
-            if ( RLTableConfiguration.applyModelColumn2TableColumn != null ) {
-                RLTableConfiguration.applyModelColumn2TableColumn(colMeta,colDef);
-            }
-
-            colConfig.push( colDef );
         }
-        return colConfig;
     };
 
 
@@ -60,35 +52,21 @@ function RLGridModel(params,componentInfo) {
         Server.session().$query(tableName, query, function (change, error) {
             //console.log(change);
             if (change.type != RL_SNAPSHOT_DONE) {
-                self.table.addRowData( rlgrid_rowIdCnt++, change.newRecord );
+                self.addRowData( rlgrid_rowIdCnt++, change.newRecord );
                 count++;
                 if (count > 100) {
                     //t.draw();
                     count = 0;
                 }
             } else {
-                self.table.trigger("reloadGrid");
+                self.refresh();
             }
         });
 
     };
 
-    this.initTable = function() {
-        self.table = self.tableElem.jqGrid({
-            height: params.height ? params.height : 200,
-            datatype: 'local',
-            colModel: self.createColumnModel(params.table),
-            rowNum: 100,
-            rowList: [10, 20, 30],
-            sortname: "recordKey",
-            sortorder: "desc",
-            viewrecords: true,
-            gridview: false
-        });
-    };
-
     Server.doOnceLoggedIn( function() {
-        self.initTable();
+        self.initTable( params.table );
         self.runQuery( params.table, params.query );
     });
 

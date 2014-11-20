@@ -118,7 +118,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
                         Instrument tpl = change.getRecord();
                         tpl.setOwner(user.getRecordKey());
                         tpl.setMarketPlace(newMPKey);
-                        instrTable.$put(tpl.getRecordKey()+"#"+user.getRecordKey(),tpl, 0);
+                        instrTable.$put(tpl.getRecordKey() + "#" + user.getRecordKey(), tpl, 0);
                     } else
                     if ( ! change.isARU() ) {
                         p.receive("ok", null); // signal finish
@@ -139,4 +139,10 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         subscriptions.clear();
         super.$hasBeenUnpublished();
     }
+
+    public Future $hello( String hello ) {
+        System.out.println("Hello");
+        return new Promise("selber");
+    }
+
 }
