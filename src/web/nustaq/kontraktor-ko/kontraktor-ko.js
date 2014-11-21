@@ -104,28 +104,37 @@ if ( typeof ko !== 'undefined') {
     };
 }
 
-var highlightElem = function(element, color) {
+var highlightElem = function(element, textColor) {
     if (!element.hicount && element.hicount != 0) {
         element.hicount = 1;
     } else {
         element.hicount++;
     }
+    if ( ! element.hasOwnProperty("__oldBG") ) {
+        var oldBG = element.style.backgroundColor;
+        if ( oldBG || oldBG == "" )
+            element.__oldBG = oldBG;
+        else
+            return; // not visible ?
+    }
+    element.style.transition = 'all .3s';
     element.style.backgroundColor = '#FFF3B0';
-    if ( color )
+    if ( textColor )
         element.style.color = '#000';
     (function () {
         var current = element;
         var prevKey = element;
         setTimeout(function () {
             if (current.hicount <= 1 || prevKey != current) {
-                current.style.backgroundColor = 'rgba(230,230,230,0.0)';
-                if ( color )
-                    current.style.color = color;
+                element.style.transition = 'all 1s';
+                current.style.backgroundColor = current.__oldBG;
+                if ( textColor )
+                    current.style.color = textColor;
                 current.hicount = 0;
             } else {
                 current.hicount--;
             }
-        }, 3000);
+        }, 2000);
     }())
 };
 

@@ -12,6 +12,18 @@ var RealLive = new function() {
 
     var self = this;
 
+    this.getChangedFieldNames = function(change) {
+        var res = [];
+        if (change.appliedChange) {
+            var changeArray = change.appliedChange.fieldIndex;
+            for ( var i = 0; i < changeArray.length; i++ ) {
+                var fieldId = changeArray[i];
+                res.push(RealLive.getFieldName(change.tableId,fieldId));
+            }
+        }
+        return res;
+    };
+
     this.getTableMeta = function(tableId,columnName) {
         var res = Server.meta().tables[tableId];
         if ( columnName ) {
@@ -239,15 +251,7 @@ function RLResultSet( table, query ) {
     };
 
     this.getChangedFieldNames = function(change) {
-        var res = [];
-        if (change.appliedChange) {
-            var changeArray = change.appliedChange.fieldIndex;
-            for ( var i = 0; i < changeArray.length; i++ ) {
-                var fieldId = changeArray[i];
-                res.push(RealLive.getFieldName(change.tableId,fieldId));
-            }
-        }
-        return res;
+        return RealLive.getChangedFieldNames(change);
     };
 
 

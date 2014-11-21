@@ -12,14 +12,14 @@
         <b>My Marketplaces</b>
         <br>
         <div style="padding-right: 50px;">
-            <rl-table params="table: 'MarketPlace', query: 'it.admin==´'+$parent.userName()+'´', height: 100, onSelection: onMarketPlaceSelection" ></rl-table>
+            <rl-grid params="table: 'MarketPlace', subscribe: 'it.admin==´'+$parent.userName()+'´', height: 100, onSelection: onMarketPlaceSelection" ></rl-grid>
         </div>
         <br>
 
         <b>Instruments</b>
         <br>
         <div style="padding-right: 50px;">
-            <rl-table params="table: 'Instrument', query: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´', height: 250" ></rl-table>
+            <rl-grid params="table: 'Instrument', subscribe: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´', height: 250" ></rl-grid>
         </div>
         <br>
     </div>

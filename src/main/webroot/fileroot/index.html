@@ -55,10 +55,10 @@
                 });
                 availableMarkets.removeKey(mp.recordKey);
             },
-            onMarketPlaceSelection: function(selectedRows) {
+            onMarketPlaceSelection: function(selectedRow,index) {
                 console.log("adminController MP change");
-                if ( selectedRows.length > 0 ) {
-                    model.adminController.selectedMP(selectedRows[0])
+                if ( selectedRow ) {
+                    model.adminController.selectedMP(selectedRow)
                 } else {
                     model.adminController.selectedMP({ recordKey: '' })
                 }

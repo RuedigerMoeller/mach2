@@ -17,9 +17,22 @@ ko.bindingHandlers.navdrawer = {
                     }, 350);
                 },
                 mouseleave: function () {
-                    drawer.height(height);
-                    closeUnderway = true;
-                    drawerVisible({ drawerVisible: false });
+                    if ( Server.loggedIn() ) {
+                        drawer.height(height);
+                        closeUnderway = true;
+                        drawerVisible({ drawerVisible: false });
+                    }
+                    var recheck = function() {
+                        if ( Server.loggedIn() ) {
+                            drawer.height(height);
+                            closeUnderway = true;
+                            drawerVisible({ drawerVisible: false });
+                        } else {
+                            setTimeout( recheck, 1000 );
+                        }
+                    };
+                    if ( ! Server.loggedIn() )
+                        setTimeout( recheck, 1000 );
                 }
             });
 
