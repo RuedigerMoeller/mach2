@@ -16,12 +16,14 @@ function RLGridModel(params,componentInfo) {
     self.tbody = null;
     self.tableMeta = null;
     self.currentSel = null;
+    self.sortKey = 'recordKey';
+    self.snapshotDone = false;
 
     var showElem = function(elem) {
-        $(elem).hide().fadeIn(200);
+        $(elem).hide().fadeIn(400);
     };
     var hideElem = function(elem) {
-        $(elem).fadeOut(200,function() { $(elem).remove(); });
+        $(elem).fadeOut(400,function() { $(elem).remove(); });
     };
 
     self.deselect = function(targetElem) {
@@ -84,30 +86,77 @@ function RLGridModel(params,componentInfo) {
         });
     };
 
+    function visibleColumnNames() {
+        if ( params.columns )
+            return params.columns;
+        return self.tableMeta.visibleColumnNames;
+    }
+
     self.createColumns = function(tableName) {
+
         var tableMeta = self.tableMeta;
         var res = "";
 
         if ( ! tableMeta )
             return;
 
-        var colNames = tableMeta.visibleColumnNames;
+        var colNames = visibleColumnNames();
         for (var i = 0; i < colNames.length; i++) {
             var cn = colNames[i];
             var colMeta = tableMeta.columns[cn];
             var title = colMeta.displayName;
+            var width = colMeta.displayWidth;
+            if ( ! width )
+                width = '';
+            else
+                width = "style: 'width:'"+width+";'";
             if ( ! title ) {
                 title = colMeta.name;
             }
-            res += "<td class='rl-grid-col'>"+title+"</td>";
+            res += "<td class='rl-grid-col' "+width+">"+title+"</td>";
         }
         return res;
     };
 
     self.clear = function() {
         self.unsubscribe();
+        self.snapshotDone = false;
         if ( self.tbody )
             self.tbody.empty();
+    };
+
+    function findPos( row ) {
+        var children = self.tbody.children();
+        var me = row[self.sortKey];
+        for ( var i = 0; i < children.length; i++ ) {
+            var tr = children[i];
+            var trRow = tr.__row;
+            if ( trRow ) {
+                var that = trRow[self.sortKey];
+                if ( that && that > me ) {
+                    return tr;
+                }
+            }
+        }
+        return null;
+    }
+
+    self.updateStripes = function( startIndex ) {
+        var children = self.tbody.children();
+        for ( var i = startIndex; i < children.length; i++ ) {
+            var tr = $(children[i]);
+            var tds = tr.children();
+            for ( var ii = 0; ii < tds.length; ii++ ) {
+                var td = $(tds[ii]);
+                if ( i&1 ) {
+                    td.removeClass('rl-grid-row');
+                    td.addClass('rl-grid-row-even');
+                } else {
+                    $(tr).removeClass('rl-grid-row-even');
+                    $(tr).addClass('rl-grid-row');
+                }
+            }
+        }
     };
 
     self.addRowData = function(tableName,row) {
@@ -117,22 +166,24 @@ function RLGridModel(params,componentInfo) {
         if ( ! tableMeta )
             return;
 
-        var colNames = tableMeta.visibleColumnNames;
-        var even = self.tbody.children().length&1;
+        var colNames = visibleColumnNames();
         for (var i = 0; i < colNames.length; i++) {
             var cn = colNames[i];
             var data = row[cn];
             if ( ! data ) {
                 data = "";
             }
-            if ( !even )
-                res += "<td class='rl-grid-row' id='"+cn+"'>"+ self.renderCell( tableMeta[cn], cn, data)+"</td>";
-            else
-                res += "<td class='rl-grid-row-even' id='"+cn+"'>"+self.renderCell( tableMeta[cn], cn, data)+"</td>";
+            res += "<td class='rl-grid-row' id='"+cn+"'>"+ self.renderCell( tableMeta[cn], cn, data)+"</td>";
         }
         var elem = $("<tr id='" + row.recordKey + "'>" + res + "</tr>");
-        self.tbody.append(elem);
-        showElem(elem);
+        var insert = findPos(row);
+        if ( insert ) {
+            self.tbody.get(0).insertBefore( elem.get(0), insert);
+        } else {
+            self.tbody.append(elem);
+        }
+        if ( self.snapshotDone )
+            showElem(elem);
         elem.get(0).__row = row;
     };
 
@@ -146,6 +197,9 @@ function RLGridModel(params,componentInfo) {
         Server.session().$query(tableName, query, function (change, error) {
             if (change.type == RL_ADD) {
                 self.addRowData( tableName, change.newRecord );
+            } else {
+                self.updateStripes(0);
+                self.snapshotDone = true;
             }
         });
     };
@@ -171,10 +225,16 @@ function RLGridModel(params,componentInfo) {
         Server.session().$subscribe(tableName, query, function (change, error) {
             if (change.type == RL_ADD) {
                 self.addRowData( tableName, change.newRecord );
+                if ( self.snapshotDone ) {
+                    self.updateStripes(0);
+                }
             } else if ( change.type == RL_REMOVE ) {
                 var row = self.tbody.find("#"+change.recordKey);
                 if ( row ) {
                     hideElem(row);
+                }
+                if ( self.snapshotDone ) {
+                    self.updateStripes(0);
                 }
             } else if ( change.type == RL_UPDATE ) {
                 var fieldList = RealLive.getChangedFieldNames(change);
@@ -201,6 +261,9 @@ function RLGridModel(params,componentInfo) {
                         }
                     }
                 }
+            } else if ( change.type == RL_SNAPSHOT_DONE ) {
+                self.snapshotDone = true;
+                self.updateStripes(0);
             }
         }).then( function(r,e) {
             self.subsId = r;

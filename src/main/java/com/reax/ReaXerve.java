@@ -5,6 +5,7 @@ import com.reax.datamodel.*;
 import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
+import org.nustaq.kontraktor.remoting.http.rest.HtmlString;
 import org.nustaq.kontraktor.util.Log;
 import org.nustaq.fourk.FourK;
 import org.nustaq.kson.Kson;
@@ -96,11 +97,25 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         return records;
     }
 
+    public Future<HtmlString> $invite( String id ) {
+        Promise result = new Promise();
+        RLTable<Invite> invite = realLive.getTable("Invite");
+        invite.$get(id).onResult(inv -> {
+            if (inv == null) {
+                result.receive(new HtmlString("<html>Invite Id is invalid</html>"), null);
+            }
+        }).onError(err -> {
+            result.receive(new HtmlString("<html>Invite Id is invalid</html>"),null);
+        });
+        return result;
+    }
+
     int stuffCount = 0;
     public void $changeStuff() {
         if ( isStopped() )
             return;
         RLTable<User> user = realLive.getTable("User");
+        RLTable<User> isntr = realLive.getTable("Instrument");
         user.$get("admin").then((u, e) -> {
             user.prepareForUpdate(u);
             u.setEmail("" + Math.random());

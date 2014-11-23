@@ -48,7 +48,7 @@
 
     # ignored if empty for an actor
     allowedMethods: {
-        ReaXerve : [ $getSession $authenticate ]
+        ReaXerve : [ $getSession $authenticate $invite ]
     }
 
     # ignored if empty for an actor

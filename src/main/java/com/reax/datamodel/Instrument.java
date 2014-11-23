@@ -27,6 +27,27 @@ public class Instrument extends Record {
     @Description("mnemonic")
     String name;
 
+    @RenderStyle("Price") @BGColor("rgba(77,8,8,0.8)") @DisplayWidth("60px") @TextColor("#fff")
+    int bid;
+    @RenderStyle("Price") @BGColor("rgba(77,8,8,0.8)") @DisplayWidth("60px") @TextColor("#fff")
+    int ask;
+    @RenderStyle("Qty") @DisplayWidth("60px")
+    int bidQty;
+    @RenderStyle("Qty")  @DisplayWidth("60px")
+    int askQty;
+
+    @RenderStyle("Price") @DisplayWidth("60px")
+    int lastPrc;
+    @RenderStyle("Qty") @DisplayWidth("60px")
+    int lastQty;
+
+    @Hidden
+    long lastMatch;
+    @DisplayWidth("160px") @DisplayName("Time")
+    String lastMatchTimeUTC;
+    String state = "TRADE";
+
+
     public Instrument() {
     }
 
@@ -35,6 +56,79 @@ public class Instrument extends Record {
         this.description = description;
         this.expiryDate = expiryDate;
         this.expiryDateString = expiryDateString;
+    }
+
+
+    public int getBid() {
+        return bid;
+    }
+
+    public void setBid(int bid) {
+        this.bid = bid;
+    }
+
+    public int getAsk() {
+        return ask;
+    }
+
+    public void setAsk(int ask) {
+        this.ask = ask;
+    }
+
+    public int getBidQty() {
+        return bidQty;
+    }
+
+    public void setBidQty(int bidQty) {
+        this.bidQty = bidQty;
+    }
+
+    public int getAskQty() {
+        return askQty;
+    }
+
+    public void setAskQty(int askQty) {
+        this.askQty = askQty;
+    }
+
+    public int getLastPrc() {
+        return lastPrc;
+    }
+
+    public void setLastPrc(int lastPrc) {
+        this.lastPrc = lastPrc;
+    }
+
+    public int getLastQty() {
+        return lastQty;
+    }
+
+    public void setLastQty(int lastQty) {
+        this.lastQty = lastQty;
+    }
+
+    public long getLastMatch() {
+        return lastMatch;
+    }
+
+    public void setLastMatch(long lastMatch) {
+        this.lastMatch = lastMatch;
+    }
+
+    public String getLastMatchTimeUTC() {
+        return lastMatchTimeUTC;
+    }
+
+    public void setLastMatchTimeUTC(String lastMatchTimeUTC) {
+        this.lastMatchTimeUTC = lastMatchTimeUTC;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getMarketPlace() {

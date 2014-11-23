@@ -1,7 +1,7 @@
 <template id="show">
 
         <div style='height:200px;border:1px solid #ccc; overflow:auto;'>
-            <rl-grid params="table: 'User'"></rl-grid>
+            <rl-grid params="table: 'User', subscribe: 'true' "></rl-grid>
         </div>
         <br>
 
@@ -73,14 +73,14 @@
     <h3>Instrument</h3>
     <br>
     <div style="padding-right: 50px;">
-        <rl-grid params="table: 'Instrument', query: 'true', height: 150" ></rl-grid>
+        <rl-grid params="table: 'Instrument', subscribe: 'true', height: 150" ></rl-grid>
     </div>
     <br>
     <br>
     <h3>MP</h3>
     <br>
     <div style="padding-right: 50px;">
-        <rl-grid params="table: 'MarketPlace', query: 'true', height: 150" ></rl-grid>
+        <rl-grid params="table: 'MarketPlace', subscribe: 'true', height: 150" ></rl-grid>
     </div>
     <br>
     <br>

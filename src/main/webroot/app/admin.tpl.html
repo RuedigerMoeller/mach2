@@ -11,15 +11,18 @@
 
         <b>My Marketplaces</b>
         <br>
-        <div style="padding-right: 50px;">
-            <rl-grid params="table: 'MarketPlace', subscribe: 'it.admin==´'+$parent.userName()+'´', height: 100, onSelection: onMarketPlaceSelection" ></rl-grid>
+        <div style="padding-right: 50px;height:150px;border:1px solid #ccc; overflow:auto;">
+            <rl-grid params="table: 'MarketPlace', subscribe: 'it.admin==´'+$parent.userName()+'´', onSelection: onMarketPlaceSelection" ></rl-grid>
         </div>
         <br>
 
         <b>Instruments</b>
         <br>
-        <div style="padding-right: 50px;">
-            <rl-grid params="table: 'Instrument', subscribe: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´', height: 250" ></rl-grid>
+        <div style="padding-right: 50px;height:250px;border:1px solid #ccc; overflow:auto;">
+            <rl-grid params="table: 'Instrument', subscribe: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´',
+                             columns: [ 'recordKey', 'name', 'description', 'owner', 'marketPlace', 'bid', 'ask', 'lastPrc', 'contractsTraded' ] " >
+
+            </rl-grid>
         </div>
         <br>
     </div>
