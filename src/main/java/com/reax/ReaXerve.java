@@ -97,16 +97,18 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         return records;
     }
 
-    public Future<HtmlString> $invite( String id ) {
+    public Future<String> $test( String t ) {
+        return new Promise<>(t);
+    }
+
+    public Future<HtmlString> $httpRedirectInvite( String id ) {
         Promise result = new Promise();
         RLTable<Invite> invite = realLive.getTable("Invite");
         invite.$get(id).onResult(inv -> {
             if (inv == null) {
-                result.receive(new HtmlString("<html>Invite Id is invalid</html>"), null);
+                result.receive(new HtmlString("/invalidInvite.html"), null);
             }
-        }).onError(err -> {
-            result.receive(new HtmlString("<html>Invite Id is invalid</html>"),null);
-        });
+        }).onError( err -> result.receive(new HtmlString("/invalidInvite.html"),null) );
         return result;
     }
 
