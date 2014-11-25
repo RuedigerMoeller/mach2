@@ -29,7 +29,7 @@ public class Mailer extends Actor<Mailer> {
             message.setText(content);
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver,false));
             message.setSentDate(new Date());
-            Transport.send(message, "moru0011@gmail.com","");
+            Transport.send(message, "reaxmailer@gmail.com","13rm13rm");
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
         } catch (MessagingException e) {
@@ -39,14 +39,14 @@ public class Mailer extends Actor<Mailer> {
     }
 
     public static void main(String arg[]) {
-        String proxyHost = "169.254.206.193";
-        String proxyPort = "8080";
-        Properties proxySet = System.getProperties();
-        proxySet.put("http.proxyPort",proxyPort);
-        proxySet.put("http.proxyHost",proxyHost);
+//        String proxyHost = "169.254.206.193";
+//        String proxyPort = "8080";
+//        Properties proxySet = System.getProperties();
+//        proxySet.put("http.proxyPort",proxyPort);
+//        proxySet.put("http.proxyHost",proxyHost);
 
         Mailer m = new Mailer();
-        m.$sendMail("moru0011@gmail.com", "Hello", "This is content");
+        m.$sendMail("heiko@dowidat.de", "Hello", "This is content");
     }
 
 }
