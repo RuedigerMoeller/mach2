@@ -29,7 +29,7 @@ public class Mailer extends Actor<Mailer> {
             message.setText(content);
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver,false));
             message.setSentDate(new Date());
-            Transport.send(message, "reaxmailer@gmail.com","13rm13rm");
+            Transport.send(message, "reaxmailer@gmail.com","");
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
         } catch (MessagingException e) {
