@@ -1,6 +1,7 @@
 package com.reax;
 
 import com.reax.datamodel.Instrument;
+import com.reax.datamodel.Invite;
 import com.reax.datamodel.MarketPlace;
 import com.reax.datamodel.User;
 import org.nustaq.kontraktor.Callback;
@@ -10,10 +11,7 @@ import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.util.Log;
 import org.nustaq.fourk.FourKSession;
-import org.nustaq.reallive.RLTable;
-import org.nustaq.reallive.RealLive;
-import org.nustaq.reallive.RealLiveClientWrapper;
-import org.nustaq.reallive.Subscription;
+import org.nustaq.reallive.*;
 import org.nustaq.reallive.queries.JSQuery;
 import org.nustaq.reallive.sys.config.ConfigReader;
 import org.nustaq.reallive.sys.config.SchemaConfig;
@@ -143,6 +141,43 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     public Future $hello( String hello ) {
         System.out.println("Hello");
         return new Promise("selber");
+    }
+
+    protected boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
+    /**
+     * "SUCCESS" = sucess, else error msg
+     * @return
+     */
+    public Future<String> $sendMails( String mails ) {
+        if (mails == null || mails.trim().length()==0) {
+            return new Promise<>("no mail addresses entered");
+        }
+        final String[] mailList = mails.split(" ");
+        int count = 0;
+        final RLTable inviteTable = realLive.getTable("Invite");
+        for (int i = 0; i < mailList.length; i++) {
+            String s = mailList[i].trim();
+            if (isValidEmailAddress(s)) {
+                Invite invite = (Invite) inviteTable.createForAdd();
+                invite.setAdmin(user.getAdminName());
+                invite.setEmail(s);
+                invite.setHoursValid(24*5);
+                invite.setTimeSent(System.currentTimeMillis());
+                inviteTable.$addGetId(invite,0).then( (r,e) -> {
+                    if ( r!=null ) {
+                        ReaXerve.Self.$submitEmail(s,"You have been invited to a Reax Game.", "Click "+r+" to accept and register." );
+                    }
+                });
+                count++;
+            }
+        }
+        return new Promise<>( (count == 0) ? "SUCCESS" : "no message sent");
     }
 
 }

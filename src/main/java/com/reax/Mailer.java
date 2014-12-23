@@ -46,7 +46,8 @@ public class Mailer extends Actor<Mailer> {
 //        proxySet.put("http.proxyHost",proxyHost);
 
         Mailer m = new Mailer();
-        m.$sendMail("heiko@dowidat.de", "Hello", "This is content");
+        m.$sendMail("moru0011@gmail.com", "Hello", "This is content");
+//        m.$sendMail("heiko@dowidat.de", "Hello", "This is content");
     }
 
 }

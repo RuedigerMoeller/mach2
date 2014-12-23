@@ -63,6 +63,13 @@
                     model.adminController.selectedMP({ recordKey: '' })
                 }
             },
+            onInvite: function() {
+                console.log("Invite:"+model.adminController.emailList() );
+                Server.session().$sendMails(model.adminController.emailList()).then( function(r,e) {
+                    console.log("result:"+r);
+                });
+            },
+            emailList: ko.observable(''),
             selectedMP: ko.observable({ recordKey: '' }), // currently selected marketPlace in MP table
             selectedMPTemplate: ko.observable(null)       // currently selected template(s) from Template table
         },

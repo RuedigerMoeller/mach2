@@ -25,10 +25,14 @@ import java.util.*;
 @GenRemote
 public class ReaXerve extends FourK<ReaXerve,ReaXession> {
 
+    public static ReaXerve Self;
     protected RealLive realLive;
+    protected Mailer mailer;
 
     @Local
     public void $init(Scheduler clientScheduler) {
+        Self = self();
+        mailer = Actors.AsActor(Mailer.class);
         super.$init(clientScheduler);
         initRealLive();
     }
@@ -162,10 +166,13 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         ReaXerve server = Actors.AsActor(ReaXerve.class);
         server.$main(arg).then( (r,e) -> {
             if ( e != null ) {
-                ((Exception)e).printStackTrace();
+                ((Throwable)e).printStackTrace();
                 System.exit(1);
             }
         });
     }
 
+    public void $submitEmail(String receiver, String subject, String text) {
+        mailer.$sendMail(receiver,subject,text);
+    }
 }

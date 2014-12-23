@@ -12,18 +12,18 @@ import org.nustaq.reallive.sys.annotations.KeyLen;
 public class Invite extends Record {
 
     String admin;    // done by
-    String emails[]; // list of users invited (email addresses)
-    int replied;     // number of users which replied and added an account
+    String email; // email of user invited
+    String repliedUserName;     // name of user in case replied
     long timeSent;
     int hoursValid;
 
     public Invite() {
     }
 
-    public Invite(String admin, String[] emails, int replied, long timeSent, int hoursValid) {
+    public Invite(String admin, String email, String repliedUserName, long timeSent, int hoursValid) {
         this.admin = admin;
-        this.emails = emails;
-        this.replied = replied;
+        this.email = email;
+        this.repliedUserName = repliedUserName;
         this.timeSent = timeSent;
         this.hoursValid = hoursValid;
     }
@@ -36,20 +36,20 @@ public class Invite extends Record {
         this.admin = admin;
     }
 
-    public String[] getEmails() {
-        return emails;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmails(String[] emails) {
-        this.emails = emails;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public int getReplied() {
-        return replied;
+    public String getRepliedUserName() {
+        return repliedUserName;
     }
 
-    public void setReplied(int replied) {
-        this.replied = replied;
+    public void setRepliedUserName(String repliedUserName) {
+        this.repliedUserName = repliedUserName;
     }
 
     public long getTimeSent() {
