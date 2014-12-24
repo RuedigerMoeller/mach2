@@ -165,15 +165,17 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
             String s = mailList[i].trim();
             if (isValidEmailAddress(s)) {
                 Invite invite = (Invite) inviteTable.createForAdd();
-                invite.setAdmin(user.getAdminName());
+                invite.setAdmin(user.getName());
                 invite.setEmail(s);
                 invite.setHoursValid(24*5);
                 invite.setTimeSent(System.currentTimeMillis());
-                inviteTable.$addGetId(invite,0).then( (r,e) -> {
-                    if ( r!=null ) {
-                        ReaXerve.Self.$submitEmail(s,"You have been invited to a Reax Game.", "Click "+r+" to accept and register." );
-                    }
-                });
+                String key = user.getName()+(""+Math.random()).substring(2);
+                while( key.length() < 32 )
+                    key+=""+(int)(Math.random()*10);
+                invite._setRecordKey(key);
+                inviteTable.$put(key,invite,0);
+                String url = MailSettings.load().getAppurl()+"/rest/$httpRedirectInvite/"+key;
+                ReaXerve.Self.$submitEmail(s,"You have been invited to reax exchange","click <a href='"+url+"'>here</a> to pick a user name.");
                 count++;
             }
         }

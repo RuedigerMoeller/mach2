@@ -111,6 +111,8 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         invite.$get(id).onResult(inv -> {
             if (inv == null) {
                 result.receive(new HtmlString("/invalidInvite.html"), null);
+            } else {
+                result.receive(new HtmlString("/invalidInvite.html"),null);//fixme:synthetic login
             }
         }).onError( err -> result.receive(new HtmlString("/invalidInvite.html"),null) );
         return result;
@@ -157,6 +159,10 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         return actor;
     }
 
+    public void $submitEmail(String receiver, String subject, String text) {
+        mailer.$sendMail(receiver,subject,text);
+    }
+
     /**
      * startup server + map some files for development
      * @param arg
@@ -172,7 +178,4 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         });
     }
 
-    public void $submitEmail(String receiver, String subject, String text) {
-        mailer.$sendMail(receiver,subject,text);
-    }
 }

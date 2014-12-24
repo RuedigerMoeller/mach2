@@ -1,10 +1,12 @@
 package com.reax;
 
 import org.nustaq.kontraktor.Actor;
+import org.nustaq.kson.Kson;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.util.Date;
 import java.util.Properties;
 
@@ -22,6 +24,7 @@ public class Mailer extends Actor<Mailer> {
             props.put("mail.smtp.host", "smtp.gmail.com");
 		    props.put("mail.smtp.port", "587");
 
+            MailSettings set = (MailSettings) new Kson().map(MailSettings.class).readObject(new File("./mail.kson"));
             Session session = Session.getInstance(props);
             Message message = new MimeMessage(session);
             message.setFrom();
@@ -29,10 +32,8 @@ public class Mailer extends Actor<Mailer> {
             message.setText(content);
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver,false));
             message.setSentDate(new Date());
-            Transport.send(message, "reaxmailer@gmail.com","");
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
+            Transport.send(message, set.getUser(),set.getPassword());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

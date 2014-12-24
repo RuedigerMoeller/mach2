@@ -8,7 +8,7 @@ import org.nustaq.reallive.sys.annotations.KeyLen;
  * Created by ruedi on 23.11.14.
  */
 @GenRemote
-@KeyLen(16)
+@KeyLen(32)
 public class Invite extends Record {
 
     String admin;    // done by
