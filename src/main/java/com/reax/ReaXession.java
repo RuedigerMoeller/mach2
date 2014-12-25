@@ -174,12 +174,21 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
                     key+=""+(int)(Math.random()*10);
                 invite._setRecordKey(key);
                 inviteTable.$put(key,invite,0);
-                String url = MailSettings.load().getAppurl()+"/rest/$httpRedirectInvite/"+key;
-                ReaXerve.Self.$submitEmail(s,"You have been invited to reax exchange","click <a href='"+url+"'>here</a> to pick a user name.");
+                String url = MailSettings.load().getAppurl()+"#invite$"+key;
+                final String finalKey = key;
+                ReaXerve.Self.$submitEmail(s,
+                        "You have been invited to reax exchange by "+user.getEmail(),
+                        "<html>click <a href='"+url+"'>here</a> to pick a user name and log on.</html>")
+                    .onResult( succ -> {
+                        if ( succ != null && succ ) {
+                            invite.setMailSent(true);
+                            inviteTable.$put(finalKey, invite, 0);
+                        }
+                    });
                 count++;
             }
         }
-        return new Promise<>( (count == 0) ? "SUCCESS" : "no message sent");
+        return new Promise<>( (count > 0) ? "SUCCESS" : "no message sent");
     }
 
 }

@@ -159,8 +159,8 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         return actor;
     }
 
-    public void $submitEmail(String receiver, String subject, String text) {
-        mailer.$sendMail(receiver,subject,text);
+    public Future<Boolean> $submitEmail(String receiver, String subject, String text) {
+        return mailer.$sendMail(receiver,subject,text);
     }
 
     /**

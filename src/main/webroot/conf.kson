@@ -24,6 +24,7 @@
         ../../web/nustaq
         ../../web/datatables                       # for images
         /home/ruedi/IdeaProjects/fast-serialization/src/main/web
+        /home/ruedi/projects/fast-serialization/src/main/web
 
         #nightflower
         C:/work/GitHub/mach2/web

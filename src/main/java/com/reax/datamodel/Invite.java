@@ -16,6 +16,7 @@ public class Invite extends Record {
     String repliedUserName;     // name of user in case replied
     long timeSent;
     int hoursValid;
+    boolean mailSent = false;
 
     public Invite() {
     }
@@ -26,6 +27,14 @@ public class Invite extends Record {
         this.repliedUserName = repliedUserName;
         this.timeSent = timeSent;
         this.hoursValid = hoursValid;
+    }
+
+    public boolean isMailSent() {
+        return mailSent;
+    }
+
+    public void setMailSent(boolean mailSent) {
+        this.mailSent = mailSent;
     }
 
     public String getAdmin() {

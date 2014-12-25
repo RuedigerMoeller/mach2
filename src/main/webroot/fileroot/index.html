@@ -113,7 +113,12 @@
         user.subscribe("User","true");
     });
 
-    window.location.hash="#home";
+    var inviteClick = window.location.hash;
+    if ( inviteClick.indexOf("invite$") >= 0 ) {
+        window.location.hash="#invite";
+    } else {
+        window.location.hash="#home";
+    }
 
 </script>
 

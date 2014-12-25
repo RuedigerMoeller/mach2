@@ -1,6 +1,8 @@
 package com.reax;
 
 import org.nustaq.kontraktor.Actor;
+import org.nustaq.kontraktor.Future;
+import org.nustaq.kontraktor.Promise;
 import org.nustaq.kson.Kson;
 
 import javax.mail.*;
@@ -15,7 +17,7 @@ import java.util.Properties;
  */
 public class Mailer extends Actor<Mailer> {
 
-    public void $sendMail( String receiver, String subject, String content ) {
+    public Future<Boolean> $sendMail( String receiver, String subject, String content ) {
         try {
             Properties props = new Properties();
 
@@ -33,10 +35,11 @@ public class Mailer extends Actor<Mailer> {
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver,false));
             message.setSentDate(new Date());
             Transport.send(message, set.getUser(),set.getPassword());
+            return new Promise<>(true);
         } catch (Exception e) {
             e.printStackTrace();
+            return new Promise<>(false,e);
         }
-
     }
 
     public static void main(String arg[]) {
