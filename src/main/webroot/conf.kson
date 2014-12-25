@@ -49,7 +49,7 @@
 
     # ignored if empty for an actor
     allowedMethods: {
-        ReaXerve : [ $getSession $authenticate $httpRedirectInvite $test ]
+        ReaXerve : [ $getSession $authenticate $httpRedirectInvite $test $isInviteValid ]
     }
 
     # ignored if empty for an actor

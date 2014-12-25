@@ -81,6 +81,18 @@
         availableMarkets: availableMarkets.list,
         userName: Server.userName,
         userList: user.list,
+        // invitationstuff
+        invitedBy: ko.observable(null), // Invite
+        inviteUser: ko.observable(""),
+        invitePwd: ko.observable(""),
+        invitePwdConfirm: ko.observable(""),
+
+        canConfirmInvite: function() {
+            return model.inviteUser().length > 4 &&
+                   model.invitePwd().length > 7 &&
+                   model.invitePwd() == model.invitePwdConfirm();
+        },
+
         initView: function() {
             if ( window[ 'init'+model.currentView() ] )
                 window[ 'init'+model.currentView() ].apply();
@@ -113,9 +125,18 @@
         user.subscribe("User","true");
     });
 
-    var inviteClick = window.location.hash;
-    if ( inviteClick.indexOf("invite$") >= 0 ) {
-        window.location.hash="#invite";
+    var inviteString = window.location.hash;
+    if ( inviteString.indexOf("invite$") >= 0 ) {
+        Kontraktor.restGET('$isInviteValid/'+(inviteString.substring("invite$".length+1)))
+            .then( function (r,e) {
+                if (r!=null) {
+                    model.invitedBy(r);
+                    window.location.hash="#invite";
+                } else {
+                    window.location.hash="#invalidInvite";
+                }
+            }
+        );
     } else {
         window.location.hash="#home";
     }

@@ -6,19 +6,19 @@
     <table cellpadding="4px">
         <tr>
             <td width="10px"></td>
-            <td style="padding: 4px;"><input type="text" class="form-control" placeholder="nick name" maxlength="16"></td>
+            <td style="padding: 4px;"><input type="text" class="form-control" placeholder="nick name" maxlength="16" data-bind="value: inviteNick"></td>
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td style="padding: 4px;"><input type="password" class="form-control" placeholder="password" maxlength="8"></td>
+            <td style="padding: 4px;"><input type="password" class="form-control" placeholder="password" maxlength="8" data-bind="value: invitePwd"></td>
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td style="padding: 4px;"><input type="password" class="form-control" placeholder="confirm pwd" maxlength="8"></td>
+            <td style="padding: 4px;"><input type="password" class="form-control" placeholder="confirm pwd" maxlength="8" data-bind="value: invitePwdConfirm"></td>
         </tr>
         <tr>
             <td></td>
-            <td style="padding-top: 12px; padding-right: 4px;" align="right"><button class="btn btn-primary">Complete Registration</button></td>
+            <td style="padding-top: 12px; padding-right: 4px;" align="right"><button class="btn btn-primary" data-bind="click: acceptInvite, enable: canConfirmInvite">Complete Registration</button></td>
         </tr>
     </table>
 

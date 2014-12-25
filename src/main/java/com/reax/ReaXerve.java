@@ -2,6 +2,7 @@ package com.reax;
 
 import com.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import com.reax.datamodel.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
@@ -105,16 +106,21 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         return new Promise<>(t);
     }
 
-    public Future<HtmlString> $httpRedirectInvite( String id ) {
+    public Future<Boolean> $isInviteValid( String id ) {
         Promise result = new Promise();
         RLTable<Invite> invite = realLive.getTable("Invite");
         invite.$get(id).onResult(inv -> {
             if (inv == null) {
-                result.receive(new HtmlString("/invalidInvite.html"), null);
+                result.receive( null, null);
             } else {
-                result.receive(new HtmlString("/invalidInvite.html"),null);//fixme:synthetic login
+                if (System.currentTimeMillis() > inv.getTimeSent() + inv.getHoursValid() * 60l * 60 * 1000) {
+                    invite.$remove( inv.getRecordKey(), 0);
+                    result.receive( null, null);
+                } else {
+                    result.receive( inv, null);
+                }
             }
-        }).onError( err -> result.receive(new HtmlString("/invalidInvite.html"),null) );
+        }).onError(err -> result.receive( null, null));
         return result;
     }
 
