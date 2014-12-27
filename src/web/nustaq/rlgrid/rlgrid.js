@@ -11,6 +11,14 @@ ko.components.register('rl-grid', {
 function rlEscapeId( str ) {
     return str.replace(/#/g, "_");
 }
+
+// a map from style to a formatting function (JColumnMeta, fieldName, cellData)
+var RLFormatterMap = {
+    "Price": function(meta, fieldName, celldata) {
+        return "<b>"+Number(celldata/100).toFixed(2)+"</b>";
+    }
+};
+
 // table
 function RLGridModel(params,componentInfo) {
     var self = this;
@@ -176,7 +184,12 @@ function RLGridModel(params,componentInfo) {
             if ( ! data ) {
                 data = "";
             }
-            res += "<td class='rl-grid-row' id='"+cn+"'>"+ self.renderCell( tableMeta[cn], cn, data)+"</td>";
+            var align = tableMeta.columns[cn].align;
+            if ( align ) {
+                align = " align='"+align+"' "
+            } else
+                align = "";
+            res += "<td class='rl-grid-row' id='"+cn+"'"+align+">"+ self.renderCell( tableMeta.columns[cn], cn, data)+"</td>";
         }
         var elem = $("<tr id='" + rlEscapeId(row.recordKey) + "'>" + res + "</tr>");
         var insert = findPos(row);
@@ -214,8 +227,26 @@ function RLGridModel(params,componentInfo) {
         }
     };
 
+    this.formatCell = function(meta, fieldName, celldata) {
+        if ( meta.renderStyle ) {
+            var formatter = RLFormatterMap[meta.renderStyle];
+            if ( formatter ) {
+                return formatter.apply(null,[meta,fieldName,celldata]);
+            }
+        }
+        return celldata;
+    };
+
+    // applies color styles and stuff. Pure formatting is done by formatter
     this.renderCell = function(meta, fieldName, celldata) {
-        return "<span id='hilight' style='padding: 4px;'>"+celldata+"</span>";
+        var styleAdditions = '';
+        if ( meta.bgColor ) {
+            styleAdditions += " background-color: "+meta.bgColor+";";
+        }
+        if ( meta.textColor ) {
+            styleAdditions += " color: "+meta.textColor+";";
+        }
+        return "<span id='hilight' style='padding: 4px; "+styleAdditions+" '>"+self.formatCell(meta,fieldName,celldata)+"</span>";
     };
 
     this.subscribe = function( tableName, query ) {
@@ -251,7 +282,7 @@ function RLGridModel(params,componentInfo) {
                             var td = rowElem.querySelector('#'+fieldList[ii]);
                             if ( td ) {
                                 td.innerHTML = self.renderCell(
-                                    self.tableMeta[fieldList[ii]],
+                                    self.tableMeta.columns[fieldList[ii]],
                                     fieldList[ii],
                                     change.appliedChange.newVal[ii]
                                 );

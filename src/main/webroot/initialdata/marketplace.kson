@@ -4,6 +4,7 @@
         admin: admin
         description: 'Bundesliga 2014: Wer wird Meister ?'
         longDescription: "Bla bla blubb BALAA !!"
+        img: 'marketplace.png'
     }
 
     {
@@ -11,6 +12,7 @@
         admin: admin
         description: 'Wer wird Europameister 2016 ?'
         longDescription: "Bla bla blubb !"
+        img: 'marketplace.png'
     }
 
 ]

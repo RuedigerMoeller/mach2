@@ -209,9 +209,9 @@ var Kontraktor = new function() {
                                         console.log("finishing callback transmission "+msg.args[0])
                                         delete self.cbmap[msg.receiverKey];
                                     }
-                                    if ( msg.args[0] && msg.args[0].tableId && msg.args[0].tableId == 'Instrument' ) {
-                                        console.log("instr update: "+msg.args[0]);
-                                    }
+                                    //if ( msg.args[0] && msg.args[0].tableId && msg.args[0].tableId == 'Instrument' ) {
+                                    //    console.log("instr update: "+msg.args[0]);
+                                    //}
                                     cbfunc.apply(null, msg.args);
                                 }
                             } else

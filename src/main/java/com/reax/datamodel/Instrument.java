@@ -27,18 +27,18 @@ public class Instrument extends Record {
     @Description("mnemonic")
     String name;
 
-    @RenderStyle("Price") @BGColor("rgba(77,8,8,0.8)") @DisplayWidth("60px") @TextColor("#fff")
+    @RenderStyle("Price") @DisplayWidth("60px") @TextColor("#400") @Align("right")
     int bid;
-    @RenderStyle("Price") @BGColor("rgba(77,8,8,0.8)") @DisplayWidth("60px") @TextColor("#fff")
+    @RenderStyle("Price") @DisplayWidth("60px") @TextColor("#004") @Align("right")
     int ask;
     @RenderStyle("Qty") @DisplayWidth("60px")
     int bidQty;
     @RenderStyle("Qty")  @DisplayWidth("60px")
     int askQty;
 
-    @RenderStyle("Price") @DisplayWidth("60px")
+    @RenderStyle("Price") @DisplayWidth("60px") @Align("right")
     int lastPrc;
-    @RenderStyle("Qty") @DisplayWidth("60px")
+    @RenderStyle("Qty") @DisplayWidth("60px") @Align("right")
     int lastQty;
 
     @Hidden

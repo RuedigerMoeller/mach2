@@ -1,3 +1,19 @@
+function TradeController() {
+    var self = this;
+
+    self.selectedMP = ko.observable({ recordKey: '' }); // currently selected marketPlace
+
+    self.onMarketPlaceSelection = function(selectedRow) {
+        console.log("TradeController MP change");
+        if ( selectedRow ) {
+            self.selectedMP(selectedRow)
+        } else {
+            self.selectedMP({ recordKey: '' })
+        }
+    };
+
+}
+
 function AdminController() {
     var self = this;
 
@@ -8,6 +24,7 @@ function AdminController() {
         });
         availableMarkets.removeKey(mp.recordKey);
     };
+
     self.onMarketPlaceSelection = function(selectedRow,index) {
         console.log("adminController MP change");
         if ( selectedRow ) {
@@ -127,8 +144,8 @@ model.isMarketAssigned = function (marketPlaceKey) {
 model.inviteController = new InviteController();
 // admin controller
 model.adminController = new AdminController();
-
-
+// trade controller (template named tables)
+model.tradeController = new TradeController();
 
 ko.applyBindings(model);
 

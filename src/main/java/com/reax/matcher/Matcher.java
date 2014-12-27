@@ -7,7 +7,9 @@ import com.reax.datamodel.Trade;
 import org.nustaq.kontraktor.Actor;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
+import org.nustaq.kontraktor.util.Log;
 import org.nustaq.kontraktor.util.TicketMachine;
+import org.nustaq.reallive.ChangeBroadcast;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.RealLive;
 
@@ -36,6 +38,7 @@ public class Matcher extends Actor<Matcher> {
         return "MA:"+orderIdCnt++;
     }
 
+    boolean initialized = false;
     public void $init(RealLive rl) {
         Thread.currentThread().setName("Matcher");
         checkThread();
@@ -45,37 +48,36 @@ public class Matcher extends Actor<Matcher> {
         trades = rl.getTable("Trade");
         instruments = rl.getTable("Instrument");
 
-        // sharding could be done using an instrument level filter below
-        instruments.stream().each((change) -> {
+        checkThread();
+        // pump stored orders into matchers
+        orders.stream().subscribe(null,(ordchange) -> {
             checkThread();
-            if (change.isAdd()) {
-                Instrument inst = change.getRecord();
-                String marketPlace = inst.getMarketPlace();
-                if ( ! inst.isTemplate() && matcherMap.get(inst.getRecordKey()) == null ) {
-                    instruments.prepareForUpdate(inst);
-                    matcherMap.put(inst.getRecordKey(), new InstrumentMatcher(self(), inst, orders, trades ));
-                    System.out.println("PUT MATCHER size: "+matcherMap.size()+" id "+System.identityHashCode(matcherMap)+" inst "+inst.getRecordKey());
-                }
-            } else if ( change.isSnapshotDone() ) {
-                checkThread();
-                orders.stream().subscribe(null,(ordchange) -> {
-                    checkThread();
-                    if ( ordchange.getRecord() != null ) {
-                        InstrumentMatcher instrumentMatcher = matcherMap.get(ordchange.getRecord().getInstrumentKey());
-                        if ( instrumentMatcher == null ) {
-                            System.out.println("fatal: no matcher found for " + ordchange.getRecord());
-                            System.out.println("matcherMap "+matcherMap);
-                        }
-                        instrumentMatcher.onARUChange(ordchange);
-                    }
-                    else if ( ordchange.isSnapshotDone() ) {
-                        matcherMap.values().forEach((matcher) -> matcher.snapDone(ordchange) );
-                    } else {
-                        System.out.println("ignored change message "+ordchange);
-                    }
+            if ( ordchange.getRecord() != null ) {
+                instruments.$get(ordchange.getRecord().getInstrumentKey()).onResult(
+                    instr -> getMatcher(instr).onARUChange(ordchange)
+                );
+            } else
+            if ( ordchange.isSnapshotDone() ) {
+                delayed( 1, () -> {
+                    matcherMap.values().forEach((matcher) -> matcher.snapDone(ordchange));
+                    initialized = true;
                 });
+            } else {
+                System.out.println("ignored change message "+ordchange);
             }
         });
+    }
+
+    InstrumentMatcher getMatcher( Instrument inst ) {
+        InstrumentMatcher instrumentMatcher = matcherMap.get(inst.getRecordKey());
+        if ( instrumentMatcher == null ) {
+            instrumentMatcher = new InstrumentMatcher(self(), inst, orders, trades);
+            matcherMap.put(inst.getRecordKey(), instrumentMatcher);
+            if ( initialized ) {
+                instrumentMatcher.snapDone(ChangeBroadcast.NewSnapFin("Order",0));
+            }
+        }
+        return instrumentMatcher;
     }
 
     public Future<String> $addOrder( Order ord ) {
@@ -116,11 +118,25 @@ public class Matcher extends Actor<Matcher> {
                 }
 
                 ord._setRecordKey(createOrderId());
-                matcherMap.get(ord.getInstrumentKey()).addOrder(assetTable, orders, ord, cashAsset, posAsset)
-                    .then((res,err) -> {
-                        result.receive(err != null ? err : res, null);
-                        finished.signal();
-                    });
+
+                InstrumentMatcher instrumentMatcher = matcherMap.get(ord.getInstrumentKey());
+                if ( instrumentMatcher == null ) {
+                    final Asset finalCashAsset = cashAsset;
+                    final Asset finalPosAsset = posAsset;
+                    instruments.$get(ord.getInstrumentKey()).onResult( instr -> {
+                        getMatcher(instr).addOrder(assetTable, orders, ord, finalCashAsset, finalPosAsset)
+                            .then((res, err) -> {
+                                result.receive(err != null ? err : res, null);
+                                finished.signal();
+                            });
+                    }).onError( er -> Log.Warn(this,"fatal: instrument "+ord.getInstrumentKey()+" not found."));
+                } else {
+                    instrumentMatcher.addOrder(assetTable, orders, ord, cashAsset, posAsset)
+                        .then((res, err) -> {
+                            result.receive(err != null ? err : res, null);
+                            finished.signal();
+                        });
+                }
             });
 
         });
