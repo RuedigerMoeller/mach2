@@ -2,6 +2,8 @@ package com.reax;
 
 import com.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import com.reax.datamodel.*;
+import com.reax.matcher.Feeder;
+import com.reax.matcher.Matcher;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.nustaq.kontraktor.*;
 import org.nustaq.kontraktor.annotations.GenRemote;
@@ -19,6 +21,7 @@ import org.nustaq.reallive.sys.config.SchemaConfig;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.BooleanSupplier;
 
 /**
  * Created by ruedi on 23.10.2014.
@@ -29,6 +32,8 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
     public static ReaXerve Self;
     protected RealLive realLive;
     protected Mailer mailer;
+    protected Matcher matcher;
+    protected Feeder feeder;
 
     @Local
     public void $init(Scheduler clientScheduler) {
@@ -36,6 +41,15 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         mailer = Actors.AsActor(Mailer.class);
         super.$init(clientScheduler);
         initRealLive();
+        initMatcher();
+    }
+
+    protected void initMatcher() {
+        matcher = Actors.AsActor(Matcher.class);
+        matcher.$init(realLive);
+        feeder = Actors.AsActor(Feeder.class);
+        feeder.$init(realLive,matcher);
+        feeder.$startFeed();
     }
 
     protected void initRealLive() {
@@ -44,9 +58,9 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         scanModelClasses( User.class.getPackage().getName() ).forEach(clazz -> realLive.createTable(clazz));
 
         realLive.getTable("User").$put(
-                "admin",
-                new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN, "me@me.com"),
-                0
+            "admin",
+            new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN, "me@me.com"),
+            0
         );
 
         importInitialData(User.class);
@@ -65,7 +79,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             e.printStackTrace();
         }
 
-        delayed( 5000, () -> $changeStuff() );
+        // TODO: remove old invites
     }
 
     private void importInitialData( Class<? extends Record> clz) {
@@ -124,27 +138,6 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         return result;
     }
 
-    int stuffCount = 0;
-    public void $changeStuff() {
-        if ( isStopped() )
-            return;
-        RLTable<User> user = realLive.getTable("User");
-        RLTable<User> isntr = realLive.getTable("Instrument");
-        user.$get("admin").then((u, e) -> {
-            user.prepareForUpdate(u);
-            u.setEmail("" + Math.random());
-            u.$apply(0);
-            if ( stuffCount == 0 ) {
-                user.$put("pok", new User().init("pok", "asd", "-", "..", UserRole.MARKET_OWNER, "...."), 0);
-                stuffCount++;
-            } else {
-                user.$remove("pok", 0 );
-                stuffCount = 0;
-            }
-            delayed(5000, () -> $changeStuff());
-        });
-    }
-
     @Override
     protected Future<Object> isLoginValid(String user, String pwd) {
         Promise p = new Promise();
@@ -161,12 +154,53 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
     @Override
     protected ReaXession createSessionActor(String sessionId, Scheduler clientScheduler, Object userRecord) {
         ReaXession actor = Actors.AsActor(ReaXession.class, clientScheduler);
-        actor.$init((User)userRecord,realLive);
+        actor.$init((User) userRecord, realLive);
         return actor;
     }
 
     public Future<Boolean> $submitEmail(String receiver, String subject, String text) {
         return mailer.$sendMail(receiver,subject,text);
+    }
+
+    public Future<Boolean> $userExists(String user) {
+        Promise p = new Promise();
+        realLive.getTable("User").$get(user).then( (r,e) -> p.receive(r,e)) ;
+        return p;
+    }
+
+    /**
+     *
+     * @param inviteId
+     * @param nickname
+     * @param pwd
+     * @return null for success, else error msg
+     */
+    public Future<String> $createUserFromInvite(String inviteId, String nickname, String pwd) {
+        Promise result = new Promise();
+        RLTable<Invite> invite = realLive.getTable("Invite");
+        invite.$get(inviteId).onResult(inv -> {
+            if (inv == null) {
+                result.receive( "no valid invitation found for given id.", null);
+            } else {
+                if (System.currentTimeMillis() > inv.getTimeSent() + inv.getHoursValid() * 60l * 60 * 1000) {
+                    invite.$remove( inv.getRecordKey(), 0);
+                    result.receive( "invitation already timed out.", null);
+                } else {
+                    RLTable<User> ut = realLive.getTable("User");
+                    User newOne = new User();
+                    newOne._setRecordKey(nickname);
+                    newOne.setAdminName(inv.getAdmin());
+                    newOne.setEmail(inv.getEmail());
+                    newOne.setPwd(pwd);
+                    newOne.setName(nickname);
+                    newOne.setRole(UserRole.USER);
+                    invite.$remove( inv.getRecordKey(), 0);
+                    ut.$put(nickname,newOne,0);
+                    result.signal();
+                }
+            }
+        }).onError(err -> result.receive( ""+err, null));
+        return result;
     }
 
     /**

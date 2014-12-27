@@ -206,7 +206,11 @@ var Kontraktor = new function() {
                                     cbfunc.receive(msg.args[0],msg.args[1]);
                                 } else {
                                     if ("CNT" != msg.args[1]) {
+                                        console.log("finishing callback transmission "+msg.args[0])
                                         delete self.cbmap[msg.receiverKey];
+                                    }
+                                    if ( msg.args[0] && msg.args[0].tableId && msg.args[0].tableId == 'Instrument' ) {
+                                        console.log("instr update: "+msg.args[0]);
                                     }
                                     cbfunc.apply(null, msg.args);
                                 }

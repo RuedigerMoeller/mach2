@@ -58,6 +58,9 @@ public class Instrument extends Record {
         this.expiryDateString = expiryDateString;
     }
 
+    public boolean isTemplate() {
+        return getMarketPlace().indexOf("#") < 0;
+    }
 
     public int getBid() {
         return bid;

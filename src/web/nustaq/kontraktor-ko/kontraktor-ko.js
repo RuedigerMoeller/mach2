@@ -7,7 +7,11 @@ if ( typeof ko !== 'undefined') {
         meta:    ko.observable(null),
         loggedIn: ko.observable(false),
         userName: ko.observable(null),
+        loginComponent: null,
 
+        restGET: function(url) {
+            return Kontraktor.restGET(url)
+        },
         doOnceLoggedIn: function (fun) {
             if ( Server.loggedIn() ) {
                 fun.apply();
@@ -26,9 +30,10 @@ if ( typeof ko !== 'undefined') {
     };
 
     ko.components.register( 'kr-login', {
-            viewModel:
+        viewModel:
             function (params) {
                 var self = this;
+                Server.loginComponent = self;
                 this.user = ko.observable('');
                 this.pwd = ko.observable('');
                 this.resultMsg = ko.observable('');

@@ -1,6 +1,5 @@
 <template id="admin">
     <div data-bind="with: adminController">
-
         <b>Available Marketplaces</b>
         <div data-bind="foreach: $parent.availableMarkets">
             <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.addMarketPlace"
@@ -24,20 +23,6 @@
 
             </rl-grid>
         </div>
-        <br>
-
-        <b>Invites</b>
-        <br>
-        <div style="padding-right: 50px;height:250px;border:1px solid #ccc; overflow:auto;">
-            <rl-grid params="table: 'Invite', subscribe: 'it.admin==´'+$parent.userName()+'´'" >
-
-            </rl-grid>
-        </div>
-
-        <br>
-        <b>Invite people:</b><br>
-        <textarea data-bind="textInput: emailList" cols="80" rows="8"></textarea><br>
-        <button type="button" class="btn btn-primary" data-bind="click: onInvite">Send Invite</button>
         <br>
     </div>
 </template>

@@ -1,0 +1,30 @@
+<template id="invite">
+    <div data-bind="with: inviteController">
+        <b>Complete your ReaX registration !</b>
+        <br>
+        <br>
+
+        <table cellpadding="4px">
+            <tr>
+                <td width="10px"></td>
+                <td style="padding: 4px;"><input type="text" class="form-control" placeholder="nick name" maxlength="16" data-bind="value: inviteUser , valueUpdate: 'input'"></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td style="padding: 4px;"><input type="password" class="form-control" placeholder="password" maxlength="12" data-bind="value: invitePwd , valueUpdate: 'input'"></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td style="padding: 4px;"><input type="password" class="form-control" placeholder="confirm pwd" maxlength="12" data-bind="value: invitePwdConfirm , valueUpdate: 'input'"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-top: 12px; padding-right: 4px;" width="200px" align="right" data-bind="text: canConfirmInviteError"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-top: 12px; padding-right: 4px;" align="right"><button class="btn btn-primary" data-bind="click: acceptInvite, enable: canConfirmInvite">Complete Registration</button></td>
+            </tr>
+        </table>
+    </div>
+</template>

@@ -1,0 +1,27 @@
+<template id="users">
+    <div data-bind="with: adminController">
+
+        <b>Users</b>
+        <br>
+        <div style="padding-right: 50px;height:250px;border:1px solid #ccc; overflow:auto;">
+            <rl-grid params="table: 'User', subscribe: 'it.adminName ==´'+$parent.userName()+'´'" >
+
+            </rl-grid>
+        </div>
+        <bR>
+
+        <b>Invites</b>
+        <br>
+        <div style="padding-right: 50px;height:250px;border:1px solid #ccc; overflow:auto;">
+            <rl-grid params="table: 'Invite', subscribe: 'it.admin==´'+$parent.userName()+'´'" >
+
+            </rl-grid>
+        </div>
+
+        <br>
+        <b>Invite people:</b><br>
+        <textarea data-bind="textInput: emailList" cols="120" rows="4"></textarea><br>
+        <button type="button" class="btn btn-primary" data-bind="click: onInvite">Send Invite</button>
+        <br>
+    </div>
+</template>

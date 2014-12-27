@@ -8,6 +8,9 @@ ko.components.register('rl-grid', {
     }
 });
 
+function rlEscapeId( str ) {
+    return str.replace(/#/g, "_");
+}
 // table
 function RLGridModel(params,componentInfo) {
     var self = this;
@@ -175,7 +178,7 @@ function RLGridModel(params,componentInfo) {
             }
             res += "<td class='rl-grid-row' id='"+cn+"'>"+ self.renderCell( tableMeta[cn], cn, data)+"</td>";
         }
-        var elem = $("<tr id='" + row.recordKey + "'>" + res + "</tr>");
+        var elem = $("<tr id='" + rlEscapeId(row.recordKey) + "'>" + res + "</tr>");
         var insert = findPos(row);
         if ( insert ) {
             self.tbody.get(0).insertBefore( elem.get(0), insert);
@@ -229,7 +232,7 @@ function RLGridModel(params,componentInfo) {
                     self.updateStripes(0);
                 }
             } else if ( change.type == RL_REMOVE ) {
-                var row = self.tbody.find("#"+change.recordKey);
+                var row = self.tbody.find("#"+rlEscapeId(change.recordKey));
                 if ( row ) {
                     hideElem(row);
                 }
@@ -240,7 +243,7 @@ function RLGridModel(params,componentInfo) {
                 var fieldList = RealLive.getChangedFieldNames(change);
                 var recKey = change.recordKey;
                 for (var i = 0; i < fieldList.length; i++) {
-                    var elementId = '#' + recKey;
+                    var elementId = '#' + rlEscapeId(recKey);
                     var rowElem = self.tbody.find(elementId).get(0);
                     if ( rowElem ) {
                         rowElem.__row = change.newRecord;

@@ -48,7 +48,12 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     }
 
     public Future<String> $subscribe(String table, String query, Callback cb) {
-        Subscription subs = realLive.stream(table).subscribe(new JSQuery(query), (change) -> cb.receive(change, CONT));
+        Subscription subs = realLive.stream(table).subscribe(new JSQuery(query), change -> {
+            if ( change.getTableId().equals("Instrument") ) {
+                System.out.println("instrument update:"+change);
+            }
+            cb.receive(change, CONT);
+        });
         String key = "subs" + subsCount++;
         subscriptions.put(key, subs);
         return new Promise<>(key);
@@ -148,6 +153,10 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
         java.util.regex.Matcher m = p.matcher(email);
         return m.matches();
+    }
+
+    public Future<User> $getUser() {
+        return new Promise<>(user);
     }
 
     /**

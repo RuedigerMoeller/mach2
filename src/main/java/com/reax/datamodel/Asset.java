@@ -11,7 +11,7 @@ import org.nustaq.reallive.sys.annotations.KeyLen;
  * Trader#InstrumentID
  *
  */
-@KeyLen(20+20+1) @GenRemote @Description("refers to an asset of a trader. Key is Trader#InstrumentID special Trader#cash")
+@KeyLen(20+20+20) @GenRemote @Description("refers to an asset of a trader. Key is Trader#InstrumentID special Trader#cash")
 public class Asset extends Record {
 
     int qty;

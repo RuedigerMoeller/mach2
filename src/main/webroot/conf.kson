@@ -14,30 +14,17 @@
     # will be added+concatenated (however no double files to enable file-level override)
     componentPath: [
 
-        .
-        app
-        app/override
-        app/components
-
+        4k
+        tmp
         #home
         ../../web
         ../../web/nustaq
         ../../web/datatables                       # for images
-        /home/ruedi/IdeaProjects/fast-serialization/src/main/web
+        # minbin
         /home/ruedi/projects/fast-serialization/src/main/web
-
-        #nightflower
-        C:/work/GitHub/mach2/web
-        C:/work/GitHub/abstractor/netty-kontraktor/src/main/web
+        /home/ruedi/IdeaProjects/fast-serialization/src/main/web
         C:/work/GitHub/fast-serialization/src/main/web
-        C:/work/GitHub/mach2/web/datatables
-        C:/work/GitHub/RealLive/src/web
-
-        #office
-        /home/moelrue/IdeaProjects/gh/kontraktor/netty-kontraktor/src/main/web
-        /home/moelrue/IdeaProjects/gh/mach2/web
         /home/moelrue/IdeaProjects/gh/fast-serialization/src/main/web
-        /home/moelrue/IdeaProjects/gh/RealLive/src/web
     ]
 
     # load order of javascript
@@ -49,7 +36,7 @@
 
     # ignored if empty for an actor
     allowedMethods: {
-        ReaXerve : [ $getSession $authenticate $httpRedirectInvite $test $isInviteValid ]
+        ReaXerve : [ $getSession $authenticate $httpRedirectInvite $test $isInviteValid $userExists $createUserFromInvite ]
     }
 
     # ignored if empty for an actor
