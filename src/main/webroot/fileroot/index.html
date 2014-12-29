@@ -6,7 +6,6 @@
     <title></title>
 
     <link rel="stylesheet" href="lookup/bootstrap/mybootstrap.css">
-    <link rel="stylesheet" href="lookup/datatables/jquery.dataTables.css">
 
     <!-- dynamically computed by webserver -->
 
@@ -21,14 +20,16 @@
 
 <navpane-ko params="{ navModel: navs, currentView: currentView }"></navpane-ko>
 
-<table style="width: 100%;">
-    <tr style="width: 100%;">
-        <td style="vertical-align: top; width: 100%;">
-            <div style="padding-left: 30px; padding-top: 20px; padding-right: 30px; "
-                 data-bind="template: { name: currentView(), afterRender: initView }"></div>
-        </td>
-    </tr>
-</table>
+<div style="padding-top: 36px;">
+    <table style="width: 100%;">
+        <tr style="width: 100%;">
+            <td style="vertical-align: top; width: 100%;">
+                <div style="padding-left: 30px; padding-top: 20px; padding-right: 30px; "
+                     data-bind="template: { name: currentView(), afterRender: initView }"></div>
+            </td>
+        </tr>
+    </table>
+</div>
 
 <script src="app.js"></script>
 

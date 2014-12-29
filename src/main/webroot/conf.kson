@@ -19,7 +19,6 @@
         #home
         ../../web
         ../../web/nustaq
-        ../../web/datatables                       # for images
         # minbin
         /home/ruedi/projects/fast-serialization/src/main/web
         /home/ruedi/IdeaProjects/fast-serialization/src/main/web

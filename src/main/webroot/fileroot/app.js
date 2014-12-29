@@ -1,103 +1,8 @@
-function TradeController() {
-    var self = this;
-
-    self.selectedMP = ko.observable({ recordKey: '' }); // currently selected marketPlace
-
-    self.onMarketPlaceSelection = function(selectedRow) {
-        console.log("TradeController MP change");
-        if ( selectedRow ) {
-            self.selectedMP(selectedRow)
-        } else {
-            self.selectedMP({ recordKey: '' })
-        }
-    };
-
-}
-
-function AdminController() {
-    var self = this;
-
-    self.addMarketPlace = function(mp) {
-        console.log('marketplace added:'+mp);
-        Server.session().$instantiateMarketPlace(mp.recordKey).then(function(r,e) {
-            console.log("instantiated "+[r,e]);
-        });
-        availableMarkets.removeKey(mp.recordKey);
-    };
-
-    self.onMarketPlaceSelection = function(selectedRow,index) {
-        console.log("adminController MP change");
-        if ( selectedRow ) {
-            self.selectedMP(selectedRow)
-        } else {
-            self.selectedMP({ recordKey: '' })
-        }
-    };
-
-    self.onInvite = function() {
-        console.log("Invite:"+self.emailList() );
-        Server.session().$sendMails(self.emailList()).then( function(r,e) {
-            console.log("result:"+r); // FIXME: Errors
-            self.emailList("");
-        });
-    };
-
-    self.emailList = ko.observable('');
-    self.selectedMP = ko.observable({ recordKey: '' }); // currently selected marketPlace in MP table
-    self.selectedMPTemplate = ko.observable(null);      // currently selected template(s) from Template table
-}
-
-function InviteController() {
-    var self = this;
-
-    self.invitedBy = ko.observable(null); // Invite
-    self.inviteId = ko.observable("");
-    self.inviteUserExists = ko.observable(false);
-    self.inviteUser = ko.observable("");
-    self.invitePwd = ko.observable("");
-    self.invitePwdConfirm = ko.observable("");
-
-    self.canConfirmInviteError = ko.computed( function() {
-        var un = self.inviteUser();
-        if ( ! /^[\x32-\x7F]*$/.test(un) || un.indexOf('#') >= 0 || un.indexOf('_') >= 0)
-            return "user name must not contain special chars.";
-        if ( self.inviteUserExists() )
-            return "user already exists !";
-        if ( self.inviteUser().length < 4 ) return "nick name must be at least 4 chars long";
-        if ( self.invitePwd().length < 6 ) return "password must have at least 6 chars";
-        if ( self.invitePwd() != self.invitePwdConfirm() ) return "confirmation password does not match";
-        return "";
-    }, self);
-
-    self.canConfirmInvite = ko.computed( function() {
-        return self.canConfirmInviteError() == "";
-    }, self);
-
-    self.inviteUser.subscribe( function() {
-        Server.restGET("$userExists/"+self.inviteUser()).then( function(r,e) {
-            self.inviteUserExists(r?true:false);
-        })
-    });
-    self.acceptInvite = function() {
-        Server.restGET("$createUserFromInvite/"+self.inviteId()+"/"+self.inviteUser()+"/"+self.invitePwd()).then( function(r,e) {
-            if ( r == null ) {
-                Server.loginComponent.user(self.inviteUser());
-                Server.loginComponent.pwd(self.invitePwd());
-                Server.loginComponent.login();
-                window.location.hash="#home";
-            } else {
-                // fixme: internal error. Need msgbox component
-                console.log("User creationg failed "+r);
-            }
-        })
-    };
-
-}
-
 var user = new RLObservableResultSet();
 var tableRS = new RLObservableResultSet();
 var assignedMarkets = new RLObservableResultSet();
 var availableMarkets = new RLObservableResultSet();
+var userMarkets = new RLObservableResultSet();
 
 var model = {};
 
@@ -116,8 +21,9 @@ model.navs = ko.observableArray([
 // appwide
 model.currentView = ko.observable("home");
 model.tables = tableRS.list;
-model.assignedMarkets = assignedMarkets.list;
-model.availableMarkets = availableMarkets.list;
+model.userMarkets = userMarkets.list;   // markets available for trading
+model.assignedMarkets = assignedMarkets.list;   // markets assigned to an admin
+model.availableMarkets = availableMarkets.list; // market templates
 model.userName = Server.userName;
 model.userList = user.list;
 
@@ -143,9 +49,17 @@ model.isMarketAssigned = function (marketPlaceKey) {
 // invitationstuff FIXME: use own controller
 model.inviteController = new InviteController();
 // admin controller
-model.adminController = new AdminController();
+model.adminController = new MarketsController();
 // trade controller (template named tables)
 model.tradeController = new TradeController();
+
+model.userString = ko.computed( function() {
+    if ( Server.loggedIn() && model.userRecord().role != "NONE" ) {
+        var us = model.userRecord();
+        return "Welcome <b>"+us.name+"</b>, "+us.role[0];
+    }
+    return "";
+});
 
 ko.applyBindings(model);
 
@@ -155,16 +69,19 @@ Server.doOnceLoggedIn( function(bool) {
     assignedMarkets.subscribe("MarketPlace", "it.admin=='"+Server.userName()+"'").onSnapFin( function() {
         availableMarkets.subscribe("MarketPlace", "it.admin=='admin'", function(record) { return ! model.isMarketAssigned(record.recordKey) } );
     });
-    Server.session().$getUser().then( function(r,e) {
-        if ( r ) {
-            model.userRecord(r);
-            model.isMarketAdmin( (r.role[0] == 'ADMIN' || r.role[0] == 'MARKET_OWNER'));
+    Server.session().$getUser().then( function(userRec,e) {
+        if ( userRec ) {
+            userMarkets.subscribe("MarketPlace", "it.admin=='"+userRec.adminName+"' || it.admin=='"+userRec.name+"'");
+            model.userRecord(userRec);
+            model.isMarketAdmin( (userRec.role[0] == 'ADMIN' || userRec.role[0] == 'MARKET_OWNER'));
         }
     });
     user.subscribe("User","true");
 });
 
 var inviteString = window.location.hash;
+
+// handle links from invitation mail
 if ( inviteString.indexOf("invite$") >= 0 ) {
     model.inviteController.inviteId(inviteString.substring("invite$".length+1));
     Kontraktor.restGET('$isInviteValid/'+model.inviteController.inviteId())

@@ -7,37 +7,43 @@
             background-color: #315;
         }
     </style>
-    <table data-bind="navdrawer" style="width: 100%;">
-        <tr data-bind="foreach: navs" class="drawer navbar-ko-bg" style="height: 45px; vertical-align: top; padding: 8px; width: 100%; transition: height .3s ease-in-out;">
-            <td data-bind="attr: { style: 'padding: 8px; text-align: left;', class: ($parent.currentView() == link.substring(1) ? 'navbar-ko-bg-sel' : 'navbar-ko-bg') }">
-                <div>
-                    <a data-bind="attr: { href: link }, if: enabled">
-                        <b style="font-size: large; color: #ddd; "
-                           data-bind="text: title"
-                           onmouseover="this.style.color='#fff'"
-                           onmouseout="this.style.color='#ddd'"
-                           style="transition: color .6s ease-in-out;"
-                                >
+    <div style="
+        position:fixed;
+        top:0;
+        width:100%;
+        z-index:100;">
+        <table data-bind="navdrawer" style="width: 100%;">
+            <tr data-bind="foreach: navs" class="drawer navbar-ko-bg" style="height: 45px; vertical-align: top; padding: 8px; width: 100%; transition: height .3s ease-in-out;">
+                <td data-bind="attr: { style: 'padding: 8px; text-align: left;', class: ($parent.currentView() == link.substring(1) ? 'navbar-ko-bg-sel' : 'navbar-ko-bg') }">
+                    <div>
+                        <a data-bind="attr: { href: link }, if: enabled">
+                            <b style="font-size: large; color: #ddd; "
+                               data-bind="text: title"
+                               onmouseover="this.style.color='#fff'"
+                               onmouseout="this.style.color='#ddd'"
+                               style="transition: color .6s ease-in-out;"
+                                    >
+                            </b>
+                        </a>
+                        <b data-bind="ifnot: enabled">
+                            <span data-bind="text: title" style="color: #999; font-size: large;">
+                            </span>
                         </b>
-                    </a>
-                    <b data-bind="ifnot: enabled">
-                        <span data-bind="text: title" style="color: #999; font-size: large;">
-                        </span>
-                    </b>
-                </div>
-            </td>
-            <td data-bind="visible: $index() == ($parent.navs().length-1)" style="width: 100%;"></td>
-            <td data-bind="visible: $index() == ($parent.navs().length-1) && (drawerVisible || Server.loggedIn())" style="width: 350px;">
-                <kr-login params="facade: 'JReaXerve'" ></kr-login>
-                <button data-bind="visible: !Server.loggedIn()"
-                        style="font-size: larger; padding-top: 6px; color: #ddd; padding: 0; border: none; background: none;"
-                        onmouseover="this.style.color='#fff'"
-                        onmouseout="this.style.color='#ddd'"
-                        style="transition: color .6s ease-in-out;"
-                        >
-                    <b data-bind="click: $parent.onRegister">Register</b>
-                </button>
-            </td>
-        </tr>
-    </table>
+                    </div>
+                </td>
+                <td data-bind="visible: $index() == ($parent.navs().length-1)" style="width: 100%;"></td>
+                <td data-bind="visible: $index() == ($parent.navs().length-1) && (drawerVisible || Server.loggedIn())" style="width: 350px;">
+                    <kr-login params="facade: 'JReaXerve'" ></kr-login>
+                    <button data-bind="visible: !Server.loggedIn()"
+                            style="font-size: larger; padding-top: 6px; color: #ddd; padding: 0; border: none; background: none;"
+                            onmouseover="this.style.color='#fff'"
+                            onmouseout="this.style.color='#ddd'"
+                            style="transition: color .6s ease-in-out;"
+                            >
+                        <b data-bind="click: $parent.onRegister">Register</b>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
 </template>

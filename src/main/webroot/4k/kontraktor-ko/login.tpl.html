@@ -19,7 +19,7 @@
                 </tr>
             </table>
         </div>
-    <div style="color: white;padding-top: 12px; padding-right: 12px;" data-bind="visible: loggedIn()">Welcome <b data-bind="text: $root.user"></b></div>
+    <div style="color: white;padding-top: 12px; padding-right: 12px;" data-bind="visible: loggedIn()"><span style="white-space:nowrap;" data-bind="html: $root.userString()"></span></div>
     <b><span data-bind="text: resultMsg" style="color: white;"></span></b>
     </div>
 </template>

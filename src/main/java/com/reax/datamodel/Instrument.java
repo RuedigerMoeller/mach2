@@ -31,9 +31,9 @@ public class Instrument extends Record {
     int bid;
     @RenderStyle("Price") @DisplayWidth("60px") @TextColor("#004") @Align("right")
     int ask;
-    @RenderStyle("Qty") @DisplayWidth("60px")
+    @RenderStyle("Qty") @DisplayWidth("60px") @Align("right")
     int bidQty;
-    @RenderStyle("Qty")  @DisplayWidth("60px")
+    @RenderStyle("Qty")  @DisplayWidth("60px") @Align("right")
     int askQty;
 
     @RenderStyle("Price") @DisplayWidth("60px") @Align("right")

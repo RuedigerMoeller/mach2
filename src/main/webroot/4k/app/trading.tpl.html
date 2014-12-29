@@ -1,0 +1,15 @@
+<template id="tables">
+    <div data-bind="with: tradeController">
+        <div data-bind="foreach: $parent.userMarkets">
+            <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.onMarketPlaceSelection">
+            </span>
+        </div>
+        <br>
+        <!--<div style="padding-right: 50px;height:250px;border:1px solid #ccc; overflow:auto;">-->
+        <rl-grid params="table: 'Instrument', subscribe: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´',
+                         columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc','lastQty' ] " >
+
+        </rl-grid>
+        <!--</div>-->
+    </div>
+</template>
