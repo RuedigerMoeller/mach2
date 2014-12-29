@@ -13,12 +13,13 @@
     # define lookup order. In case a filename contains '.', file lookup is done, else all js/html's inside a dir
     # will be added+concatenated (however no double files to enable file-level override)
     componentPath: [
-
-        4k
-        tmp
+        4k                     # application (+overrides)
+        tmp                    # generated stuff
         #home
         ../../web
-        ../../web/nustaq
+        ../../web/nustaq       # enable scan of nustaq subcomps
+        ../../web/knockout     # enable scan of knockout subcomps
+
         # minbin
         /home/ruedi/projects/fast-serialization/src/main/web
         /home/ruedi/IdeaProjects/fast-serialization/src/main/web
@@ -26,9 +27,9 @@
         /home/moelrue/IdeaProjects/gh/fast-serialization/src/main/web
     ]
 
-    # load order of javascript
+    # modules to load
     components: [
-        app
+        app       # app dependencies (see ./4k/app/dep.kson) actually contain all required js-modules
     ]
 
     # network exposed messages

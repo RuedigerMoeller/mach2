@@ -21,9 +21,11 @@ public class Order extends Record {
 
     boolean buy; // else sell
 
+    @RenderStyle("Price") @DisplayWidth("60px") @Align("right")
     int limitPrice;
     int qty;
 
+    @RenderStyle("Text15")
     String text;
 
     String traderKey;

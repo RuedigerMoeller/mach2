@@ -49,9 +49,9 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
 
     public Future<String> $subscribe(String table, String query, Callback cb) {
         Subscription subs = realLive.stream(table).subscribe(new JSQuery(query), change -> {
-            if ( change.getTableId().equals("Instrument") ) {
-                System.out.println("instrument update:"+change);
-            }
+//            if ( change.getTableId().equals("Instrument") ) {
+//                System.out.println("instrument update:"+change);
+//            }
             cb.receive(change, CONT);
         });
         String key = "subs" + subsCount++;

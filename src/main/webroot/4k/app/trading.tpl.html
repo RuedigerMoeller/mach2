@@ -5,11 +5,62 @@
             </span>
         </div>
         <br>
-        <!--<div style="padding-right: 50px;height:250px;border:1px solid #ccc; overflow:auto;">-->
-        <rl-grid params="table: 'Instrument', subscribe: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´',
-                         columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc','lastQty' ] " >
 
-        </rl-grid>
-        <!--</div>-->
+        <div data-bind="flip: selectedInstr()">
+            <div>
+                <div class="front">
+                    <rl-grid params="table: 'Instrument',
+                         subscribe: subscription,
+                         columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc','lastQty' ],
+                         onSelection: tableSelected" >
+                    </rl-grid>
+                </div>
+                <div class="back">
+                    <table>
+                        <tr>
+                            <td>
+                                <rl-grid params="table: 'Instrument',
+                                                 subscribe: instrSubscription,
+                                                 columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc', 'lastQty' ]">
+                                </rl-grid>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <span class="buyBox"><b>Buy</b></span>
+                                <div style="border: 3px solid #711;">
+                                    <rl-grid params="
+                                        table: 'Order',
+                                        subscribe: orderBuySubscription,
+                                        columns: [ 'limitPrice', 'qty', 'traderKey', 'text' ],
+                                        sortKey: 'limitPrice',
+                                        noColumns: true,
+                                        noStriping: true
+                                    ">
+                                </rl-grid>
+                                </div>
+                            </td>
+                        </tr>
+                        <!--<tr><td>&nbsp;</td></tr>-->
+                        <tr>
+                            <td align="left">
+                                <div style="border: 3px solid #117;">
+                                    <rl-grid params="
+                                        table: 'Order',
+                                        subscribe: orderSellSubscription,
+                                        columns: [ 'text', 'traderKey', 'qty', 'limitPrice'],
+                                        sortKey: 'limitPrice',
+                                        noColumns: true,
+                                        noStriping: true
+                                    ">
+                                    </rl-grid>
+                                </div>
+                                <span class="sellBox"><b>Sell</b></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

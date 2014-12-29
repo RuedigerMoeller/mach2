@@ -36,7 +36,7 @@ public class Feeder extends Actor<Feeder> {
     public void $feed() {
         RLTable<Instrument> instr = rl.getTable("Instrument");
         instr.stream().each((change) -> {
-            if ( orderCount > 1000 ) {
+            if ( orderCount > 3000 ) {
                 RLTable orTable = rl.getTable("Order");
                 orTable.stream().each((delChange) -> {
                     if ( delChange.isAdd() ) {

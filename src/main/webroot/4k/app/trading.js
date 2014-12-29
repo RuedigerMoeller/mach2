@@ -9,9 +9,43 @@ function TradeController() {
     var self = this;
 
     self.selectedMP = ko.observable({ recordKey: '' }); // currently selected marketPlace
+    self.selectedInstr = ko.observable( null );
+
+    self.subscription = ko.pureComputed( function() {
+        if ( self.selectedInstr() == null )
+            return  "it.marketPlace== '"+ self.selectedMP().recordKey+"'";
+        else
+            return  "it.recordKey== '"+ self.selectedInstr().recordKey+"'";
+    });
+
+    self.instrSubscription = ko.pureComputed( function() {
+        if ( self.selectedInstr() == null )
+            return  "false";
+        else
+            return  "it.recordKey== '"+ self.selectedInstr().recordKey+"'";
+    });
+
+    self.orderBuySubscription = ko.pureComputed( function() {
+        if ( self.selectedInstr() == null )
+            return  "false";
+        else
+            return  "it.instrumentKey == '"+ self.selectedInstr().recordKey+"' && it.buy";
+    });
+
+    self.orderSellSubscription = ko.pureComputed( function() {
+        if ( self.selectedInstr() == null )
+            return  "false";
+        else
+            return  "it.instrumentKey == '"+ self.selectedInstr().recordKey+"' && !it.buy";
+    });
+
+    self.tableSelected = function( instr ) {
+        self.selectedInstr(instr);
+    };
 
     self.onMarketPlaceSelection = function(selectedRow) {
         console.log("TradeController MP change");
+        self.selectedInstr(null);
         if ( selectedRow ) {
             self.selectedMP(selectedRow)
         } else {

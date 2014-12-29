@@ -1,5 +1,6 @@
 [
     bootstrap
+    punches
     reallive      # data basics
     kontraktor    # communication+encoding
     generated.js  # generated server interface
@@ -7,4 +8,5 @@
     navpane-ko    # navpane tag for ko
     components    # applevel components
     rlgrid        # real live table control
+    flipcontainer # effect
 ]

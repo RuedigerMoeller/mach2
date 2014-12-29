@@ -1,4 +1,11 @@
 
+// params:
+//   table: tableName
+//   subscribe: queryString
+//   columns: []
+//   noColums: true
+//   sortKey: colId
+//   noStriping: something
 ko.components.register('rl-grid', {
     template: 'none',
     viewModel: {
@@ -9,13 +16,18 @@ ko.components.register('rl-grid', {
 });
 
 function rlEscapeId( str ) {
-    return str.replace(/#/g, "_");
+    return str.replace(/#/g, "_").replace(/:/g, "_");
 }
 
 // a map from style to a formatting function (JColumnMeta, fieldName, cellData)
 var RLFormatterMap = {
     "Price": function(meta, fieldName, celldata) {
         return "<b>"+Number(celldata/100).toFixed(2)+"</b>";
+    },
+    "Text15": function(meta, fieldName, celldata) {
+        if ( celldata.length < 16 )
+            return celldata;
+        return celldata.substring(0,15)+ " ...";
     }
 };
 
@@ -28,6 +40,16 @@ function RLGridModel(params,componentInfo) {
     self.tableMeta = null;
     self.currentSel = null;
     self.sortKey = 'recordKey';
+    self.sortOrder = true;
+    self.striping = params.noStriping ? false : true;
+    if ( params.sortKey ) {
+        if ( params.sortKey.substring(0,1) == '!' ) {
+            self.sortKey = params.sortKey.substring(1);
+            self.sortOrder = false;
+        } else {
+            self.sortKey = params.sortKey;
+        }
+    }
     self.snapshotDone = false;
 
     var showElem = function(elem) {
@@ -44,7 +66,7 @@ function RLGridModel(params,componentInfo) {
         while (e = e.previousSibling) {
             ++k;
         }
-        if (k & 1) {
+        if ((k & 1) && self.striping ) {
             $(targetElem).find("td").addClass('rl-grid-row-even');
         } else
             $(targetElem).find("td").addClass('rl-grid-row');
@@ -54,6 +76,9 @@ function RLGridModel(params,componentInfo) {
         self.tableElem.empty();
         self.tableMeta = Server.meta().tables[tableName];
         var htm = "<table class='rl-grid-table'><thead><tr style='background-color: #fff;'>"+self.createColumns(tableName)+"</tr></thead><tbody></tbody></table>";
+        if ( params.noColumns ) {
+            htm = "<table class='rl-grid-table'><tbody></tbody></table>";
+        }
         self.tableElem.append(htm);
         self.tbody = self.tableElem.find("tbody");
         self.tbody.on( "click", function(event) {
@@ -115,16 +140,20 @@ function RLGridModel(params,componentInfo) {
         for (var i = 0; i < colNames.length; i++) {
             var cn = colNames[i];
             var colMeta = tableMeta.columns[cn];
-            var title = colMeta.displayName;
-            var width = colMeta.displayWidth;
-            if ( ! width )
-                width = '';
-            else
-                width = "style: 'width:'"+width+";'";
-            if ( ! title ) {
-                title = colMeta.name;
+            if ( ! colMeta ) {
+                res += "<td>wrong column '"+cn+"'</td>";
+            } else {
+                var title = colMeta.displayName;
+                var width = colMeta.displayWidth;
+                if ( ! width )
+                    width = '';
+                else
+                    width = "style: 'width:'"+width+";'";
+                if ( ! title ) {
+                    title = colMeta.name;
+                }
+                res += "<td class='rl-grid-col' "+width+">"+title+"</td>";
             }
-            res += "<td class='rl-grid-col' "+width+">"+title+"</td>";
         }
         return res;
     };
@@ -144,8 +173,14 @@ function RLGridModel(params,componentInfo) {
             var trRow = tr.__row;
             if ( trRow ) {
                 var that = trRow[self.sortKey];
-                if ( that && that > me ) {
-                    return tr;
+                if ( self.sortOrder ) {
+                    if ( that && that > me ) {
+                        return tr;
+                    }
+                } else {
+                    if ( that && that <= me ) {
+                        return tr;
+                    }
                 }
             }
         }
@@ -153,13 +188,15 @@ function RLGridModel(params,componentInfo) {
     }
 
     self.updateStripes = function( startIndex ) {
+        if ( ! self.striping )
+            return;
         var children = self.tbody.children();
         for ( var i = startIndex; i < children.length; i++ ) {
             var tr = $(children[i]);
             var tds = tr.children();
             for ( var ii = 0; ii < tds.length; ii++ ) {
                 var td = $(tds[ii]);
-                if ( i&1 ) {
+                if ( (i&1) && self.striping ) {
                     td.removeClass('rl-grid-row');
                     td.addClass('rl-grid-row-even');
                 } else {
