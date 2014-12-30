@@ -1,0 +1,14 @@
+<template id="input-tpl">
+    <input class="form-control" data-bind="
+        attr: {
+            placeholder: $data.placeHolder(),
+            size: size(),
+            maxlength: maxLength()
+        },
+        value: value,
+        valueUpdate: 'input',
+        style: { backgroundColor: bgColor, width: width, textAlign: align }
+    ">
+</template>
+
+<!--style: { width: width, backgroundColor: bgColor, textAlign: align }-->

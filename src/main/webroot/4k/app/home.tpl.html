@@ -1,16 +1,9 @@
 <template id="home">
     <h1>Home</h1>
 
+    <b data-bind="bsttip: 'Hallo Hallo'">POK</b>
 
-    <div data-bind="flip: true">
-        <div style="background-color: #777;">
-            <div class="front">
-                Hello Front.
-            </div>
-            <div class="back">
-                Goodby, I am back
-            </div>
-        </div>
-    </div>
+    <ns-input params="value: test, width: '100px', align: 'right', validator: 'Number' ">
+    </ns-input>
 
 </template>

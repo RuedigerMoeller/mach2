@@ -45,6 +45,7 @@ model.isMarketAssigned = function (marketPlaceKey) {
     return assignedMarkets.containsKey( marketPlaceKey + '#' + model.userName() );
 };
 
+model.test = ko.observable("pok");
 
 // invitationstuff FIXME: use own controller
 model.inviteController = new InviteController();
@@ -62,6 +63,13 @@ model.userString = ko.computed( function() {
 });
 
 ko.applyBindings(model);
+
+// init/overwrite formatters in rlgrid
+RLFormatterMap["Text15"] = function(meta, fieldName, celldata) {
+    if ( celldata.length < 16 )
+        return celldata;
+    return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,15)+ " ...</span>";
+};
 
 // subscribe sets on login
 Server.doOnceLoggedIn( function(bool) {

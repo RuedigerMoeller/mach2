@@ -6,6 +6,7 @@
 //   noColums: true
 //   sortKey: colId
 //   noStriping: something
+//   width: '300px'
 ko.components.register('rl-grid', {
     template: 'none',
     viewModel: {
@@ -75,9 +76,10 @@ function RLGridModel(params,componentInfo) {
     self.initTable = function( tableName ) {
         self.tableElem.empty();
         self.tableMeta = Server.meta().tables[tableName];
-        var htm = "<table class='rl-grid-table'><thead><tr style='background-color: #fff;'>"+self.createColumns(tableName)+"</tr></thead><tbody></tbody></table>";
+
+        var htm = "<table class='rl-grid-table' "+(params.width?"width='"+params.width+"'":"")+"><thead><tr style='background-color: #fff;'>"+self.createColumns(tableName)+"</tr></thead><tbody></tbody></table>";
         if ( params.noColumns ) {
-            htm = "<table class='rl-grid-table'><tbody></tbody></table>";
+            htm = "<table class='rl-grid-table' "+(params.width?"width='"+params.width+"'":"")+"><tbody></tbody></table>";
         }
         self.tableElem.append(htm);
         self.tbody = self.tableElem.find("tbody");
@@ -235,6 +237,9 @@ function RLGridModel(params,componentInfo) {
         } else {
             self.tbody.append(elem);
         }
+
+        ko.applyBindings(row, elem.get(0));
+
         if ( self.snapshotDone )
             showElem(elem);
         elem.get(0).__row = row;

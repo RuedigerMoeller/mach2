@@ -10,6 +10,10 @@ function TradeController() {
 
     self.selectedMP = ko.observable({ recordKey: '' }); // currently selected marketPlace
     self.selectedInstr = ko.observable( null );
+    self.buyPrc = ko.observable(null);
+    self.sellPrc = ko.observable(null);
+    self.buyQty = ko.observable(1);
+    self.sellQty = ko.observable(1);
 
     self.subscription = ko.pureComputed( function() {
         if ( self.selectedInstr() == null )

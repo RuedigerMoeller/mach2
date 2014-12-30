@@ -12,7 +12,9 @@
                     <rl-grid params="table: 'Instrument',
                          subscribe: subscription,
                          columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc','lastQty' ],
-                         onSelection: tableSelected" >
+                         onSelection: tableSelected,
+                         width: '520px'
+                        ">
                     </rl-grid>
                 </div>
                 <div class="back">
@@ -21,13 +23,45 @@
                             <td>
                                 <rl-grid params="table: 'Instrument',
                                                  subscribe: instrSubscription,
-                                                 columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc', 'lastQty' ]">
+                                                 columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc', 'lastQty' ],
+                                                 width: '520px'
+                                                 ">
                                 </rl-grid>
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <span class="buyBox"><b>Buy</b></span>
+                                <table>
+                                    <tr>
+                                        <td style="padding: 3px 2px; width: 70px;">
+                                            <ns-input params="
+                                               placeHolder: 'Price',
+                                               maxLength: 5,
+                                               value: buyPrc,
+                                               align: 'right',
+                                               validator: 'Number'
+                                            ">
+                                            </ns-input>
+                                        </td>
+                                        <td style="padding: 3px 2px; width: 60px;">
+                                            <ns-input params="
+                                               placeHolder: 'Qty',
+                                               maxLength: 3,
+                                               value: buyQty,
+                                               align: 'right',
+                                               validator: 'Int'
+                                            ">
+                                            </ns-input>
+                                        </td>
+                                        <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px; border: none;">
+                                            <button class="buyBox" style="border: none;"><b>Buy</b></button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
                                 <div style="border: 3px solid #711;">
                                     <rl-grid params="
                                         table: 'Order',
@@ -37,7 +71,7 @@
                                         noColumns: true,
                                         noStriping: true
                                     ">
-                                </rl-grid>
+                                    </rl-grid>
                                 </div>
                             </td>
                         </tr>
@@ -55,7 +89,34 @@
                                     ">
                                     </rl-grid>
                                 </div>
-                                <span class="sellBox"><b>Sell</b></span>
+                                <table>
+                                    <tr>
+                                        <td style="padding: 3px 2px; width: 70px;">
+                                            <ns-input params="
+                                               placeHolder: 'Price',
+                                               maxLength: 5,
+                                               value: sellPrc,
+                                               align: 'right',
+                                               validator: 'Number'
+                                            ">
+                                            </ns-input>
+                                        </td>
+                                        <td style="padding: 3px 2px; width: 60px;">
+                                            <ns-input params="
+                                               placeHolder: 'Qty',
+                                               maxLength: 3,
+                                               value: sellQty,
+                                               align: 'right',
+                                               validator: 'Int',
+                                               width: '60px'
+                                            ">
+                                            </ns-input>
+                                        </td>
+                                        <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px;">
+                                            <button class="sellBox" style="border: none; "><b>Sell</b></button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </table>

@@ -25,10 +25,18 @@
 
         .buyBox {
             display: inline-block;
-            padding: 4px 6px;
+            padding: 4px;
             border-radius: 2px;
             color: #fff;
             background-color: #711;
+        }
+
+        .price-in {
+            text-align: right;
+        }
+
+        .qty-in {
+            text-align: right;
         }
 
     </style>
@@ -40,7 +48,7 @@
 <div style="padding-top: 36px;">
     <table style="width: 100%;">
         <tr style="width: 100%;">
-            <td style="vertical-align: top; width: 100%;">
+            <td style="vertical-align: top; width: 100%; horiz-align: center;">
                 <div style="padding-left: 30px; padding-top: 20px; padding-right: 30px; "
                      data-bind="template: { name: currentView(), afterRender: initView }"></div>
             </td>

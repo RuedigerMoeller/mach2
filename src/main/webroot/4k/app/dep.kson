@@ -1,6 +1,8 @@
 [
     bootstrap
     punches
+    bootstrap-ko
+    input-ko
     reallive      # data basics
     kontraktor    # communication+encoding
     generated.js  # generated server interface
