@@ -39,7 +39,7 @@
                                                maxLength: 5,
                                                value: buyPrc,
                                                align: 'right',
-                                               validator: 'Number'
+                                               validator: 'Number',
                                             ">
                                             </ns-input>
                                         </td>
@@ -49,12 +49,12 @@
                                                maxLength: 3,
                                                value: buyQty,
                                                align: 'right',
-                                               validator: 'Int'
+                                               validator: 'Int',
                                             ">
                                             </ns-input>
                                         </td>
                                         <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px; border: none;">
-                                            <button class="buyBox" style="border: none;"><b>Buy</b></button>
+                                            <button class="buyBox" style="border: none;" data-bind="enable: buyValid"><b>Buy</b></button>
                                         </td>
                                     </tr>
                                 </table>
@@ -62,7 +62,7 @@
                         </tr>
                         <tr>
                             <td align="right">
-                                <div style="border: 3px solid #711;">
+                                <div>
                                     <rl-grid params="
                                         table: 'Order',
                                         subscribe: orderBuySubscription,
@@ -78,7 +78,7 @@
                         <!--<tr><td>&nbsp;</td></tr>-->
                         <tr>
                             <td align="left">
-                                <div style="border: 3px solid #117;">
+                                <div>
                                     <rl-grid params="
                                         table: 'Order',
                                         subscribe: orderSellSubscription,
@@ -97,7 +97,7 @@
                                                maxLength: 5,
                                                value: sellPrc,
                                                align: 'right',
-                                               validator: 'Number'
+                                               validator: 'Number',
                                             ">
                                             </ns-input>
                                         </td>
@@ -108,12 +108,12 @@
                                                value: sellQty,
                                                align: 'right',
                                                validator: 'Int',
-                                               width: '60px'
+                                               width: '60px',
                                             ">
                                             </ns-input>
                                         </td>
                                         <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px;">
-                                            <button class="sellBox" style="border: none; "><b>Sell</b></button>
+                                            <button class="sellBox" style="border: none;" data-bind="enable: sellValid"><b>Sell</b></button>
                                         </td>
                                     </tr>
                                 </table>

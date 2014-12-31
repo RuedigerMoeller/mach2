@@ -15,6 +15,18 @@ function TradeController() {
     self.buyQty = ko.observable(1);
     self.sellQty = ko.observable(1);
 
+    self.sellValid = ko.pureComputed(function() {
+        return true;
+    });
+
+    self.buyValid = ko.pureComputed(function() {
+        self.buyPrc();
+        self.buyQty();
+        if ( !self.buyPrc.editor || !self.buyQty.editor )
+            return false;
+        return self.buyPrc.editor.isValid() && self.buyQty.editor.isValid();
+    });
+
     self.subscription = ko.pureComputed( function() {
         if ( self.selectedInstr() == null )
             return  "it.marketPlace== '"+ self.selectedMP().recordKey+"'";
