@@ -1,9 +1,6 @@
 package com.reax;
 
-import com.reax.datamodel.Instrument;
-import com.reax.datamodel.Invite;
-import com.reax.datamodel.MarketPlace;
-import com.reax.datamodel.User;
+import com.reax.datamodel.*;
 import org.nustaq.kontraktor.Callback;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
@@ -159,6 +156,22 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         return new Promise<>(user);
     }
 
+    public Future<String> $addOrder( String instrId, String instrName, boolean buy, int price, int qty, String text ) {
+        Order o = new Order();
+        o.setBuy(buy);
+        o.setCreationTime(System.currentTimeMillis());
+        o.setInstrumentKey(instrId);
+        o.setInstrumentMnem(instrName);
+        o.setLimitPrice(price);
+        o.setQty(qty);
+        o.setText(text);
+        o.setTraderKey(user.getRecordKey());
+        return app.getMatcher().$addOrder(o);
+    }
+
+    public Future<String> $delOrder(Order order) {
+        return app.getMatcher().$delOrder(order);
+    }
     /**
      * "SUCCESS" = sucess, else error msg
      * @return

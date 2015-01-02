@@ -6,6 +6,7 @@ import com.reax.matcher.Feeder;
 import com.reax.matcher.Matcher;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.nustaq.kontraktor.*;
+import org.nustaq.kontraktor.annotations.CallerSideMethod;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.remoting.http.rest.HtmlString;
@@ -50,6 +51,16 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         feeder = Actors.AsActor(Feeder.class);
         feeder.$init(realLive,matcher);
         feeder.$startFeed();
+    }
+
+    @CallerSideMethod
+    public Mailer getMailer() {
+        return getActor().mailer;
+    }
+
+    @CallerSideMethod
+    public Matcher getMatcher() {
+        return getActor().matcher;
     }
 
     protected void initRealLive() {

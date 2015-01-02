@@ -13,8 +13,6 @@ function InviteController() {
 
     self.canConfirmInviteError = ko.computed( function() {
         var un = self.inviteUser();
-        if ( ! /^[\x32-\x7F]*$/.test(un) || un.indexOf('#') >= 0 || un.indexOf('_') >= 0)
-            return "user name must not contain special chars.";
         if ( self.inviteUserExists() )
             return "user already exists !";
         if ( self.inviteUser().length < 4 ) return "nick name must be at least 4 chars long";

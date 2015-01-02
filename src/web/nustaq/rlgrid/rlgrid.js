@@ -7,6 +7,8 @@
 //   sortKey: colId
 //   noStriping: something
 //   width: '300px'
+//   actions: function(tableName,row) => return td content. clickable elements need id starting with _ns_ set
+//   onAction: fun(actionid,row)
 ko.components.register('rl-grid', {
     template: 'none',
     viewModel: {
@@ -43,6 +45,9 @@ function RLGridModel(params,componentInfo) {
     self.sortKey = 'recordKey';
     self.sortOrder = true;
     self.striping = params.noStriping ? false : true;
+    self.actions = params.actions ? params.actions : false;
+    self.onAction = params.onAction ? params.onAction : null;
+
     if ( params.sortKey ) {
         if ( params.sortKey.substring(0,1) == '!' ) {
             self.sortKey = params.sortKey.substring(1);
@@ -85,10 +90,22 @@ function RLGridModel(params,componentInfo) {
         self.tbody = self.tableElem.find("tbody");
         self.tbody.on( "click", function(event) {
             var target = event.target;
+            var actionId = null;
 
             while ( target ) {
+                if (target.id && target.id.indexOf('_ns_') == 0 ) {
+                    actionId = target.id;
+                }
                 if ( target.nodeName == "TR" ) {
                     console.log("found row "+target.__row);
+                    if (actionId) {
+                        if (!self.onAction) {
+                            console.error("no onAction function set")
+                        }
+                        if (self.onAction.apply( self, [actionId, target.__row]) ) {
+                            return;
+                        }
+                    }
                     if ( ! target.__selected ) {
                         if ( self.currentSel ) {
                             self.deselect(self.currentSel);
@@ -138,6 +155,9 @@ function RLGridModel(params,componentInfo) {
         if ( ! tableMeta )
             return;
 
+        if ( self.actions ) {
+            res += "<td class='rl-grid-col-action'></td>"
+        }
         var colNames = visibleColumnNames();
         for (var i = 0; i < colNames.length; i++) {
             var cn = colNames[i];
@@ -216,6 +236,9 @@ function RLGridModel(params,componentInfo) {
         if ( ! tableMeta )
             return;
 
+        if ( self.actions ) {
+            res+="<td class='rl-grid-row'>"+self.actions.apply(self,[tableName,row])+"</td>";
+        }
         var colNames = visibleColumnNames();
         for (var i = 0; i < colNames.length; i++) {
             var cn = colNames[i];

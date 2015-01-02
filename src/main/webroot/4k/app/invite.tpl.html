@@ -7,7 +7,16 @@
         <table cellpadding="4px">
             <tr>
                 <td width="10px"></td>
-                <td style="padding: 4px;"><input type="text" class="form-control" placeholder="nick name" maxlength="16" data-bind="value: inviteUser , valueUpdate: 'input'"></td>
+                <td style="padding: 4px;">
+                    <!--<input type="text" class="form-control" placeholder="nick name" maxlength="16" data-bind="value: inviteUser , valueUpdate: 'input'">-->
+                    <ns-input params="
+                           placeHolder: 'nick name',
+                           maxLength: 16,
+                           value: inviteUser,
+                           validator: ns.validators.charnumstring(16)
+                        ">
+                    </ns-input>
+                </td>
             </tr>
             <tr>
                 <td>&nbsp;</td>

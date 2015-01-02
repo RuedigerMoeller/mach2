@@ -1,4 +1,6 @@
 <template id="tables">
+    <br>
+    <br>
     <div data-bind="with: tradeController">
         <div data-bind="foreach: $parent.userMarkets">
             <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.onMarketPlaceSelection">
@@ -13,24 +15,26 @@
                          subscribe: subscription,
                          columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc','lastQty' ],
                          onSelection: tableSelected,
-                         width: '520px'
+                         width: '600px'
                         ">
                     </rl-grid>
                 </div>
                 <div class="back">
                     <table>
                         <tr>
-                            <td>
+                            <td colspan="3">
                                 <rl-grid params="table: 'Instrument',
                                                  subscribe: instrSubscription,
                                                  columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc', 'lastQty' ],
-                                                 width: '520px'
+                                                 width: '600px'
                                                  ">
                                 </rl-grid>
                             </td>
                         </tr>
                         <tr>
-                            <td align="right">
+                        </tr>
+                        <tr>
+                            <td valign="top" align="left">
                                 <table>
                                     <tr>
                                         <td style="padding: 3px 2px; width: 70px;">
@@ -39,7 +43,7 @@
                                                maxLength: 5,
                                                value: buyPrc,
                                                align: 'right',
-                                               validator: 'Number',
+                                               validator: ns.validators.number(0.01,9.99)
                                             ">
                                             </ns-input>
                                         </td>
@@ -49,19 +53,29 @@
                                                maxLength: 3,
                                                value: buyQty,
                                                align: 'right',
-                                               validator: 'Int',
+                                               validator: ns.validators.int(1,999)
                                             ">
                                             </ns-input>
                                         </td>
                                         <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px; border: none;">
-                                            <button class="buyBox" style="border: none;" data-bind="enable: buyValid"><b>Buy</b></button>
+                                            <button class="btn-primary btn-sm" style="border: none;"
+                                                    data-bind="dependsOn: [ buyQty, buyPrc ], click: doBuy"><b>Buy</b>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <textarea class="form-control" placeholder="Order text" cols="30" rows="1" data-bind="value: buyText"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <span data-bind="html: buyOrderMsg"></span>
                                         </td>
                                     </tr>
                                 </table>
                             </td>
-                        </tr>
-                        <tr>
-                            <td align="right">
+                            <td align="left" valign="top">
                                 <div>
                                     <rl-grid params="
                                         table: 'Order',
@@ -69,7 +83,9 @@
                                         columns: [ 'limitPrice', 'qty', 'traderKey', 'text' ],
                                         sortKey: 'limitPrice',
                                         noColumns: true,
-                                        noStriping: true
+                                        noStriping: true,
+                                        actions: buyActions,
+                                        onAction: onTableAction
                                     ">
                                     </rl-grid>
                                 </div>
@@ -77,7 +93,7 @@
                         </tr>
                         <!--<tr><td>&nbsp;</td></tr>-->
                         <tr>
-                            <td align="left">
+                            <td align="right" valign="top">
                                 <div>
                                     <rl-grid params="
                                         table: 'Order',
@@ -85,10 +101,14 @@
                                         columns: [ 'text', 'traderKey', 'qty', 'limitPrice'],
                                         sortKey: 'limitPrice',
                                         noColumns: true,
-                                        noStriping: true
+                                        noStriping: true,
+                                        actions: buyActions,
+                                        onAction: onTableAction
                                     ">
                                     </rl-grid>
                                 </div>
+                            </td>
+                            <td valign="top" align="right">
                                 <table>
                                     <tr>
                                         <td style="padding: 3px 2px; width: 70px;">
@@ -97,7 +117,7 @@
                                                maxLength: 5,
                                                value: sellPrc,
                                                align: 'right',
-                                               validator: 'Number',
+                                               validator: ns.validators.number(0.01,9.99)
                                             ">
                                             </ns-input>
                                         </td>
@@ -107,13 +127,23 @@
                                                maxLength: 3,
                                                value: sellQty,
                                                align: 'right',
-                                               validator: 'Int',
-                                               width: '60px',
+                                               validator: ns.validators.int(1,999),
+                                               width: '60px'
                                             ">
                                             </ns-input>
                                         </td>
                                         <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px;">
-                                            <button class="sellBox" style="border: none;" data-bind="enable: sellValid"><b>Sell</b></button>
+                                            <button class="btn-danger btn-sm" style="border: none;" data-bind="dependsOn: [sellQty,sellPrc], click: doSell"><b>Sell</b></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <span data-bind="html: sellOrderMsg"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <textarea class="form-control" placeholder="Order text" cols="30" rows="1" data-bind="value: sellText"></textarea>
                                         </td>
                                     </tr>
                                 </table>

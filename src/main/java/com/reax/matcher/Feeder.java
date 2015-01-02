@@ -102,7 +102,7 @@ public class Feeder extends Actor<Feeder> {
             }
         });
         if ( running ) {
-            delayed(3000, () -> self().$feed());
+            //delayed(3000, () -> self().$feed());
         }
     }
 }
