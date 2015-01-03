@@ -12,10 +12,16 @@ model.isMarketAdmin = ko.observable(false);
 // navbar menu
 model.navs = ko.observableArray([
     { title: 'Home',    link:'#home',  enabled: true },
-    { title: 'Trade',  link:'#tables', enabled: Server.loggedIn },
-    { title: 'Markets',   link:'#admin', enabled: model.isMarketAdmin },
-    { title: 'Users',   link:'#users', enabled: model.isMarketAdmin },
-    { title: 'Showcase',link:'#show',  enabled: Server.loggedIn },
+    { title: 'Trading',   link:'#tables', enabled: Server.loggedIn, subs: [
+        { title: 'Markets', link:'#tables', enabled: Server.loggedIn },
+        { title: 'Orders & Trades', link:'#own', enabled: Server.loggedIn },
+        { title: 'Cash', link:'#own', enabled: Server.loggedIn }
+    ]},
+    { title: 'Admin', link:'#admin', enabled: model.isMarketAdmin, subs: [
+        { title: 'Users & Invites', link:'#users', enabled: Server.loggedIn },
+        { title: 'Assigned Markets', link:'#admin', enabled: Server.loggedIn }
+    ]},
+    { title: 'Showcase',link:'#show',  enabled: Server.loggedIn }
 ]);
 
 // appwide
@@ -70,6 +76,19 @@ RLFormatterMap["Text15"] = function(meta, fieldName, celldata) {
         return celldata;
     return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,15)+ " ...</span>";
 };
+RLFormatterMap["Trader"] = function(meta, fieldName, celldata, row) {
+    //return "<img src='img/user/"+celldata+".jpg' width='16' height='16'>&nbsp;<b>"+celldata+"</b>";
+    return "<b id='_ns_userLink' class='userLink'>"+celldata+"</b>";
+};
+RLFormatterMap["Price"] = function(meta, fieldName, celldata, row) {
+    if ( row instanceof JOrder ) {
+        if ( row.buy ) {
+            return "<b id='_ns_matchBuy' class='buyPrice'>"+Number(celldata/100).toFixed(2)+"</b>";
+        } else
+            return "<b id='_ns_matchSell' class='sellPrice'>"+Number(celldata/100).toFixed(2)+"</b>";
+    } else
+        return "<b>"+Number(celldata/100).toFixed(2)+"</b>";
+},
 
 // subscribe sets on login
 Server.doOnceLoggedIn( function(bool) {

@@ -31,6 +31,24 @@
             background-color: #711;
         }
 
+        .sellPrice {
+            color: #3299BB;
+            cursor: pointer;
+        }
+        .sellPrice:hover { text-decoration:underline; }
+
+        .userLink {
+            color: #111;
+            cursor: pointer;
+        }
+        .userLink:hover { text-decoration:underline; }
+
+        .buyPrice {
+            color: #711;
+            cursor: pointer;
+        }
+        .buyPrice:hover { text-decoration:underline; }
+
         .price-in {
             text-align: right;
         }
@@ -39,9 +57,23 @@
             text-align: right;
         }
 
+        .obook-buy-bg {
+            /*background-color: #eee;*/
+        }
+
+        .obook-sell-bg {
+            /*background-color: #eee;*/
+        }
+
+        .obook-oentry {
+            background-color: #eef;
+            border: solid #ccc 2px;
+        }
+
     </style>
 </head>
-<body>
+<body style="background-color: #E9E9E9">
+
 
 <navpane-ko params="{ navModel: navs, currentView: currentView }"></navpane-ko>
 

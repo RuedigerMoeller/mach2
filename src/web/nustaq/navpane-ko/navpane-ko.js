@@ -4,12 +4,12 @@ ko.bindingHandlers.navdrawer = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var drawer = $(element).find(".drawer");
         var drawerVisible = ko.observable({ drawerVisible: false });
-        var height = drawer.height();
+        var height = 34; // drawer.height();
         var closeUnderway = false;
         drawer.on(
             {
                 mouseenter: function () {
-                    drawer.height(height*2);
+                    drawer.height(height+24);
                     closeUnderway = false;
                     setTimeout( function() {
                         if (!closeUnderway)
@@ -49,11 +49,48 @@ ko.bindingHandlers.navdrawer = {
 };
 
 function NavBarModel(params) {
+    var self = this;
     // 'params' is an object whose key/value pairs are the parameters
     // passed from the component binding or custom element.
     this.navs = params.navModel; // [ { title: 'Home',    link:'#home',  enabled: true }, .. ]
+    this.hovered = ko.observable(null);
+
+    this.doHover = function( navElem ) {
+        self.hovered(navElem);
+    };
+
+    this.doUnHover = function( navElem ) {
+        //self.hovered(null);
+    };
+
+    this.activeNavs = ko.pureComputed( function() {
+        var res = [null,null];
+        $.each(self.navs(), function (i,top) {
+            if ( top.link === '#'+self.currentView() ) {
+                res[0] = top;
+            }
+            if ( top.subs && top.subs.length > 0 ) {
+                $.each(top.subs, function (i,sub) {
+                    if ( sub.link === '#'+self.currentView() ) {
+                        res[0] = top;
+                        res[1] = sub;
+                    }
+                    return true;
+                });
+            }
+            return true;
+        });
+        console.log("active"+JSON.stringify(res));
+        return res;
+    });
+
+    self.subMenu = ko.pureComputed( function() {
+        if ( self.hovered() )
+            return self.hovered();
+        return self.activeNavs()[1];
+    });
+
     this.currentView = params.currentView; // observable wher currentiew without # is set
-    var self = this;
 
     $(window).on('hashchange', function() {
         console.log("change site:"+window.location.hash.substring(1));

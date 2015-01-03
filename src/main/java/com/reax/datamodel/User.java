@@ -84,4 +84,5 @@ public class User extends Record {
     public void setRole(UserRole role) {
         this.role = role;
     }
+
 }

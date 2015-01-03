@@ -16,6 +16,8 @@ if ( window.ns ) {
     window.ns = { validators: {} };
 }
 
+ns.invalidColor = '#FFFFCC';
+
 ko.extenders.editor = function(target, option) {
     target.editor = option;
     target.errorMsg = null;
@@ -104,7 +106,7 @@ function InputModel(params, compInfo) {
     }
 
     this.bgColor = ko.pureComputed(function () {
-        return self.isValid() ? '#fff' : '#FFF3B0';
+        return self.isValid() ? '#fff' : ns.invalidColor;
     });
     this.value.extend( { editor: self } );
 }

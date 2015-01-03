@@ -2,6 +2,7 @@ schema {
 
     globals: {
         version:   { hidden: true }
+        traderKey: { renderStyle: Trader }
     }
 
     tables: {

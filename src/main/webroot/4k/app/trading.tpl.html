@@ -1,6 +1,5 @@
 <template id="tables">
     <br>
-    <br>
     <div data-bind="with: tradeController">
         <div data-bind="foreach: $parent.userMarkets">
             <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.onMarketPlaceSelection">
@@ -15,7 +14,8 @@
                          subscribe: subscription,
                          columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc','lastQty' ],
                          onSelection: tableSelected,
-                         width: '600px'
+                         width: '600px',
+                         hoverSelection: true
                         ">
                     </rl-grid>
                 </div>
@@ -26,18 +26,18 @@
                                 <rl-grid params="table: 'Instrument',
                                                  subscribe: instrSubscription,
                                                  columns: [ 'name', 'bidQty', 'bid', 'ask', 'askQty', 'lastPrc', 'lastQty' ],
-                                                 width: '600px'
+                                                 width: '100%'
                                                  ">
                                 </rl-grid>
                             </td>
                         </tr>
-                        <tr>
+                        <tr> <td colspan="3" style="width: 500px;">&nbsp;</td>
                         </tr>
-                        <tr>
-                            <td valign="top" align="left">
-                                <table>
+                        <tr class="obook-buy-bg">
+                            <td valign="top" align="center" style="padding-top: 8px; padding-bottom: 8px; width: 50%;">
+                                <table class="obook-oentry">
                                     <tr>
-                                        <td style="padding: 3px 2px; width: 70px;">
+                                        <td style="padding: 6px 2px 2px 6px;width: 70px;">
                                             <ns-input params="
                                                placeHolder: 'Price',
                                                maxLength: 5,
@@ -47,7 +47,7 @@
                                             ">
                                             </ns-input>
                                         </td>
-                                        <td style="padding: 3px 2px; width: 60px;">
+                                        <td style="padding: 6px 2px 3px 2px; width: 60px;">
                                             <ns-input params="
                                                placeHolder: 'Qty',
                                                maxLength: 3,
@@ -57,25 +57,21 @@
                                             ">
                                             </ns-input>
                                         </td>
-                                        <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px; border: none;">
+                                        <td style="padding: 6px 6px 3px 4px;border: none;">
                                             <button class="btn-primary btn-sm" style="border: none;"
                                                     data-bind="dependsOn: [ buyQty, buyPrc ], click: doBuy"><b>Buy</b>
                                             </button>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3">
-                                            <textarea class="form-control" placeholder="Order text" cols="30" rows="1" data-bind="value: buyText"></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3">
-                                            <span data-bind="html: buyOrderMsg"></span>
+                                        <td colspan="3" style="padding: 2px 6px 6px 6px;">
+                                            <textarea class="form-control" placeholder="Order text" cols="15" rows="1"
+                                                      data-bind="value: buyText"></textarea>
                                         </td>
                                     </tr>
                                 </table>
                             </td>
-                            <td align="left" valign="top">
+                            <td align="left" valign="bottom">
                                 <div>
                                     <rl-grid params="
                                         table: 'Order',
@@ -85,14 +81,15 @@
                                         noColumns: true,
                                         noStriping: true,
                                         actions: buyActions,
-                                        onAction: onTableAction
+                                        onAction: onTableAction,
+                                        hoverSelection: true
                                     ">
                                     </rl-grid>
                                 </div>
                             </td>
                         </tr>
                         <!--<tr><td>&nbsp;</td></tr>-->
-                        <tr>
+                        <tr class="obook-sell-bg">
                             <td align="right" valign="top">
                                 <div>
                                     <rl-grid params="
@@ -103,15 +100,16 @@
                                         noColumns: true,
                                         noStriping: true,
                                         actions: buyActions,
-                                        onAction: onTableAction
+                                        onAction: onTableAction,
+                                        hoverSelection: true
                                     ">
                                     </rl-grid>
                                 </div>
                             </td>
-                            <td valign="top" align="right">
-                                <table>
+                            <td valign="top" align="center" style="padding-top: 8px; padding-bottom: 8px;">
+                                <table class="obook-oentry">
                                     <tr>
-                                        <td style="padding: 3px 2px; width: 70px;">
+                                        <td style="padding: 6px 2px 2px 6px; width: 70px;">
                                             <ns-input params="
                                                placeHolder: 'Price',
                                                maxLength: 5,
@@ -121,7 +119,7 @@
                                             ">
                                             </ns-input>
                                         </td>
-                                        <td style="padding: 3px 2px; width: 60px;">
+                                        <td style="padding: 6px 2px 3px 2px; width: 60px;">
                                             <ns-input params="
                                                placeHolder: 'Qty',
                                                maxLength: 3,
@@ -132,18 +130,13 @@
                                             ">
                                             </ns-input>
                                         </td>
-                                        <td style="padding-left: 4px; padding-bottom: 3px; padding-top: 3px;">
+                                        <td style="padding: 6px 6px 3px 4px;">
                                             <button class="btn-danger btn-sm" style="border: none;" data-bind="dependsOn: [sellQty,sellPrc], click: doSell"><b>Sell</b></button>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3">
-                                            <span data-bind="html: sellOrderMsg"></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3">
-                                            <textarea class="form-control" placeholder="Order text" cols="30" rows="1" data-bind="value: sellText"></textarea>
+                                        <td colspan="3" style="padding: 2px 6px 6px 6px;">
+                                            <textarea class="form-control" placeholder="Order text" cols="15" rows="1" data-bind="value: sellText"></textarea>
                                         </td>
                                     </tr>
                                 </table>

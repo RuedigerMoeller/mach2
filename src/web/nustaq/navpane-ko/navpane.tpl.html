@@ -1,32 +1,33 @@
 <template id="navbar-tpl">
     <style>
         .navbar-ko-bg {
-            background-color: #427;
+            background-color: #3299BB;
         }
         .navbar-ko-bg-sel {
-            background-color: #315;
+            background-color: #2F8BA9;
         }
     </style>
     <div style="
         position:fixed;
         top:0;
         width:100%;
-        z-index:100;">
-        <table data-bind="navdrawer" style="width: 100%;">
-            <tr data-bind="foreach: navs" class="drawer navbar-ko-bg" style="height: 45px; vertical-align: top; padding: 8px; width: 100%; transition: height .3s ease-in-out;">
-                <td data-bind="attr: { style: 'padding: 8px; text-align: left;', class: ($parent.currentView() == link.substring(1) ? 'navbar-ko-bg-sel' : 'navbar-ko-bg') }">
+        z-index:100;"
+        data-bind="navdrawer" class="navbar-ko-bg" >
+        <div class="drawer" style="transition: height .3s ease-in-out;">
+        <table style="width: 100%; transition: height .3s ease-in-out;">
+            <tr data-bind="foreach: navs" class="navbar-ko-bg" style="height: 45px; vertical-align: top; padding: 8px; width: 100%;">
+                <td data-bind="attr: { style: 'padding: 8px; text-align: left;', class: ($parent.activeNavs()[0] === $data ? 'navbar-ko-bg-sel' : 'navbar-ko-bg') }">
                     <div>
                         <a data-bind="attr: { href: link }, if: enabled">
-                            <b style="font-size: large; color: #ddd; "
-                               data-bind="text: title"
+                            <b style="font-size: large; color: #ddd;"
+                               data-bind="text: title, event: { mouseover: $parent.doHover, mouseout: $parent.doUnHover }"
                                onmouseover="this.style.color='#fff'"
                                onmouseout="this.style.color='#ddd'"
-                               style="transition: color .6s ease-in-out;"
-                                    >
+                               style="transition: color .6s ease-in-out;">
                             </b>
                         </a>
                         <b data-bind="ifnot: enabled">
-                            <span data-bind="text: title" style="color: #999; font-size: large;">
+                            <span data-bind="text: title" style="color: #2F8BA9; font-size: large;">
                             </span>
                         </b>
                     </div>
@@ -35,7 +36,7 @@
                 <td data-bind="visible: $index() == ($parent.navs().length-1) && (drawerVisible || Server.loggedIn())" style="width: 350px;">
                     <kr-login params="facade: 'JReaXerve'" ></kr-login>
                     <button data-bind="visible: !Server.loggedIn()"
-                            style="font-size: larger; padding-top: 6px; color: #ddd; padding: 0; border: none; background: none;"
+                            style="font-size: larger; color: #ddd; padding: 0; border: none; background: none;"
                             onmouseover="this.style.color='#fff'"
                             onmouseout="this.style.color='#ddd'"
                             style="transition: color .6s ease-in-out;"
@@ -45,5 +46,26 @@
                 </td>
             </tr>
         </table>
+        <div data-bind="visible: drawerVisible && subMenu()!=null && Server.loggedIn() && subMenu().subs && subMenu().subs.length>0" style="transition:opacity .5s linear;">
+            <span style="border: solid rgba(0,0,0,0.3) 2px; padding: 8px 0px;" class="navbar-ko-bg">
+            <span data-bind="foreach: subMenu() ? subMenu().subs : []">
+                <span data-bind="attr: { style: 'padding: 8px; text-align: left;', class: ($parent.currentView() == link.substring(1) ? 'navbar-ko-bg-sel' : 'navbar-ko-bg') }">
+                    <a data-bind="attr: { href: link }, if: enabled">
+                        <b style="font-size: larger; color: #ddd; "
+                           data-bind="text: title"
+                           onmouseover="this.style.color='#fff'"
+                           onmouseout="this.style.color='#ddd'"
+                           style="transition: color .6s ease-in-out;">
+                        </b>
+                    </a>
+                    <b data-bind="ifnot: enabled">
+                        <span data-bind="text: title" style="color: #2F8BA9; font-size: larger;">
+                    </span>
+                    </b>
+                </span>
+            </span>
+            </span>
+        </div>
+        </div>
     </div>
 </template>

@@ -85,7 +85,8 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
 
         try {
             SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");
-            realLive.getMetadata().overrideWith(schemaProps); // FIXME: side effecting
+//            realLive.getMetadata().overrideWith(schemaProps); // FIXME: side effecting
+//            done per login for dynamic update
         } catch (Exception e) {
             e.printStackTrace();
         }
