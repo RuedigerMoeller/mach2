@@ -164,19 +164,21 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             if (inv == null) {
                 result.receive( null, null);
             } else {
-                if (System.currentTimeMillis() > inv.getTimeSent() + inv.getHoursValid() * 60l * 60 * 1000) {
-                    invite.$remove( inv.getRecordKey(), 0);
-                    result.receive( null, null);
-                } else {
+//                if (System.currentTimeMillis() > inv.getTimeSent() + inv.getHoursValid() * 60l * 60 * 1000) {
+//                    invite.$remove( inv.getRecordKey(), 0);
+//                    result.receive( null, null);
+//                } else
+                {
                     User u = new User();
-                    u.setAdminName("admin");
+//                    u.setAdminName("admin");
+                    u.setName(inv.getUser());
                     u.setCreationTime(Trade.df.format(new Date()));
                     u.setPwd(inv.getPwd());
                     u.setEmail(inv.getEmail());
                     u.setRole(UserRole.MARKET_OWNER);
                     u.setLastLogin(u.getCreationTime());
                     RLTable users = realLive.getTable("User");
-                    users.$put(u.getName(), u, 0);
+                    users.$putIfAbsent(u.getName(), u, 0);
                     users.$sync().onResult( r -> result.receive(new String[]{inv.getUser(), inv.getPwd()}, null) );
                 }
             }

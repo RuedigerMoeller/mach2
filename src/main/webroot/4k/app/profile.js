@@ -8,6 +8,13 @@ function ProfileController() {
     self.email = ko.observable("");
     self.formError = ko.observable("");
 
+    self.readData = function(usrec) {
+        self.user(usrec.name);
+        self.pwd(usrec.pwd);
+        self.confirmPwd(usrec.pwd);
+        self.email(usrec.email);
+    };
+
     self.confirmError = ko.computed( function() {
         var un = self.user();
         if ( self.user().length < 4 ) return "nick name must be at least 4 chars long";

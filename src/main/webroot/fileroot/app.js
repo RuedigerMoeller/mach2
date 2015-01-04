@@ -11,7 +11,9 @@ model.isMarketAdmin = ko.observable(false);
 
 // navbar menu
 model.navs = ko.observableArray([
-    { title: 'Home',    link:'#home',  enabled: true },
+    { title: 'Home',    link:'#home',  enabled: true, subs: [
+        { title: 'Profile', link:'#profile', enabled: Server.loggedIn },
+    ]},
     { title: 'Trading',   link:'#tables', enabled: Server.loggedIn, subs: [
         { title: 'Markets', link:'#tables', enabled: Server.loggedIn },
         { title: 'Orders & Trades', link:'#own', enabled: Server.loggedIn },
@@ -140,6 +142,7 @@ Server.doOnceLoggedIn( function(bool) {
             userMarkets.subscribe("MarketPlace", "it.admin=='"+userRec.adminName+"' || it.admin=='"+userRec.name+"'");
             model.userRecord(userRec);
             model.isMarketAdmin( (userRec.role[0] == 'ADMIN' || userRec.role[0] == 'MARKET_OWNER'));
+            model.profileController.readData(model.userRecord());
         }
     });
     user.subscribe("User","true");
@@ -168,12 +171,24 @@ if ( inviteString.indexOf("invite$") >= 0 ) {
     Kontraktor.restGET( '$validateRegistration/'+regID )
         .then( function (r,e) {
             if (r!=null) {
-                Server.loginComponent.user(r[0]);
-                Server.loginComponent.pwd(r[1]);
-                Server.loginComponent.login();
-                Server.doOnceLoggedIn( function() {
-                    window.location.hash="#profile";
-                });
+                var waitForLibs = function() {
+                    if ( ! Server.loginComponent ) {
+                        setTimeout(waitForLibs,500);
+                    } else {
+                        Server.loginComponent.user(r[0]);
+                        Server.loginComponent.pwd(r[1]);
+                        Server.loginComponent.login();
+                        var waitForUser = function() {
+                            if ( ! model.userRecord().name )
+                                setTimeout(waitForUser,500);
+                            else {
+                                window.location.hash="#profile";
+                            }
+                        };
+                        waitForUser();
+                    }
+                };
+                waitForLibs();
             } else {
                 window.location.hash="#invalidRegistration";
             }
