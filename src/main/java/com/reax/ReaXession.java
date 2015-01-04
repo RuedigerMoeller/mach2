@@ -133,7 +133,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
      */
     @Override
     public void $hasBeenUnpublished() {
-        subscriptions.values().forEach( (subs) -> {
+        subscriptions.values().forEach((subs) -> {
             realLive.getTable(subs.getTableKey()).stream().unsubscribe(subs);
         });
         subscriptions.clear();
@@ -143,13 +143,6 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     public Future $hello( String hello ) {
         System.out.println("Hello");
         return new Promise("selber");
-    }
-
-    protected boolean isValidEmailAddress(String email) {
-        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
-        java.util.regex.Matcher m = p.matcher(email);
-        return m.matches();
     }
 
     public Future<User> $getUser() {
@@ -185,7 +178,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         final RLTable inviteTable = realLive.getTable("Invite");
         for (int i = 0; i < mailList.length; i++) {
             String s = mailList[i].trim();
-            if (isValidEmailAddress(s)) {
+            if (ReaXerve.isValidEmailAddress(s)) {
                 Invite invite = (Invite) inviteTable.createForAdd();
                 invite.setAdmin(user.getName());
                 invite.setEmail(s);
@@ -200,7 +193,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
                 final String finalKey = key;
                 ReaXerve.Self.$submitEmail(s,
                         "You have been invited to reax exchange by "+user.getEmail(),
-                        "<html>click <a href='"+url+"'>here</a> to pick a user name and log on.</html>")
+                        "<html>Click <a href='"+url+"'>here</a> to pick a user name and log on.</html>")
                     .onResult( succ -> {
                         if ( succ != null && succ ) {
                             invite.setMailSent(true);

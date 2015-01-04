@@ -1,0 +1,68 @@
+<template id="register">
+    <div data-bind="with: registerController">
+    <br>
+    <b class="table-heading">Register</b>
+    <br>
+    <br>
+
+    <table cellpadding="4px">
+        <tr>
+            <td width="10px"></td>
+            <td style="padding: 4px;">
+                <ns-input params="
+                           placeHolder: 'Nick name',
+                           maxLength: 16,
+                           value: user,
+                           validator: ns.validators.safenowhite(16,6)
+                        ">
+                </ns-input>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td style="padding: 4px;">
+                <ns-input params="
+                           placeHolder: 'Password',
+                           maxLength: 16,
+                           value: pwd,
+                           inputtype: 'password',
+                           validator: ns.validators.safenowhite(16,6)
+                        ">
+                </ns-input>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td style="padding: 4px;">
+                <ns-input params="
+                           placeHolder: 'Confirm Password',
+                           maxLength: 16,
+                           value: confirmPwd,
+                           inputtype: 'password',
+                           validator: ns.validators.safenowhite(16,6)
+                        ">
+                </ns-input>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td style="padding: 4px;">
+                <ns-input params="
+                           placeHolder: 'Email',
+                           maxLength: 60,
+                           value: email,
+                           validator: ns.validators.email()
+                        ">
+                </ns-input>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="padding-top: 12px; padding-right: 4px;" width="200px" align="right" data-bind="text: confirmError"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="padding-top: 12px; padding-right: 4px;" align="right"><button class="btn btn-primary" data-bind="click: doRegister, dependsOn:[user,pwd,confirmPwd,email]"><b>Submit Registration</b></button></td>
+        </tr>
+    </table>
+    </div>
+</template>

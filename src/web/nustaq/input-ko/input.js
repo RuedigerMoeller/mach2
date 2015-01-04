@@ -44,8 +44,16 @@ ns.validators.charnumstring = function(maxlen, minlen) {
     return ns.validators.string(maxlen,minlen,/^[a-zA-Z0-9]*$/);
 };
 
+ns.validators.safenowhite = function(maxlen, minlen) {
+    return ns.validators.string(maxlen,minlen,/^[a-zA-Z0-9-_üöäÜÖÄ@]*$/);
+};
+
 ns.validators.safestring = function(maxlen, minlen) {
-    return ns.validators.string(maxlen,minlen,/^[a-zA-Z0-9-_ üöäÜÖÄ.,!?:/]*$/);
+    return ns.validators.string(maxlen,minlen,/^[a-zA-Z0-9-_ üöäÜÖÄ.,!?:/@]*$/);
+};
+
+ns.validators.email = function() {
+    return ns.validators.string(60,6,/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 };
 
 ns.validators.number = function(min,max) {
@@ -128,6 +136,14 @@ ko.bindingHandlers.dependsOn = {
             var res = true;
             $.each(arrObs, function(i,obs) {
                 var val = obs();
+                return true;
+            });
+            $.each(arrObs, function(i,obs) {
+                var val = obs();
+                if ( ko.isComputed(obs) ) {
+                    res = val;
+                    return res;
+                }
                 if ( obs.editor && ! obs.editor.isValid() ) {
                     res = false;
                     return false;
@@ -139,6 +155,7 @@ ko.bindingHandlers.dependsOn = {
             return res;
         });
         enabled.subscribe(function(value) {
+            console.log("enable action "+value);
             if (value && element.disabled)
                 element.removeAttribute("disabled");
             else if ((!value) && (!element.disabled))
@@ -146,7 +163,11 @@ ko.bindingHandlers.dependsOn = {
         });
         setTimeout(function() {
             if (arrObs.length>0) {
-                arrObs[0].valueHasMutated();
+                var idx = 0;
+                while ( ko.isComputed(arrObs[idx]) && idx < arrObs.length ) {
+                    idx++;
+                }
+                arrObs[idx].valueHasMutated();
             }
         },50);
     },

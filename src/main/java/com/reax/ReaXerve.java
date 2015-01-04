@@ -36,6 +36,13 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
     protected Matcher matcher;
     protected Feeder feeder;
 
+    public static boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
     @Local
     public void $init(Scheduler clientScheduler) {
         Self = self();
@@ -148,6 +155,64 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             }
         }).onError(err -> result.receive( null, null));
         return result;
+    }
+
+    public Future<String[]> $validateRegistration(String id) {
+        Promise result = new Promise();
+        RLTable<Invite> invite = realLive.getTable("Invite");
+        invite.$get(id).onResult(inv -> {
+            if (inv == null) {
+                result.receive( null, null);
+            } else {
+                if (System.currentTimeMillis() > inv.getTimeSent() + inv.getHoursValid() * 60l * 60 * 1000) {
+                    invite.$remove( inv.getRecordKey(), 0);
+                    result.receive( null, null);
+                } else {
+                    User u = new User();
+                    u.setAdminName("admin");
+                    u.setCreationTime(Trade.df.format(new Date()));
+                    u.setPwd(inv.getPwd());
+                    u.setEmail(inv.getEmail());
+                    u.setRole(UserRole.MARKET_OWNER);
+                    u.setLastLogin(u.getCreationTime());
+                    RLTable users = realLive.getTable("User");
+                    users.$put(u.getName(), u, 0);
+                    users.$sync().onResult( r -> result.receive(new String[]{inv.getUser(), inv.getPwd()}, null) );
+                }
+            }
+        }).onError(err -> result.receive( null, null));
+        return result;
+    }
+
+    public Future<String> $registerUser( String user, String pwd, String email ) {
+        if (isValidEmailAddress(email)) {
+            RLTable<Invite> inviteTable = realLive.getTable("Invite");
+            Invite invite = inviteTable.createForAdd();
+            invite.setAdmin("admin");
+            invite.setUser(user);
+            invite.setPwd(pwd);
+            invite.setEmail(email);
+            invite.setHoursValid(24*5);
+            invite.setTimeSent(System.currentTimeMillis());
+            String key = user+(""+Math.random()).substring(2);
+            while( key.length() < 32 )
+                key+=""+(int)(Math.random()*10);
+            invite._setRecordKey(key);
+            inviteTable.$put(key,invite,0);
+            String url = MailSettings.load().getAppurl()+"#register$"+key;
+            final String finalKey = key;
+            ReaXerve.Self.$submitEmail(email,
+                    "Confirm your ReaX exchange registration",
+                    "<html>Please click <a href='"+url+"'>here</a> to confirm</html>")
+                    .onResult( succ -> {
+                        if ( succ != null && succ ) {
+                            invite.setMailSent(true);
+                            inviteTable.$put(finalKey, invite, 0);
+                        }
+                    });
+            return new Promise<>(null);
+        }
+        return new Promise<>("Invalid mail address");
     }
 
     @Override

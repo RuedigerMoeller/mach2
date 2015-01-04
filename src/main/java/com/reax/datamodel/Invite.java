@@ -14,8 +14,9 @@ import java.util.Date;
 public class Invite extends Record {
 
     String admin;    // done by
-    String email; // email of user invited
-    String repliedUserName;     // name of user in case replied
+    String email;    // email of user invited
+    String user;     // name of user (only in case of registration)
+    String pwd;      // pwd in case of registration
     String timeSentString;
     long timeSent;
     int hoursValid;
@@ -24,10 +25,10 @@ public class Invite extends Record {
     public Invite() {
     }
 
-    public Invite(String admin, String email, String repliedUserName, long timeSent, int hoursValid) {
+    public Invite(String admin, String email, String user, long timeSent, int hoursValid) {
         this.admin = admin;
         this.email = email;
-        this.repliedUserName = repliedUserName;
+        this.user = user;
         setTimeSent(timeSent);
         this.hoursValid = hoursValid;
     }
@@ -56,12 +57,20 @@ public class Invite extends Record {
         this.email = email;
     }
 
-    public String getRepliedUserName() {
-        return repliedUserName;
+    public String getUser() {
+        return user;
     }
 
-    public void setRepliedUserName(String repliedUserName) {
-        this.repliedUserName = repliedUserName;
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
     }
 
     public long getTimeSent() {

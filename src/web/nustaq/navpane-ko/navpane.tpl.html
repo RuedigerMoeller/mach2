@@ -5,6 +5,14 @@
         }
         .main-menu:hover {
             text-decoration: none;
+            background-color: rgba(0,0,0,.05);
+        }
+        .sub-menu {
+            font-size: larger; color: #ddd;
+        }
+        .sub-menu:hover {
+            text-decoration: none;
+            background-color: rgba(0,0,0,.05);
         }
         .navbar-ko-bg {
             background-color: #3299BB;
@@ -43,12 +51,13 @@
                         <td><kr-login params="facade: 'JReaXerve'" ></kr-login></td>
                         <td style="padding: 4px;">
                             <button data-bind="visible: !Server.loggedIn()"
-                                    style="font-size: larger; color: #ddd; padding: 0; border: none; background: none;"
+                                    class="sub-menu"
+                                    style="padding: 0; border: none; background: none;"
                                     onmouseover="this.style.color='#fff'"
                                     onmouseout="this.style.color='#ddd'"
                                     style="transition: color .6s ease-in-out;"
                                     >
-                                <b data-bind="click: $parent.onRegister">Register</b>
+                                <b data-bind="click: $root.onRegister">Register</b>
                             </button>
                         </td>
                     </tr></table>
@@ -61,7 +70,7 @@
             <span data-bind="foreach: subMenu() ? subMenu().subs : []">
                 <span data-bind="attr: { style: 'padding: 8px; text-align: left;', class: ($parent.currentView() == link.substring(1) ? 'navbar-ko-bg-sel' : 'navbar-ko-bg') }">
                     <a data-bind="attr: { href: link }, if: enabled">
-                        <b style="font-size: larger; color: #ddd; "
+                        <b class="sub-menu"
                            data-bind="text: title"
                            onmouseover="this.style.color='#fff'"
                            onmouseout="this.style.color='#ddd'"

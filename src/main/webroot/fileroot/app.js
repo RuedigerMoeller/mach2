@@ -70,6 +70,10 @@ model.tradeController = new TradeController();
 // own overview
 model.ownController = new OwnController();
 
+model.registerController = new RegisterController();
+
+model.profileController = new ProfileController();
+
 model.userString = ko.computed( function() {
     if ( Server.loggedIn() && model.userRecord().role != "NONE" ) {
         var us = model.userRecord();
@@ -77,6 +81,10 @@ model.userString = ko.computed( function() {
     }
     return "";
 });
+
+model.onRegister = function() {
+    window.location.hash = "register";
+};
 
 model.delOrder = function( row ) {
     Server.session().$delOrder(row).then( function(r,e) {
@@ -152,6 +160,22 @@ if ( inviteString.indexOf("invite$") >= 0 ) {
                 window.location.hash="#invite";
             } else {
                 window.location.hash="#invalidInvite";
+            }
+        }
+    );
+} else if ( inviteString.indexOf("register$") >= 0 ) {
+    var regID = inviteString.substring("register$".length+1);
+    Kontraktor.restGET( '$validateRegistration/'+regID )
+        .then( function (r,e) {
+            if (r!=null) {
+                Server.loginComponent.user(r[0]);
+                Server.loginComponent.pwd(r[1]);
+                Server.loginComponent.login();
+                Server.doOnceLoggedIn( function() {
+                    window.location.hash="#profile";
+                });
+            } else {
+                window.location.hash="#invalidRegistration";
             }
         }
     );

@@ -15,16 +15,9 @@
     componentPath: [
         4k                     # application (+overrides)
         tmp                    # generated stuff
-        #home
         ../../web
         ../../web/nustaq       # enable scan of nustaq subcomps
         ../../web/knockout     # enable scan of knockout subcomps
-
-        # minbin
-        /home/ruedi/projects/fast-serialization/src/main/web
-        /home/ruedi/IdeaProjects/fast-serialization/src/main/web
-        C:/work/GitHub/fast-serialization/src/main/web
-        /home/moelrue/IdeaProjects/gh/fast-serialization/src/main/web
     ]
 
     # modules to load
@@ -36,7 +29,17 @@
 
     # ignored if empty for an actor
     allowedMethods: {
-        ReaXerve : [ $getSession $authenticate $httpRedirectInvite $test $isInviteValid $userExists $createUserFromInvite ]
+        ReaXerve : [
+            $getSession
+            $authenticate
+            $httpRedirectInvite
+            $test
+            $isInviteValid
+            $userExists
+            $createUserFromInvite
+            $registerUser
+            $validateRegistration
+        ]
     }
 
     # ignored if empty for an actor
