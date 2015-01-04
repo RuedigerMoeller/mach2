@@ -1,0 +1,33 @@
+<style>
+    .nsfilter-cell {
+        padding: 6px 2px;
+        white-space: nowrap;
+    }
+</style>
+<template id="filterstrip">
+    <table>
+        <tr>
+            <td class="nsfilter-cell" data-bind="foreach: filter">
+                <!--<p data-bind="text: JSON.stringify($data)"></p>-->
+                <ns-input params="
+                    placeHolder: $data.placeHolder,
+                    size: $data.size,
+                    maxLength: $data.maxLength,
+                    width: $data.width,
+                    value: value,
+                    align: $data.align,
+                    inputtype: $data.inputtype,
+                    validator: $data.validator,
+                    inpId: $data.inpId
+                "
+                data-bind="event: { keypress: $parent.keyPressed }"
+                >
+                </ns-input>
+            </td>
+            <td class="nsfilter-cell">
+                <button data-bind="click: doFilter, dependsOn: values, html: label, css: btnClass"></button>
+            </td>
+        </tr>
+
+    </table>
+</template>

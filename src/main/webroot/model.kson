@@ -3,15 +3,10 @@ schema {
     globals: {
         version:   { hidden: true }
         traderKey: { renderStyle: Trader }
+        text: { displayWidth: 100 }
     }
 
     tables: {
-        TestRecord: {
-            columns: {
-                recordKey: { displayWidth: 100 }
-                name: { displayWidth: 70 }
-            }
-        }
         User: {
             columns: {
                 recordKey: { displayWidth: 70 }
@@ -20,6 +15,11 @@ schema {
                 role: { displayWidth: 95 }
             }
         }
+#        Order: {
+#            columns: {
+#                text: { displayWidth: 100 }
+#            }
+#        }
 
     }
 

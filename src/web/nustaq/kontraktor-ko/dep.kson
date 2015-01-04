@@ -1,2 +1,2 @@
 # some ko components + utils, e.g. login
-[spin,kontraktor,knockout]
+[spin kontraktor knockout input-ko]

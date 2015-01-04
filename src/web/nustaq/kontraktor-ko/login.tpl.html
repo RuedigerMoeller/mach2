@@ -1,11 +1,34 @@
 <template id="login-template">
     <span data-bind="spin: doSpin()">
         <span data-bind="visible: !loggedIn()">
-            <input placeholder="user" size="6" type="text" data-bind="value: user">
-            <input placeholder="password" size="4" type="password" data-bind="value: pwd">
-            <button class="btn btn-primary btn-default" data-bind="click: login, enable: !doSpin()">Log In</button>
+            <!--<input placeholder="user" size="6" type="text" data-bind="value: user">-->
+            <!--<input placeholder="password" size="4" type="password" data-bind="value: pwd">-->
+            <!--<button class="btn btn-primary btn-default" data-bind="click: login, enable: !doSpin()">Log In</button>-->
+                <ns-filterstrip params="
+                        filter: [
+                            {
+                                placeHolder: 'user',
+                                maxLength: 16,
+                                width: '70px',
+                                value: user,
+                                validator: ns.validators.safestring(16,1)
+                            },
+                            {
+                                placeHolder: 'pwd',
+                                width: '70px',
+                                maxLength: 50,
+                                value: pwd,
+                                inputtype: 'password',
+                                validator: ns.validators.safestring(16,1)
+                            }
+                        ],
+                        click: login,
+                        label: '<b>Log In</b>',
+                        btnClass: 'btn btn-primary'
+                    ">
+                </ns-filterstrip>
         </span>
-    <span data-bind="visible: loggedIn()">Welcome <b data-bind="text: user"></b></span>
-    <b data-bind="hilight: true" style="color: darkred;"><span data-bind="text: resultMsg"></span></b>
+    <div data-bind="visible: loggedIn()" style="padding-top: 10px; color: white; white-space: nowrap;">Welcome <b data-bind="text: user"></b></div>
+    <b style="color: white;"><span data-bind="text: resultMsg"></span></b>
     </span>
 </template>

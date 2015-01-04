@@ -31,23 +31,32 @@
             background-color: #711;
         }
 
-        .sellPrice {
-            color: #3299BB;
-            cursor: pointer;
-        }
-        .sellPrice:hover { text-decoration:underline; }
-
         .userLink {
             color: #111;
             cursor: pointer;
         }
         .userLink:hover { text-decoration:underline; }
 
+
+        .sellPrice {
+            color: #711;
+        }
+
         .buyPrice {
+            color: #3299BB;
+        }
+
+        .sellPrice-link {
             color: #711;
             cursor: pointer;
         }
-        .buyPrice:hover { text-decoration:underline; }
+        .sellPrice-link:hover { text-decoration:underline; }
+
+        .buyPrice-link {
+            color: #3299BB;
+            cursor: pointer;
+        }
+        .buyPrice-link:hover { text-decoration:underline; }
 
         .price-in {
             text-align: right;
@@ -70,9 +79,23 @@
             border: solid #ccc 2px;
         }
 
+        .table-heading {
+            font-size: large;
+        }
+
+        .table-scrollbox {
+            padding-right: 50px;
+            border:1px solid #ccc;
+            overflow:auto;
+        }
+
+        .form-cell {
+            padding: 6px 2px;
+        }
+
     </style>
 </head>
-<body style="background-color: #E9E9E9">
+<body style="background-color: #F0F0F0">
 
 
 <navpane-ko params="{ navModel: navs, currentView: currentView }"></navpane-ko>

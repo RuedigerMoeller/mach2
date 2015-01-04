@@ -3,7 +3,24 @@
 
     <b data-bind="bsttip: 'Hallo Hallo'">POK</b>
 
-    <ns-input params="value: test, width: '100px', align: 'right', validator: ns.validators.int() ">
-    </ns-input>
 
+    <ns-filterstrip params="
+        filter: [
+            {
+                placeHolder: 'Contract Name',
+                maxLength: 30,
+                width: '140px',
+                value: testInstrument
+            },
+            {
+                placeHolder: 'Market',
+                width: '60px',
+                maxLength: 50,
+                value: testMarket
+            }
+        ],
+        click: testClick
+    ">
+
+    </ns-filterstrip>
 </template>

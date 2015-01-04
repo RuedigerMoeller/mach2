@@ -1,10 +1,19 @@
 <template id="tables">
     <br>
     <div data-bind="with: tradeController">
-        <div data-bind="foreach: $parent.userMarkets">
-            <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.onMarketPlaceSelection">
-            </span>
+
+        <div class="btn-group">
+            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+               data-bind="html: '<b>'+(selectedMP().description ? selectedMP().description : 'Select your Market')+'</b>'"></a>
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+            <ul class="dropdown-menu" style="cursor: pointer;">
+                <li data-bind="foreach: $parent.userMarkets">
+                    <a><i class="icon-list"></i><span data-bind="click: $parent.onMarketPlaceSelection, text: description"></span></a>
+                </li>
+            </ul>
         </div>
+
+        <br>
         <br>
 
         <div data-bind="flip: selectedInstr()">
@@ -34,7 +43,7 @@
                         <tr> <td colspan="3" style="width: 500px;">&nbsp;</td>
                         </tr>
                         <tr class="obook-buy-bg">
-                            <td valign="top" align="center" style="padding-top: 8px; padding-bottom: 8px; width: 50%;">
+                            <td valign="bottom" align="center" style="padding-top: 8px; padding-bottom: 8px; width: 50%;">
                                 <table class="obook-oentry">
                                     <tr>
                                         <td style="padding: 6px 2px 2px 6px;width: 70px;">
@@ -82,7 +91,8 @@
                                         noStriping: true,
                                         actions: buyActions,
                                         onAction: onTableAction,
-                                        hoverSelection: true
+                                        hoverSelection: true,
+                                        formatter: formatOrder
                                     ">
                                     </rl-grid>
                                 </div>
@@ -101,7 +111,8 @@
                                         noStriping: true,
                                         actions: buyActions,
                                         onAction: onTableAction,
-                                        hoverSelection: true
+                                        hoverSelection: true,
+                                        formatter: formatOrder
                                     ">
                                     </rl-grid>
                                 </div>

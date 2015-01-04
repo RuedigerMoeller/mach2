@@ -44,6 +44,10 @@ ns.validators.charnumstring = function(maxlen, minlen) {
     return ns.validators.string(maxlen,minlen,/^[a-zA-Z0-9]*$/);
 };
 
+ns.validators.safestring = function(maxlen, minlen) {
+    return ns.validators.string(maxlen,minlen,/^[a-zA-Z0-9-_ üöäÜÖÄ.,!?:/]*$/);
+};
+
 ns.validators.number = function(min,max) {
     return function(cont) {
         if (! $.isNumeric(cont) )
@@ -92,16 +96,22 @@ function InputModel(params, compInfo) {
     this.value = params.value ? params.value : ko.observable('-');
     this.width = params.width ? params.width : '';
     this.align = params.align ? params.align : 'left';
+    this.validator = ns.validators.safestring(100);
+    this.inputtype = params.inputtype ? params.inputtype : '';
+
+    if ( params.validator ) {
+        self.validator = params.validator;
+    }
 
     this.isValid = ko.pureComputed(function () {
         return true; //self.value() && self.value().length > 0;
     });
 
-    if ($.isFunction(params.validator)) {
+    if ($.isFunction(self.validator)) {
         this.isValid = function () {
-            return params.validator.apply(self, [self.value()]);
+            return self.validator.apply(self, [self.value()]);
         };
-    } else if ( params.validator ) {
+    } else if ( self.validator ) {
         console.error('validator should be a function');
     }
 

@@ -15,7 +15,7 @@ model.navs = ko.observableArray([
     { title: 'Trading',   link:'#tables', enabled: Server.loggedIn, subs: [
         { title: 'Markets', link:'#tables', enabled: Server.loggedIn },
         { title: 'Orders & Trades', link:'#own', enabled: Server.loggedIn },
-        { title: 'Cash', link:'#own', enabled: Server.loggedIn }
+        { title: 'Cash', link:'#cash', enabled: Server.loggedIn }
     ]},
     { title: 'Admin', link:'#admin', enabled: model.isMarketAdmin, subs: [
         { title: 'Users & Invites', link:'#users', enabled: Server.loggedIn },
@@ -23,6 +23,14 @@ model.navs = ko.observableArray([
     ]},
     { title: 'Showcase',link:'#show',  enabled: Server.loggedIn }
 ]);
+
+// testing on home
+model.testInstrument = ko.observable("");
+model.testMarket = ko.observable("");
+model.testClick = function() {
+    console.log("testClick");
+};
+
 
 // appwide
 model.currentView = ko.observable("home");
@@ -53,12 +61,14 @@ model.isMarketAssigned = function (marketPlaceKey) {
 
 model.test = ko.observable("pok");
 
-// invitationstuff FIXME: use own controller
+// invitationstuff
 model.inviteController = new InviteController();
 // admin controller
 model.adminController = new MarketsController();
 // trade controller (template named tables)
 model.tradeController = new TradeController();
+// own overview
+model.ownController = new OwnController();
 
 model.userString = ko.computed( function() {
     if ( Server.loggedIn() && model.userRecord().role != "NONE" ) {
@@ -68,13 +78,34 @@ model.userString = ko.computed( function() {
     return "";
 });
 
+model.delOrder = function( row ) {
+    Server.session().$delOrder(row).then( function(r,e) {
+        if (e)
+            console.error("unhandled error "+e);
+        if (r) {
+            //if ( row.buy ) {
+            //    self.buyOrderMsg(r);
+            //} else
+            //{
+            //    self.sellOrderMsg(r);
+            //}
+        } else {
+            //if ( row.buy ) {
+            //    self.buyOrderMsg('');
+            //} else {
+            //    self.sellOrderMsg('');
+            //}
+        }
+    });
+};
+
 ko.applyBindings(model);
 
 // init/overwrite formatters in rlgrid
 RLFormatterMap["Text15"] = function(meta, fieldName, celldata) {
-    if ( celldata.length < 16 )
+    if ( celldata.length < 30 )
         return celldata;
-    return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,15)+ " ...</span>";
+    return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,30)+ " ...</span>";
 };
 RLFormatterMap["Trader"] = function(meta, fieldName, celldata, row) {
     //return "<img src='img/user/"+celldata+".jpg' width='16' height='16'>&nbsp;<b>"+celldata+"</b>";

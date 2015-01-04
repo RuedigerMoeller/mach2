@@ -4,6 +4,8 @@ import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.KeyLen;
 
+import java.util.Date;
+
 /**
  * Created by ruedi on 23.11.14.
  */
@@ -14,6 +16,7 @@ public class Invite extends Record {
     String admin;    // done by
     String email; // email of user invited
     String repliedUserName;     // name of user in case replied
+    String timeSentString;
     long timeSent;
     int hoursValid;
     boolean mailSent = false;
@@ -25,7 +28,7 @@ public class Invite extends Record {
         this.admin = admin;
         this.email = email;
         this.repliedUserName = repliedUserName;
-        this.timeSent = timeSent;
+        setTimeSent(timeSent);
         this.hoursValid = hoursValid;
     }
 
@@ -67,6 +70,7 @@ public class Invite extends Record {
 
     public void setTimeSent(long timeSent) {
         this.timeSent = timeSent;
+        timeSentString = Trade.df.format(new Date(timeSent));
     }
 
     public int getHoursValid() {
@@ -75,5 +79,13 @@ public class Invite extends Record {
 
     public void setHoursValid(int hoursValid) {
         this.hoursValid = hoursValid;
+    }
+
+    public String getTimeSentString() {
+        return timeSentString;
+    }
+
+    public void setTimeSentString(String timeSentString) {
+        this.timeSentString = timeSentString;
     }
 }

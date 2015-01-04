@@ -1,0 +1,54 @@
+<template id="own">
+    <div data-bind="with: ownController">
+        <br>
+        <b class="table-heading">Open orders</b>
+        <br>
+        <br>
+        <div class='table-scrollbox' style="height:200px;">
+            <rl-grid params="table: 'Order',
+                             subscribe: 'it.traderKey==´'+model.userRecord().recordKey+'´',
+                             columns: [ 'instrumentMnem', 'buy', 'limitPrice', 'qty', 'creationTimeString', 'text'  ],
+                             sortKey: '!creationTimeString',
+                             actions: orderActions,
+                             onAction: onTableAction
+                             ">
+            </rl-grid>
+        </div>
+        <br>
+        <br>
+        <b class="table-heading">Trades</b>
+        <br>
+        <br>
+        <ns-filterstrip params="
+            filter: [
+                {
+                    placeHolder: 'Contract Name',
+                    maxLength: 30,
+                    width: '140px',
+                    value: tfInstrument
+                },
+                {
+                    placeHolder: 'Market',
+                    width: '70px',
+                    maxLength: 50,
+                    value: tfMarket
+                },
+                {
+                    placeHolder: 'Date',
+                    width: '140px',
+                    maxLength: 50,
+                    value: tfDate
+                }
+            ],
+            click: doTrades
+            ">
+        </ns-filterstrip>
+        <div class='table-scrollbox' style="height:400px;">
+            <rl-grid params="table: 'Trade',
+                             subscribe: tradeFilter,
+                             sortKey: '!tradeTime'
+                             ">
+            </rl-grid>
+        </div>
+    </div>
+</template>

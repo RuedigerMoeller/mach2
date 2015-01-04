@@ -4,12 +4,13 @@
 //   subscribe: queryString
 //   columns: []
 //   noColums: true
-//   sortKey: colId
+//   sortKey: colId // ! for reverse order
 //   noStriping: something
 //   width: '300px'
 //   actions: function(tableName,row) => return td content. clickable elements need id starting with _ns_ set
 //   onAction: fun(actionid,row)
 //   hoverSelection: true
+//   formatter: function(function(meta, fieldName, celldata,row). return null for default. Overrides RLFormatterMap.
 ko.components.register('rl-grid', {
     template: 'none',
     viewModel: {
@@ -48,6 +49,7 @@ function RLGridModel(params,componentInfo) {
     self.striping = params.noStriping ? false : true;
     self.actions = params.actions ? params.actions : false;
     self.onAction = params.onAction ? params.onAction : null;
+    self.formatter = params.formatter ? params.formatter : null;
     self.hoverSelection = params.hoverSelection ? params.hoverSelection : false;
 
     if ( params.sortKey ) {
@@ -285,6 +287,8 @@ function RLGridModel(params,componentInfo) {
         if ( typeof(query) == 'function') {
             query = query.apply();
         }
+        if ( query == null )
+            return;
         query = query.replace("´","'"); // workaround quoting limits
         query = query.replace("´","'"); // workaround quoting limits
         Server.session().$query(tableName, query, function (change, error) {
@@ -305,6 +309,11 @@ function RLGridModel(params,componentInfo) {
     };
 
     this.formatCell = function(meta, fieldName, celldata, row) {
+        if ( self.formatter ) {
+            var res = self.formatter.apply(null,[meta,fieldName,celldata,row]);
+            if ( res )
+                return res;
+        }
         if ( meta.renderStyle ) {
             var formatter = RLFormatterMap[meta.renderStyle];
             if ( formatter ) {
@@ -330,6 +339,9 @@ function RLGridModel(params,componentInfo) {
         self.clear();
         if ( typeof(query) == 'function') {
             query = query.apply();
+        }
+        if ( query == null ) {
+            return;
         }
         query = query.replace("´","'"); // workaround quoting limits
         query = query.replace("´","'"); // workaround quoting limits

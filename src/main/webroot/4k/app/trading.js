@@ -59,18 +59,28 @@ function TradeController() {
             return  "it.instrumentKey == '"+ self.selectedInstr().recordKey+"' && !it.buy";
     });
 
+    self.formatOrder = function(meta, fieldName, celldata, row) {
+        if ( fieldName === 'limitPrice' ) {
+            if ( row.buy ) {
+                return "<b id='_ns_matchBuy' class='buyPrice-link'>"+Number(celldata/100).toFixed(2)+"</b>";
+            } else
+                return "<b id='_ns_matchSell' class='sellPrice-link'>"+Number(celldata/100).toFixed(2)+"</b>";
+        }
+        return null;
+    };
+
     self.tableSelected = function( instr ) {
         self.selectedInstr(instr);
     };
 
     self.onMarketPlaceSelection = function(selectedRow) {
         console.log("TradeController MP change");
-        self.selectedInstr(null);
         if ( selectedRow ) {
             self.selectedMP(selectedRow)
         } else {
             self.selectedMP({ recordKey: '' })
         }
+        self.selectedInstr(null);
     };
 
     self.buyActions = function(tablename, order) {
@@ -83,24 +93,15 @@ function TradeController() {
     self.onTableAction = function(action,row) {
         console.log("tableaction "+action+" "+row);
         if ( action === '_ns_delOrder' ) {
-            Server.session().$delOrder(row).then( function(r,e) {
-                if (e)
-                    console.error("unhandled error "+e);
-                if (r) {
-                    if ( row.buy ) {
-                        self.buyOrderMsg(r);
-                    } else
-                    {
-                        self.sellOrderMsg(r);
-                    }
-                } else {
-                    if ( row.buy ) {
-                        self.buyOrderMsg('');
-                    } else {
-                        self.sellOrderMsg('');
-                    }
-                }
-            });
+            model.delOrder(row);
+            return true;
+        } else if ( action === '_ns_matchBuy') {
+            self.sellPrc(row.limitPrice/100);
+            self.sellQty(row.qty);
+            return true;
+        } else if ( action === '_ns_matchSell' ) {
+            self.buyPrc(row.limitPrice/100);
+            self.buyQty(row.qty);
             return true;
         }
         return false;

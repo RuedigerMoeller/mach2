@@ -1,59 +1,11 @@
 
-// helper binding
-ko.bindingHandlers.navdrawer = {
-    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var drawer = $(element).find(".drawer");
-        var drawerVisible = ko.observable({ drawerVisible: false });
-        var height = 34; // drawer.height();
-        var closeUnderway = false;
-        drawer.on(
-            {
-                mouseenter: function () {
-                    drawer.height(height+24);
-                    closeUnderway = false;
-                    setTimeout( function() {
-                        if (!closeUnderway)
-                            drawerVisible({ drawerVisible: true });
-                    }, 350);
-                },
-                mouseleave: function () {
-                    if ( Server.loggedIn() ) {
-                        drawer.height(height);
-                        closeUnderway = true;
-                        drawerVisible({ drawerVisible: false });
-                    }
-                    var recheck = function() {
-                        if ( Server.loggedIn() ) {
-                            drawer.height(height);
-                            closeUnderway = true;
-                            drawerVisible({ drawerVisible: false });
-                        } else {
-                            setTimeout( recheck, 1000 );
-                        }
-                    };
-                    if ( ! Server.loggedIn() )
-                        setTimeout( recheck, 1000 );
-                }
-            });
-
-        // Make a modified binding context, with a extra properties, and apply it to descendant elements
-        var childBindingContext = bindingContext.extend(drawerVisible);
-        ko.applyBindingsToDescendants(childBindingContext, element);
-        // Also tell KO *not* to bind the descendants itself, otherwise they will be bound twice
-        return { controlsDescendantBindings: true };
-//        return { controlsDescendantBindings: false };
-    },
-    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        console.log("navdrawer update"+valueAccessor());
-    }
-};
-
 function NavBarModel(params) {
     var self = this;
     // 'params' is an object whose key/value pairs are the parameters
     // passed from the component binding or custom element.
     this.navs = params.navModel; // [ { title: 'Home',    link:'#home',  enabled: true }, .. ]
     this.hovered = ko.observable(null);
+    this.mouseIn = ko.observable(false);
 
     this.doHover = function( navElem ) {
         self.hovered(navElem);
@@ -61,6 +13,16 @@ function NavBarModel(params) {
 
     this.doUnHover = function( navElem ) {
         //self.hovered(null);
+    };
+
+    this.isIn = function( data, event ) {
+        self.mouseIn(true);
+        return false;
+    };
+
+    this.isOut = function( data, event ) {
+        self.mouseIn(false);
+        return false;
     };
 
     this.activeNavs = ko.pureComputed( function() {
@@ -97,8 +59,6 @@ function NavBarModel(params) {
         self.currentView(window.location.hash.substring(1))
     });
 }
-
-NavBarModel.prototype.doSomething = function() { };
 
 ko.components.register('navpane-ko', {
     viewModel: {

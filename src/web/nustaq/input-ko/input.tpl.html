@@ -1,9 +1,10 @@
 <template id="input-tpl">
-    <input class="form-control" data-bind="
+    <input class="form-control" style="display: inline;" data-bind="
         attr: {
             placeholder: $data.placeHolder(),
             size: size(),
-            maxlength: maxLength()
+            maxlength: maxLength(),
+            type: $data.inputtype
         },
         value: value,
         valueUpdate: 'input',

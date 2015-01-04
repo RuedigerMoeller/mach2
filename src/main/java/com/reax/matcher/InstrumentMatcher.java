@@ -149,6 +149,15 @@ public class InstrumentMatcher { // ready to be be an actor if needed
             }
             if ( bestBuy.getLimitPrice() >= bestSell.getLimitPrice() ) {
                 Trade newTrade = trades.createForAdd();
+
+                newTrade.setInstrumentName(instrument.getName());
+                // just use first part of key as name
+                String marketPlace = instrument.getMarketPlace();
+                if ( marketPlace.indexOf("#") > 0 ) {
+                    marketPlace = marketPlace.substring(0,marketPlace.indexOf('#'));
+                }
+                newTrade.setMarketName(marketPlace);
+
                 orders.prepareForUpdate(bestBuy); // mutates record !
                 orders.prepareForUpdate(bestSell);
 

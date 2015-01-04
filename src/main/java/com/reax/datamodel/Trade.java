@@ -5,6 +5,7 @@ import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.*;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -12,6 +13,8 @@ import java.util.Date;
  */
 @GenRemote
 public class Trade extends Record {
+
+    public static SimpleDateFormat df = new SimpleDateFormat("'´'yy/MM/dd HH:mm:ss");
 
     @Hidden
     String buyTraderKey;
@@ -33,7 +36,7 @@ public class Trade extends Record {
     @ColOrder(5) @DisplayWidth("120px")
     String instrumentKey;
 
-    @RenderStyle("Price") @ColOrder(10) @DisplayWidth("80px") @BGColor("rgba(0,0,0,0.2)")
+    @RenderStyle("Price") @ColOrder(10) @DisplayWidth("80px") @BGColor("rgba(0,0,0,0.2)") @Align("right")
     int tradePrice;
     @ColOrder(15)
     @RenderStyle("Qty") @DisplayWidth("60px") @DisplayName("Qty")
@@ -41,6 +44,9 @@ public class Trade extends Record {
 
     @DisplayWidth("160px") @DisplayName("Time")  @ColOrder(20)
     String tradeTime;
+
+    String marketName;
+    String instrumentName;
 
     public String getBuyOrderId() {
         return buyOrderId;
@@ -64,7 +70,7 @@ public class Trade extends Record {
 
     public void setTradeTimeStamp(long tradeTimeStamp) {
         this.tradeTimeStamp = tradeTimeStamp;
-        this.tradeTime = DateFormat.getDateTimeInstance().format(new Date(tradeTimeStamp));
+        this.tradeTime = df.format(new Date(tradeTimeStamp));
     }
 
     public String getTradeTime() {
@@ -123,5 +129,19 @@ public class Trade extends Record {
         this.instrumentKey = instrumentKey;
     }
 
+    public String getMarketName() {
+        return marketName;
+    }
 
+    public void setMarketName(String marketName) {
+        this.marketName = marketName;
+    }
+
+    public String getInstrumentName() {
+        return instrumentName;
+    }
+
+    public void setInstrumentName(String instrumentName) {
+        this.instrumentName = instrumentName;
+    }
 }
