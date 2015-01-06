@@ -1,22 +1,26 @@
 <template id="profile">
     <div data-bind="with: profileController">
         <br>
-        <b class="table-heading">Welcome '<span data-bind="text: user"></span>', your profile:</b>
+        <b class="table-heading"><b><span data-bind="text: user"></span></b>'s profile:</b>
         <br>
         <br>
-        <table>
+        <table style="border-spacing: 4px; border-collapse: separate;">
             <tr>
-                <td valign="top"><img src="img/user.jpg" width="128" height="128"> </td>
-                <td>
+                <td valign="top">
+                    <ns-upload params="{ image: 'img/user/'+model.userRecord().name+'.png', onUpload: doUpload }">
+                    </ns-upload>
+                    <!--<img src="img/user.png" width="128" height="128"> -->
+                </td>
+                <td style="padding-left: 10px; ">
                     <table cellpadding="4px">
                         <tr>
-                            <td width="10px"></td>
+                            <td>Name:</td>
                             <td style="padding: 4px;">
-                                <b data-bind="text"><b>user</b></b>
+                                <input class="form-control" data-bind="value: user" readonly>
                             </td>
                         </tr>
                         <tr>
-                            <td>&nbsp;</td>
+                            <td>Password:</td>
                             <td style="padding: 4px;">
                                 <ns-input params="
                                    placeHolder: 'Password',
@@ -29,28 +33,28 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>&nbsp;</td>
+                            <td style="white-space: nowrap">Confirm Password:</td>
                             <td style="padding: 4px;">
                                 <ns-input params="
-                               placeHolder: 'Confirm Password',
-                               maxLength: 16,
-                               value: confirmPwd,
-                               inputtype: 'password',
-                               validator: ns.validators.safenowhite(16,6)
-                            ">
+                                   placeHolder: 'Confirm Password',
+                                   maxLength: 16,
+                                   value: confirmPwd,
+                                   inputtype: 'password',
+                                   validator: ns.validators.safenowhite(16,6)
+                                ">
                                 </ns-input>
                             </td>
                         </tr>
                         <tr>
-                            <td>&nbsp;</td>
+                            <td>Email:</td>
                             <td style="padding: 4px;">
-                                <ns-input params="
-                               placeHolder: 'Email',
-                               maxLength: 60,
-                               value: email,
-                               validator: ns.validators.email()
-                            ">
-                                </ns-input>
+                                <input class="form-control" data-bind="value: email" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Role:</td>
+                            <td style="padding: 4px;">
+                                <input class="form-control" data-bind="value: urec().role[0]" readonly>
                             </td>
                         </tr>
                         <tr>
@@ -58,7 +62,7 @@
                         </tr>
                         <tr>
                             <td></td>
-                            <td style="padding-top: 12px; padding-right: 4px;" align="right"><button class="btn btn-primary" data-bind="click: doRegister, dependsOn:[user,pwd,confirmPwd,email]"><b>Submit</b></button></td>
+                            <td style="padding-top: 12px; padding-right: 4px;" align="right"><button class="btn btn-primary" data-bind="click: doSubmit, dependsOn:[pwd,confirmPwd]"><b>Submit</b></button></td>
                         </tr>
                     </table>
                 </td>

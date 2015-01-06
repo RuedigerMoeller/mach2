@@ -15,9 +15,9 @@
     componentPath: [
         4k                     # application (+overrides)
         tmp                    # generated stuff
-        ../../web
-        ../../web/nustaq       # enable scan of nustaq subcomps
-        ../../web/knockout     # enable scan of knockout subcomps
+        ../../weblib
+        ../../weblib/nustaq       # enable scan of nustaq subcomps
+        ../../weblib/knockout     # enable scan of knockout subcomps
     ]
 
     # modules to load

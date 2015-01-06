@@ -104,8 +104,14 @@ var MinBin = new function MinBin() {
 
     this.i8 = function(array) {
         var res = new Int8Array(array.length);
-        for ( var i = 0; i < array.length; i++) {
-            res[i] = array[i];
+        if ( typeof array === 'string' ) {
+            for ( var i = 0; i < array.length; i++) {
+                res[i] = array.charCodeAt(i);
+            }
+        } else {
+            for ( var i = 0; i < array.length; i++) {
+                res[i] = array[i];
+            }
         }
         return res;
     };

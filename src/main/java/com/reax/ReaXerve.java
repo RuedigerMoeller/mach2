@@ -21,6 +21,8 @@ import org.nustaq.reallive.sys.config.ConfigReader;
 import org.nustaq.reallive.sys.config.SchemaConfig;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 
@@ -222,6 +224,19 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         Promise p = new Promise();
         realLive.getTable("User").$get(user.trim().toLowerCase()).then((userRecord, error) -> {
             if ( userRecord != null && pwd.equals(((User) userRecord).getPwd())) {
+                String name = ((User) userRecord).getName();
+                String pathname = "fileroot/img/user/" + name + ".png";
+                if ( ! new File(pathname).exists() ) {
+                    Path from = Paths.get("fileroot/img/user.png");
+                    CopyOption[] options = new CopyOption[]{
+                        StandardCopyOption.REPLACE_EXISTING
+                    };
+                    try {
+                        Files.copy(from, Paths.get(pathname), options);
+                    } catch (IOException e) {
+                        Log.Warn(ReaXerve.this,e);
+                    }
+                }
                 p.receive(userRecord,null);
             } else {
                 p.receive(null,"authentication failure");

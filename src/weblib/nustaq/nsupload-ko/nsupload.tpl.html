@@ -1,0 +1,45 @@
+<template id="nsupload">
+    <style>
+        .nsupload {
+            width: 100%;
+            height: 100%;
+            -moz-opacity:0;
+            filter:alpha(opacity: 0);
+            opacity: 0;
+        }
+        .nsupload-container {
+            border: solid #000000 1px;
+            background-size: cover;
+            position: relative;
+            display: inline-block;
+            vertical-align:middle;
+        }
+    </style>
+    <table>
+        <tr>
+            <td>
+                <div class="nsupload-container" data-bind="style: { backgroundImage: 'url('+image()+')', width: width, height: height }">
+                    <p style="width: 100%; position: absolute; top: 0; left: 0; z-index:1; text-align: center;">
+                        Click to upload
+                    </p>
+                    <input class="form-control nsupload" id="files" type="file" data-bind="
+                        files: {
+                            onLoaded: onLoadEnd,
+                            fileFilter: 'image.*',
+                            readAs: 'binary'
+                        },
+                        customFileInput: {
+                            buttonClass: 'btn btn-success',
+                            fileNameClass: 'disabled form-control'
+                        },
+                        maxSize: 50000
+                    "/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 4px;"><b data-bind="html: errorMsg"></b></td>
+        </tr>
+    </table>
+
+</template>

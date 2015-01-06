@@ -14,7 +14,15 @@ import org.nustaq.reallive.sys.config.ConfigReader;
 import org.nustaq.reallive.sys.config.SchemaConfig;
 import org.nustaq.reallive.sys.metadata.Metadata;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by ruedi on 23.10.2014.
@@ -165,6 +173,29 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     public Future<String> $delOrder(Order order) {
         return app.getMatcher().$delOrder(order);
     }
+
+    public Future<Integer> $uploadImage( String symbolic, String imageType, byte[] bytes ) {
+//        System.out.println("size: "+image.length() +" type "+imageType+"  "+image);
+//        byte[] bytes = new byte[0];
+        try {
+//            bytes = image.getBytes("UTF-8");
+            ByteArrayInputStream bai = new ByteArrayInputStream(bytes);
+            Iterator<ImageReader> imageReadersByMIMEType = ImageIO.getImageReadersByMIMEType(imageType);
+            if ( imageReadersByMIMEType.hasNext() ) {
+                ImageReader reader = imageReadersByMIMEType.next();
+                reader.setInput(ImageIO.createImageInputStream(bai));
+                BufferedImage read = reader.read(0, reader.getDefaultReadParam() );
+                ImageIO.write(read, "png", new File("fileroot/img/user/" + user.getName() + ".png"));
+            } else {
+                return new Promise<>(null, "unrecognized type");
+            }
+        } catch (Exception e) {
+            Log.Warn(this,e);
+            return new Promise<>(0,e.getClass().getSimpleName()+":"+e.getMessage());
+        }
+        return new Promise<>(bytes.length);
+    }
+
     /**
      * "SUCCESS" = sucess, else error msg
      * @return
