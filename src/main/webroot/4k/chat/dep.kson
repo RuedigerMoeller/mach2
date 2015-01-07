@@ -1,0 +1,3 @@
+{
+    depends: [ kontraktor-ko input-ko ]
+}

@@ -114,7 +114,7 @@ public class TopOfBook extends Record {
     }
 
     public void setLastTradeStringFrom(long timeStringFrom) {
-        this.lastMatchStr = DateFormat.getDateTimeInstance().format(new Date(timeStringFrom));
+        this.lastMatchStr = Trade.df.format(new Date(timeStringFrom));
     }
 
 }

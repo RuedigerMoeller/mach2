@@ -1,1 +1,1 @@
-[ jquery ]
+{ depends: [ jquery ] }

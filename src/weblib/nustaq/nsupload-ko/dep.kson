@@ -1,1 +1,1 @@
-[ knockout kontraktor-ko ]
+{ depends: [ knockout kontraktor-ko ] }

@@ -19,8 +19,6 @@ import javax.imageio.ImageReader;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -52,13 +50,47 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         return new Promise<>(key);
     }
 
+    /**
+     *
+     * @param table
+     * @param query
+     * @param cb
+     * @return subs id
+     */
     public Future<String> $subscribe(String table, String query, Callback cb) {
         Subscription subs = realLive.stream(table).subscribe(new JSQuery(query), change -> {
-//            if ( change.getTableId().equals("Instrument") ) {
-//                System.out.println("instrument update:"+change);
-//            }
             cb.receive(change, CONT);
         });
+        String key = "subs" + subsCount++;
+        subscriptions.put(key, subs);
+        return new Promise<>(key);
+    }
+
+    /**
+     * @param marketPlacePrefix - if != null, remove messages relevant to other MP
+     * @param cb
+     * @return subsId
+     */
+    public Future<String> $subscribeMsg(String marketPlacePrefix, String userId, Callback cb) {
+        Subscription subs = realLive.stream("Message").subscribe(
+            rec -> {
+                Message m = (Message) rec;
+                String adminName = user.getAdminName();
+                if ( adminName == null )
+                    adminName = user.getName();
+                if ( (adminName.equals(m.getAdminId()) ) ||
+                     ( marketPlacePrefix == null || (m.getMarketId() != null && m.getMarketId().equals(marketPlacePrefix) ) ) ||
+                     ( m.getUserId() == null || (userId != null && m.getUserId().equals(user.getName()) ) )
+                   )
+                {
+                    return true;
+                }
+                return false;
+            },
+            change -> {
+                cb.receive(change, CONT);
+            }
+        );
         String key = "subs" + subsCount++;
         subscriptions.put(key, subs);
         return new Promise<>(key);
@@ -112,6 +144,11 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
 
         mpTable.$get(mpRecordKey).onResult( place -> {
             place.setAdmin( user.getRecordKey() );
+            Message m = new Message();
+            m.setAdminId(user.getRecordKey());
+            m.setSenderId("system");
+            m.setMessageText("New Market created: '"+place.getDescription()+"'");
+            $sendMessage(m);
             String newMPKey = place.getRecordKey() + "#" + user.getRecordKey();
             mpTable.$put(newMPKey, place, 0);
             instrTable.stream().filter(
@@ -194,6 +231,20 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
             return new Promise<>(0,e.getClass().getSimpleName()+":"+e.getMessage());
         }
         return new Promise<>(bytes.length);
+    }
+
+    public Future $sendMessage( Message message ) {
+        RLTable<Message> msgTab = realLive.getTable("Message");
+        if ( user.getAdminName() == null ) {
+            message.setAdminId(user.getName()); // market owner owns hisself
+        } else {
+            message.setAdminId(user.getAdminName());
+        }
+        message.setSenderId(user.getName());
+        message.setMsgTime(System.currentTimeMillis());
+        message._setRecordKey(null);
+        msgTab.$add(message,0);
+        return new Promise(null);
     }
 
     /**

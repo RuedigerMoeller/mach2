@@ -1,2 +1,2 @@
 # realtime connected ko-components
-[ kontraktor-ko, reallive ]
+{ depends: [ kontraktor-ko, reallive ] }

@@ -1,4 +1,8 @@
 var initown = function() {
+    if ( model.ownController.firstTime !== true ) {
+        model.ownController.doTrades();
+        model.ownController.firstTime = true;
+    }
 };
 
 function OwnController() {
@@ -40,7 +44,5 @@ function OwnController() {
         }
         self.tradeFilter(base);
     };
-
-    setTimeout( function() {self.doTrades();}, 500 );
 
 }

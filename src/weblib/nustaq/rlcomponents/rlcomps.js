@@ -114,8 +114,8 @@ ko.bindingHandlers.rlrecord = {
     }
 };
 
-function RLObservableResultSet(table,query) {
-    RLResultSet.call(this);
+function RLObservableResultSet(table,query, subscribeFun /*optional*/) {
+    RLResultSet.call(this, table, query, subscribeFun);
     this.list = ko.observableArray();
     this.clearList = function() {
         this.list.splice(0,this.getList().length);

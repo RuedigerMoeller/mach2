@@ -45,6 +45,10 @@ public class User extends Record {
         this.email = email;
     }
 
+    /**
+     * assumption == recordKey !!!!
+     * @return
+     */
     public String getName() {
         return name;
     }

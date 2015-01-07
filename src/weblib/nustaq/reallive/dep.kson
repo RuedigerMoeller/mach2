@@ -1,2 +1,2 @@
 # guilib independent part of reallive
-[ minbin kontraktor ]
+{ depends: [ minbin kontraktor ] }

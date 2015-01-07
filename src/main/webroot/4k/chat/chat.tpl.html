@@ -1,0 +1,47 @@
+<template id="chat-tpl">
+    <table style="width: 250px; padding: 20px; border: solid #eee 1px;">
+        <tr>
+            <td>
+                <textarea
+                    class="form-control"
+                    data-bind="resizableTA: true, value: msgBox"
+                    placeholder="What's up ?"
+                    maxlength="200"
+                    rows="1">
+                </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" align="right" style="padding-top: 4px; padding-bottom: 6px;">
+                <button class="btn btn-xs btn-primary">Send</button>
+            </td>
+        </tr>
+        <tr>
+            <td data-bind="foreach: { data: data.list }" style="padding-top: 4px;">
+                <div style="padding-top: 4px; padding-right: 12px; padding-bottom: 4px;border-bottom: solid #eee 2px; background-color: #ffffff; ">
+                    <table>
+                        <tr>
+                            <td style="padding-top: 2px; padding-bottom: 2px; padding-left: 8px; padding-right: 8px;" valign="top">
+                                <img data-bind="attr: { src: 'img/user/'+$data.senderId+'.png' }" width="48" height="48">
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td valign="center" align="left" style="padding-bottom: 2px; border-bottom: solid #eee 1px;">
+                                            by <b data-bind="text: $data.senderId"></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-top: 4px; padding-bottom: 4px;" colspan="2" data-bind="text: $data.messageText"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </td>
+        </tr>
+    </table>
+</template>
+

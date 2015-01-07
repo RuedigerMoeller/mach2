@@ -1,14 +1,16 @@
-[
-    bootstrap
-    bootstrap-ko
-    input-ko
-    nsupload-ko
-    reallive      # data basics
-    kontraktor    # communication+encoding
-    generated.js  # generated server interface
-    rlcomponents  # some real live components (observable result set, rlrecord)
-    navpane-ko    # navpane tag for ko
-    components    # applevel components
-    rlgrid        # real live table control
-    flipcontainer # effect
-]
+{
+    depends: [
+        bootstrap
+        bootstrap-ko
+        input-ko
+        nsupload-ko
+        reallive      # data basics
+        kontraktor    # communication+encoding
+        generated.js  # generated server interface
+        rlcomponents  # some real live components (observable result set, rlrecord)
+        navpane-ko    # navpane tag for ko
+        rlgrid        # real live table control
+        flipcontainer # effect
+        chat
+    ]
+}

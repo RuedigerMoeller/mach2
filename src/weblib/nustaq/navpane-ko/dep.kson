@@ -1,1 +1,1 @@
-[ kontraktor-ko ]
+{ depends: [ kontraktor-ko ] }

@@ -107,6 +107,6 @@ public class Order extends Record {
     }
 
     public void setTimeStringFrom(long timeStringFrom) {
-        this.creationTimeString = DateFormat.getDateTimeInstance().format(new Date(timeStringFrom));
+        this.creationTimeString = Trade.df.format(new Date(timeStringFrom));
     }
 }

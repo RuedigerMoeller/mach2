@@ -87,7 +87,7 @@ var RealLive = new function() {
 
 };
 
-function RLResultSet( table, query ) {
+function RLResultSet( table, query, subscribeFun /*optional table, query, callback */ ) {
 
     var self = this;
 
@@ -103,16 +103,22 @@ function RLResultSet( table, query ) {
     // fnFronendquery: filterfunction(record)
     this.subscribe = function( table, query, fnFrontendQuery ) {
         self.unsubscribe();
-        Server.session().$subscribe( table, query, self.subscb = function(change,e) {
-            if ( fnFrontendQuery && change.type == RL_ADD ) {
-                if ( !fnFrontendQuery.apply(self,[change.newRecord]) ) {
+        self.subscb = function (change, e) {
+            if (fnFrontendQuery && change.type == RL_ADD) {
+                if (!fnFrontendQuery.apply(self, [change.newRecord])) {
                     return;
                 }
             }
             self.push(change);
-        }).then( function(subsId, err) {
+        };
+        var cbProc = function (subsId, err) {
             self.subsId = subsId;
-        });
+        };
+        if ( subscribeFun ) {
+            subscribeFun.apply(null,[table, query, self.subscb]).then(cbProc)
+        } else {
+            Server.session().$subscribe( table, query, self.subscb ).then(cbProc);
+        }
         return this;
     };
 

@@ -106,6 +106,7 @@ function InputModel(params, compInfo) {
     this.align = params.align ? params.align : 'left';
     this.validator = ns.validators.safestring(100);
     this.inputtype = params.inputtype ? params.inputtype : '';
+    this.multiline = params.multiline ? true : null;
 
     if ( params.validator ) {
         self.validator = params.validator;
@@ -172,5 +173,16 @@ ko.bindingHandlers.dependsOn = {
         },50);
     },
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+    }
+};
+
+// for text area
+ko.bindingHandlers.resizableTA = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        $(element).css("overflow", "hidden");
+        element.addEventListener('keyup', function(ev) {
+            this.style.height = '24px';
+            this.style.height = this.scrollHeight + 12 + 'px';
+        });
     }
 };
