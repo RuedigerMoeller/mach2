@@ -37,7 +37,7 @@ function OwnController() {
             base += "&& it.instrumentName.indexOf('"+self.tfInstrument()+"') >= 0";
         }
         if (self.tfMarket().length > 0) {
-            base += "&& it.marketName.indexOf('"+self.tfMarket()+"') >= 0";
+            base += "&& it.marketId.indexOf('"+self.tfMarket()+"') >= 0";
         }
         if (self.tfDate().length > 0) {
             base += "&& it.tradeTime.indexOf('"+self.tfDate()+"') >= 0";

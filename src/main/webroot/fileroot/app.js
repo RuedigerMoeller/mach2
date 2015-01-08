@@ -4,7 +4,8 @@ var assignedMarkets = new RLObservableResultSet();
 var availableMarkets = new RLObservableResultSet();
 var userMarkets = new RLObservableResultSet();
 
-var model = {};
+var model = { test: ko.observable("POK")};
+ko.punches.enableAll();
 
 model.userRecord = ko.observable({ role: ['NONE'] });
 model.isMarketAdmin = ko.observable(false);
@@ -107,10 +108,12 @@ RLFormatterMap["Text15"] = function(meta, fieldName, celldata) {
         return "<span style='width:150px;'>"+celldata+"</span>";
     return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,15)+ " ...</span>";
 };
+
 RLFormatterMap["Trader"] = function(meta, fieldName, celldata, row) {
     //return "<img src='img/user/"+celldata+".jpg' width='16' height='16'>&nbsp;<b>"+celldata+"</b>";
     return "<b id='_ns_userLink' class='userLink'>"+celldata+"</b>";
 };
+
 RLFormatterMap["Price"] = function(meta, fieldName, celldata, row) {
     if ( row instanceof JOrder ) {
         if ( row.buy ) {
@@ -119,7 +122,21 @@ RLFormatterMap["Price"] = function(meta, fieldName, celldata, row) {
             return "<b id='_ns_matchSell' class='sellPrice'>"+Number(celldata/100).toFixed(2)+"</b>";
     } else
         return "<b>"+Number(celldata/100).toFixed(2)+"</b>";
-},
+};
+
+RLFormatterMap["BS"] = function(meta, fieldName, celldata, row) {
+    if ( row instanceof JTrade ) {
+        if ( row.buyTraderKey == model.userRecord().name ) {
+            return "<div class='buyBox'>Buy</div>";
+        } else
+            return "<div class='sellBox'>Sell</div>";
+    } else {
+        if ( row[fieldName] ) {
+            return "<div class='buyBox'>Buy</div>";
+        } else
+            return "<div class='sellBox'>Sell</div>";
+    }
+};
 
 // subscribe sets on login
 Server.doOnceLoggedIn( function(bool) {

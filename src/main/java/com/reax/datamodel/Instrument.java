@@ -11,7 +11,7 @@ import org.nustaq.reallive.sys.annotations.*;
  *
  */
 @GenRemote
-@KeyLen(32) // instr template id # marketid
+@KeyLen(Keys.INSTRUMENT) // instr template id # marketid
 public class Instrument extends Record {
 
     String description;

@@ -13,12 +13,13 @@ import java.util.Date;
  * Key is orderId
  *
  */
-@GenRemote
+@GenRemote @KeyLen(Keys.ORDER)
 public class Order extends Record {
 
     String instrumentKey;
     String instrumentMnem;
 
+    @RenderStyle("BS")
     boolean buy; // else sell
 
     @RenderStyle("Price") @DisplayWidth("60px") @Align("right")
@@ -27,6 +28,8 @@ public class Order extends Record {
 
     @RenderStyle("Text15")
     String text;
+
+    String marketKey;
 
     String traderKey;
 
@@ -108,5 +111,13 @@ public class Order extends Record {
 
     public void setTimeStringFrom(long timeStringFrom) {
         this.creationTimeString = Trade.df.format(new Date(timeStringFrom));
+    }
+
+    public String getMarketKey() {
+        return marketKey;
+    }
+
+    public void setMarketKey(String marketKey) {
+        this.marketKey = marketKey;
     }
 }

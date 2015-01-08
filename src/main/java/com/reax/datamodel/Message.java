@@ -2,13 +2,14 @@ package com.reax.datamodel;
 
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
+import org.nustaq.reallive.sys.annotations.KeyLen;
 
 import java.util.Date;
 
 /**
  * Created by ruedi on 06/01/15.
  */
-@GenRemote
+@GenRemote @KeyLen(Keys.MESSAGE)
 public class Message extends Record {
 
     long msgTime;

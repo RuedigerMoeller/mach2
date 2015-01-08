@@ -8,6 +8,7 @@ function RegisterController() {
     self.confirmPwd = ko.observable("");
     self.email = ko.observable("");
     self.formError = ko.observable("");
+    self.viewForm = ko.observable(true);
 
     self.confirmError = ko.computed( function() {
         var un = self.user();
@@ -31,8 +32,8 @@ function RegisterController() {
     self.doRegister = function() {
         Server.restGET("$registerUser/"+self.user()+"/"+self.pwd()+"/"+self.email()).then( function(r,e) {
             if ( r == null ) {
-                // fixme: need global message component
-                window.location.hash="#home";
+                self.viewForm(false);
+                //window.location.hash="#home";
             } else {
                 self.confirmError("ERROR: User registration failed "+r);
             }

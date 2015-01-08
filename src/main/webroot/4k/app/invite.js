@@ -39,6 +39,7 @@ function InviteController() {
                 window.location.hash="#home";
             } else {
                 // fixme: internal error. Need msgbox component
+                model.postMessage(r+":"+e);
                 console.log("User creationg failed "+r);
             }
         })

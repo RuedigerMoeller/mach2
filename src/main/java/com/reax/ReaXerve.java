@@ -2,6 +2,7 @@ package com.reax;
 
 import com.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import com.reax.datamodel.*;
+import com.reax.datamodel.Message;
 import com.reax.matcher.Feeder;
 import com.reax.matcher.Matcher;
 import com.sun.org.apache.xpath.internal.operations.Bool;
@@ -86,11 +87,6 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         importInitialData(User.class);
         importInitialData(MarketPlace.class);
         importInitialData(Instrument.class);
-
-        RLTable testTable = realLive.getTable("TestRecord");
-        for ( int i = 1; i < 500; i++ ) {
-            testTable.$put("test_" + i, new TestRecord().init("name"+i,""+Math.random(),13,32,5*i),0);
-        }
 
         try {
             SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");
@@ -291,12 +287,23 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                     invite.$remove( inv.getRecordKey(), 0);
                     ut.$put(nickname,newOne,0);
                     result.signal();
+                    postAdminMsg(inv.getAdmin(), nickname, "User " + nickname + " has confirmed his invitation !");
                 }
             }
         }).onError(err -> result.receive( ""+err, null));
         return result;
     }
 
+    protected void postAdminMsg(String admin, String sender, String msgTxt ) {
+        RLTable<Message> msgTab = realLive.getTable("Message");
+        Message message = new Message();
+        message.setAdminId(admin); // market owner owns hisself
+        message.setSenderId(sender);
+        message.setMessageText(msgTxt);
+        message.setMsgTime(System.currentTimeMillis());
+        message._setRecordKey(null);
+        msgTab.$add(message,0);
+    }
     /**
      * startup server + map some files for development
      * @param arg

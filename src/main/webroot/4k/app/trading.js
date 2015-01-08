@@ -114,6 +114,7 @@ function TradeController() {
         var buyQ = self.buyQty();
         var buyPrc = parseFloat(self.buyPrc());
         Server.session().$addOrder(
+            instr.marketPlace,
             instr.recordKey,
             instr.name,
             true,
@@ -139,6 +140,7 @@ function TradeController() {
         var sellQ = self.sellQty();
         var instr = self.selectedInstr();
         Server.session().$addOrder(
+            instr.marketPlace,
             instr.recordKey,
             instr.name,
             false,

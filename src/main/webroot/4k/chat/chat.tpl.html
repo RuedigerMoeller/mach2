@@ -4,6 +4,9 @@
             background-color: #ffffff;
             transition: background-color .3s;
         }
+        .nschatown {
+            color: #070;
+        }
         .nschatlocal {
             background-color: #ffffcc;
             transition: background-color .3s;
@@ -30,6 +33,7 @@
             border-radius:3px 3px 3px 3px; padding: 4px; background-color: #800; color: white; font-size: x-small; font-weight: bold;
         }
     </style>
+    {{#if: Server.loggedIn}}
     <table style="width: 300px; padding: 12px; border: solid #eee 1px;">
         <tr>
             <td>
@@ -55,7 +59,8 @@
                         {
                             nschatlocal: $data.senderId == 'local',
                             nschatsystem: $data.senderId == 'system',
-                            nschatitem: $data.senderId != 'local' && $data.senderId != 'system'
+                            nschatitem: $data.senderId != 'local' && $data.senderId != 'system',
+                            nschatown: $data.senderId == model.userRecord().name
                         }" >
                     <table data-bind="if: $data.senderId == 'local'">
                         <tr>
@@ -99,5 +104,6 @@
             </td>
         </tr>
     </table>
+    {{/if}}
 </template>
 

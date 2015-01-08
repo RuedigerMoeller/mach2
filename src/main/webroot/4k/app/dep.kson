@@ -2,6 +2,7 @@
     depends: [
         bootstrap
         bootstrap-ko
+        punches
         input-ko
         nsupload-ko
         reallive      # data basics

@@ -2,11 +2,12 @@ package com.reax.datamodel;
 
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
+import org.nustaq.reallive.sys.annotations.KeyLen;
 
 /**
  * Created by ruedi on 04.08.2014.
  */
-@GenRemote
+@GenRemote @KeyLen(Keys.MARKET_PLACE)
 public class MarketPlace extends Record {
 
     String templateId; // the recId it was derived from

@@ -46,7 +46,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     int subsCount = 1;
 
     public Future<String> $subscribeKey(String table, String recordKey, Callback cb) {
-        Subscription subs = realLive.stream(table).subscribeKey( recordKey, (change) -> cb.receive(change,CONT) );
+        Subscription subs = realLive.stream(table).subscribeKey(recordKey, (change) -> cb.receive(change, CONT));
         String key = "subs" + subsCount++;
         subscriptions.put(key, subs);
         return new Promise<>(key);
@@ -69,11 +69,11 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     }
 
     /**
-     * @param marketPlacePrefix - if != null, remove messages relevant to other MP
+     * @param marketPlaceFilter - if != null, remove messages relevant to other MP
      * @param cb
      * @return subsId
      */
-    public Future<String> $subscribeMsg(String marketPlacePrefix, String userId, Callback cb) {
+    public Future<String> $subscribeMsg(String marketPlaceFilter, String userFilter, Callback cb) {
         long oldest = 0;//System.currentTimeMillis()-2*24*60*60*1000l;
         Predicate matches = rec -> {
             Message m = (Message) rec;
@@ -83,10 +83,11 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
             String adminName = user.getAdminName();
             if (adminName == null)
                 adminName = user.getName();
-            if ((adminName.equals(m.getAdminId())) ||
-                    (marketPlacePrefix == null || (m.getMarketId() != null && m.getMarketId().equals(marketPlacePrefix))) ||
-                    (m.getUserId() == null || (userId != null && m.getUserId().equals(user.getName())))
-                    ) {
+            boolean isVisibleToMarket = adminName.equals(m.getAdminId()) || "system".equals(m.getAdminId());
+            boolean matchesMPFilter = marketPlaceFilter == null || (m.getMarketId() != null && m.getMarketId().equals(marketPlaceFilter));
+            boolean matchesUserFilter = m.getUserId() == null || (userFilter != null && m.getUserId().equals(user.getName()));
+            if ( isVisibleToMarket && (matchesMPFilter || matchesUserFilter) )
+            {
                 return true;
             }
             return false;
@@ -173,7 +174,8 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
                             tpl.setOwner(user.getRecordKey());
                             tpl.setMarketPlace(newMPKey);
                             instrTable.$put(tpl.getRecordKey() + "#" + user.getRecordKey(), tpl, 0);
-                        } else if (!change.isARU()) {
+                        }
+                        if (change.isSnapshotDone()) {
                             p.receive("ok", null); // signal finish
                         }
                     });
@@ -202,10 +204,11 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         return new Promise<>(user);
     }
 
-    public Future<String> $addOrder( String instrId, String instrName, boolean buy, int price, int qty, String text ) {
+    public Future<String> $addOrder( String marketId, String instrId, String instrName, boolean buy, int price, int qty, String text ) {
         Order o = new Order();
         o.setBuy(buy);
         o.setCreationTime(System.currentTimeMillis());
+        o.setMarketKey(marketId);
         o.setInstrumentKey(instrId);
         o.setInstrumentMnem(instrName);
         o.setLimitPrice(price);

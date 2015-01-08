@@ -1,5 +1,15 @@
 <template id="register">
+
     <div data-bind="with: registerController">
+
+    {{#ifnot: viewForm}}
+    <br><br>
+    <b class="table-heading">Thank's for registering</b><br><br>
+    <p>A mail has been sent to <b>{{email}}</b>. <br>Please click the link inside the mail to finish registration.</p>
+    <br>See you :).
+    {{/if}}
+
+    {{#if: viewForm}}
     <br>
     <b class="table-heading">Register</b>
     <br>
@@ -64,5 +74,6 @@
             <td style="padding-top: 12px; padding-right: 4px;" align="right"><button class="btn btn-primary" data-bind="click: doRegister, dependsOn:[user,pwd,confirmPwd,email]"><b>Submit Registration</b></button></td>
         </tr>
     </table>
+    {{/if}}
     </div>
 </template>

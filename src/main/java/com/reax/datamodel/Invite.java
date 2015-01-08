@@ -10,7 +10,7 @@ import java.util.Date;
  * Created by ruedi on 23.11.14.
  */
 @GenRemote
-@KeyLen(32)
+@KeyLen(Keys.INVITE)
 public class Invite extends Record {
 
     String admin;    // done by

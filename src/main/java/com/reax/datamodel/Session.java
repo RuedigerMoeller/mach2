@@ -10,7 +10,7 @@ import org.nustaq.reallive.sys.annotations.KeyLen;
  * Created by ruedi on 27.07.14.
  */
 @GenRemote
-@InMem @KeyLen(16) // sessionid
+@InMem @KeyLen(Keys.SESSION) // sessionid
 public class Session extends Record {
 
     String traderKey;

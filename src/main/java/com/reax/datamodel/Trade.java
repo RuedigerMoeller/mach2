@@ -4,14 +4,13 @@ import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.*;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by ruedi on 18.07.14.
  */
-@GenRemote
+@GenRemote @KeyLen(Keys.TRADE)
 public class Trade extends Record {
 
     public static SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
@@ -26,26 +25,25 @@ public class Trade extends Record {
     @Hidden
     String sellOrderId;
 
-    @Virtual @ColOrder(3)
     @RenderStyle("BS") @DisplayWidth("60px") @DisplayName("B/S")
-    boolean isBuy;
+    transient boolean isBuy;
 
     @Hidden
     long tradeTimeStamp;
 
-    @ColOrder(5) @DisplayWidth("120px")
+    @DisplayWidth("120px")
     String instrumentKey;
 
-    @RenderStyle("Price") @ColOrder(10) @DisplayWidth("80px") @BGColor("rgba(0,0,0,0.2)") @Align("right")
+    @RenderStyle("Price") @DisplayWidth("80px") @BGColor("rgba(0,0,0,0.2)") @Align("right")
     int tradePrice;
-    @ColOrder(15)
+
     @RenderStyle("Qty") @DisplayWidth("60px") @DisplayName("Qty")
     int tradeQty;
 
     @DisplayWidth("160px") @DisplayName("Time")  @ColOrder(20)
     String tradeTime;
 
-    String marketName;
+    String marketId;
     String instrumentName;
 
     public String getBuyOrderId() {
@@ -129,12 +127,12 @@ public class Trade extends Record {
         this.instrumentKey = instrumentKey;
     }
 
-    public String getMarketName() {
-        return marketName;
+    public String getMarketId() {
+        return marketId;
     }
 
-    public void setMarketName(String marketName) {
-        this.marketName = marketName;
+    public void setMarketId(String marketId) {
+        this.marketId = marketId;
     }
 
     public String getInstrumentName() {

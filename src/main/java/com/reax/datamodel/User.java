@@ -4,11 +4,12 @@ import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.Description;
+import org.nustaq.reallive.sys.annotations.KeyLen;
 
 /**
  * Created by ruedi on 25.10.2014.
  */
-@GenRemote @Description("refers to a user. Can have different roles.")
+@GenRemote @Description("refers to a user. Can have different roles.") @KeyLen(Keys.USER)
 public class User extends Record {
 
     String adminName; // refers to owner in case

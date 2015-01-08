@@ -65,6 +65,7 @@ public class Feeder extends Actor<Feeder> {
                         //                        Order newOrder = (Order) rl.getTable("Order").createForAddWithKey();
                         Order newOrder = new Order();
                         newOrder.setInstrumentKey(instrument.getRecordKey());
+                        newOrder.setMarketKey(instrument.getMarketPlace());
                         boolean isBuy = Math.random() > .5;
                         if (isBuy) {
                             newOrder.setBuy(isBuy);

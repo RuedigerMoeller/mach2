@@ -46,7 +46,8 @@
         <div class='table-scrollbox' style="height:400px;">
             <rl-grid params="table: 'Trade',
                              subscribe: tradeFilter,
-                             sortKey: '!tradeTime'
+                             sortKey: '!tradeTime',
+                             columns: ['isBuy','instrumentName', 'marketId', 'tradePrice', 'tradeQty', 'tradeTime' ]
                              ">
             </rl-grid>
         </div>
