@@ -1,10 +1,41 @@
 <template id="chat-tpl">
-    <table style="width: 250px; padding: 20px; border: solid #eee 1px;">
+    <style>
+        .nschatitem {
+            background-color: #ffffff;
+            transition: background-color .3s;
+        }
+        .nschatlocal {
+            background-color: #ffffcc;
+            transition: background-color .3s;
+        }
+        .nschatprivate {
+            background-color: #ffffcc;
+            transition: background-color .3s;
+        }
+        .nschatsystem {
+            background-color: #ffffff;
+            transition: background-color .3s;
+            color: #3299BB;
+        }
+        .nschatlocal:hover, .nschatitem:hover, .nschatsystem:hover {
+            background-color: rgba(0,0,0,.05);
+        }
+        .tag-private {
+            border-radius:3px 3px 3px 3px; padding: 4px; background-color: #080; color: white; font-size: x-small; font-weight: bold;
+        }
+        .tag-public {
+            border-radius:3px 3px 3px 3px; padding: 4px; background-color: #3299BB; color: white; font-size: x-small; font-weight: bold;
+        }
+        .tag-admin {
+            border-radius:3px 3px 3px 3px; padding: 4px; background-color: #800; color: white; font-size: x-small; font-weight: bold;
+        }
+    </style>
+    <table style="width: 300px; padding: 12px; border: solid #eee 1px;">
         <tr>
             <td>
                 <textarea
                     class="form-control"
-                    data-bind="resizableTA: true, value: msgBox"
+                    data-bind="resizableTA: true, value: msgBox, event: { focus: startEdit, blur: stopEdit, keypress: keyPressed }, valueUpdate: 'input'"
                     placeholder="What's up ?"
                     maxlength="200"
                     rows="1">
@@ -12,23 +43,48 @@
             </td>
         </tr>
         <tr>
-            <td valign="top" align="right" style="padding-top: 4px; padding-bottom: 6px;">
-                <button class="btn btn-xs btn-primary">Send</button>
+            <td data-bind="visible: isEditing() && msgBox().length > 0" valign="top" align="right" style="padding-top: 4px; padding-bottom: 6px;">
+                <button class="btn btn-xs btn-primary" data-bind="click: sendMsg">Send</button>
             </td>
         </tr>
         <tr>
-            <td data-bind="foreach: { data: data.list }" style="padding-top: 4px;">
-                <div style="padding-top: 4px; padding-right: 12px; padding-bottom: 4px;border-bottom: solid #eee 2px; background-color: #ffffff; ">
-                    <table>
+            <td id="nschatcont" data-bind="foreach: { data: data.list, afterAdd: showElem, beforeRemove: hideElem }" style="padding-top: 4px;">
+                <!--<b data-bind="text: $data.senderId"></b>-->
+                <div style="padding-top: 4px; padding-right: 12px; padding-bottom: 4px;border-bottom: solid #eee 2px;"
+                     data-bind="css:
+                        {
+                            nschatlocal: $data.senderId == 'local',
+                            nschatsystem: $data.senderId == 'system',
+                            nschatitem: $data.senderId != 'local' && $data.senderId != 'system'
+                        }" >
+                    <table data-bind="if: $data.senderId == 'local'">
                         <tr>
                             <td style="padding-top: 2px; padding-bottom: 2px; padding-left: 8px; padding-right: 8px;" valign="top">
-                                <img data-bind="attr: { src: 'img/user/'+$data.senderId+'.png' }" width="48" height="48">
+                                <img data-bind="attr: { src: 'img/local.png' }" width="32" height="32">
+                            </td>
+                            <td style="padding-top: 4px; padding-bottom: 4px;" colspan="2" data-bind="text: $data.messageText"></td>
+                        </tr>
+                    </table>
+                    <table data-bind="ifnot: ($data.senderId == 'local')">
+                        <tr>
+                            <td style="padding-top: 2px; padding-bottom: 2px; padding-left: 8px; padding-right: 8px;" valign="top">
+                                <img data-bind="attr: { src: 'img/user/'+$data.senderId+'.png' }" width="32" height="32">
                             </td>
                             <td>
                                 <table>
                                     <tr>
                                         <td valign="center" align="left" style="padding-bottom: 2px; border-bottom: solid #eee 1px;">
                                             by <b data-bind="text: $data.senderId"></b>
+                                            &nbsp;&nbsp;&nbsp;<span style="color: gray; font-size: smaller;" data-bind="text: msgTimeString"></span>
+                                            <!--<span data-bind="if: ! $data.userId && $data.senderId != 'local' && $data.senderId != 'system'">-->
+                                                <!--<span class="tag-public">public</span>-->
+                                            <!--</span>-->
+                                            <span data-bind="if: $data.userId == model.userRecord().name">
+                                                <span class="tag-private">private</span>
+                                            </span>
+                                            <span data-bind="if: $data.senderId == model.userRecord().adminName">
+                                                <span class="tag-admin">admin</span>
+                                            </span>
                                         </td>
                                     </tr>
                                     <tr>

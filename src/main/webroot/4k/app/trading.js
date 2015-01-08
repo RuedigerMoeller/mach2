@@ -14,8 +14,6 @@ function TradeController() {
     self.sellPrc = ko.observable(null);
     self.buyQty = ko.observable(1);
     self.sellQty = ko.observable(1);
-    self.buyOrderMsg = ko.observable("");
-    self.sellOrderMsg = ko.observable("");
     self.buyText = ko.observable("");
     self.sellText = ko.observable("");
 
@@ -90,6 +88,10 @@ function TradeController() {
         return '';
     };
 
+    self.goBack = function() {
+        self.selectedInstr(null);
+    };
+
     self.onTableAction = function(action,row) {
         console.log("tableaction "+action+" "+row);
         if ( action === '_ns_delOrder' ) {
@@ -108,40 +110,48 @@ function TradeController() {
     };
 
     self.doBuy = function() {
+        var instr = self.selectedInstr();
+        var buyQ = self.buyQty();
+        var buyPrc = parseFloat(self.buyPrc());
         Server.session().$addOrder(
-            self.selectedInstr().recordKey,
-            self.selectedInstr().name,
+            instr.recordKey,
+            instr.name,
             true,
-            self.buyPrc()*100,
-            self.buyQty(),
+            buyPrc*100,
+            buyQ,
             self.buyText()
         ).then( function(r,e) {
             if ( r ) {
-                self.buyOrderMsg(r);
+                model.postMessage(""+r);
             } else {
+                if ( e )
+                    model.postMessage(""+e);
+                else
+                    model.postMessage( "you added a buy order "+buyQ+"@"+buyPrc.toFixed(2)+" for '"+instr.name+"'" );
                 self.buyPrc("");
-                self.buyOrderMsg("");
                 self.buyText('');
             }
         });
     };
 
     self.doSell = function() {
+        var sellPrc = parseFloat(self.sellPrc());
+        var sellQ = self.sellQty();
+        var instr = self.selectedInstr();
         Server.session().$addOrder(
-            self.selectedInstr().recordKey,
-            self.selectedInstr().name,
+            instr.recordKey,
+            instr.name,
             false,
-            self.sellPrc()*100,
-            self.sellQty(),
+            sellPrc*100,
+            sellQ,
             self.sellText()
         ).then( function(r,e) {
-                if ( r ) {
-                    self.sellOrderMsg(r);
-                } else {
-                    self.sellPrc("");
-                    self.sellOrderMsg("");
-                    self.sellText('');
-                }
+                if ( e )
+                    model.postMessage(""+e);
+                else
+                    model.postMessage( "you added a sell order "+sellQ+"@"+sellPrc.toFixed(2)+" for '"+instr.name+"'" );
+                self.sellPrc("");
+                self.sellText('');
             });
     };
 }

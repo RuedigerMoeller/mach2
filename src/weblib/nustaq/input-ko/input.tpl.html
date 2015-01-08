@@ -12,4 +12,17 @@
     ">
 </template>
 
+<template id="msgbox-tpl">
+    <div style="position: fixed; top: 10px; z-index: 1000; left: 40%;" data-bind="fadeVisible: isVisible">
+        <table style="background-color: #FFFFCC; border: solid #eeeebb 1px;">
+            <tr>
+                <td width="90%" align="center" style="padding: 4px;">
+                    <span data-bind="text:msgText">
+                    </span>
+                </td>
+                <td align="right" valign="top" data-bind="click: hideMe"><div style="color: #ddb; font-size: small; cursor: pointer; font-size: larger; padding: 4px;">&#10006;</div></td>
+            </tr>
+        </table>
+    </div>
+</template>
 <!--style: { width: width, backgroundColor: bgColor, textAlign: align }-->

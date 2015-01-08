@@ -129,12 +129,18 @@ function RLObservableResultSet(table,query, subscribeFun /*optional*/) {
         //return JSON.parse(JSON.stringify(record));
     };
 
-    this.sortBy = function( column ) {
+    this.sortBy = function( column, boolReverse ) {
         this.insertFun = function( list, record ) {
             var len = list.length;
             for ( var i = 0; i < len; i++ ) {
-                if ( list[i][column] > record[column] ) {
-                    return i;
+                if ( boolReverse ) {
+                    if ( list[i][column] <= record[column] ) {
+                        return i;
+                    }
+                } else {
+                    if ( list[i][column] > record[column] ) {
+                        return i;
+                    }
                 }
             }
             return len;

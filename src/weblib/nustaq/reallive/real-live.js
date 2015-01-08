@@ -98,7 +98,7 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
     this.subsId = null;
     this.subsCB = null;
     this.snapFinFun = null;
-    this.insertFun = 0; // function(list,newItem) defining insert point in list.
+    this.insertFun = null; // function(list,newItem) defining insert point in list.
 
     // fnFronendquery: filterfunction(record)
     this.subscribe = function( table, query, fnFrontendQuery ) {
@@ -195,6 +195,16 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
         }
     };
 
+    this.insertRec = function(rec) {
+        self.map[rec.recordKey] = rec;
+        if (self.insertFun) {
+            var idx = self.insertFun.apply(this, [this.getList(), rec]);
+            self.list.splice(idx, 0, rec);
+        } else {
+            self.list.push(rec);
+        }
+    };
+
     this.push = function(change) {
         if (this.preChangeHook) {
             this.preChangeHook.call(null,change,this.snapFin);
@@ -206,13 +216,7 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
                 if ( this.map[change.recordKey] ) {
                     console.log('double add rec '+change.recordKey);
                 }
-                this.map[rec.recordKey] = rec;
-                if ( this.insertFun ) {
-                    var idx = this.insertFun.apply(this,[this.getList(),rec]);
-                    this.list.splice(idx,0,rec);
-                } else {
-                    this.list.push(rec);
-                }
+                self.insertRec(rec);
             } break;
             case RL_REMOVE: {
 //                console.log( "remove "+change.recordKey);

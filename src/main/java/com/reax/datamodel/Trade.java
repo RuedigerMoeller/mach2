@@ -14,7 +14,7 @@ import java.util.Date;
 @GenRemote
 public class Trade extends Record {
 
-    public static SimpleDateFormat df = new SimpleDateFormat("'´'yy/MM/dd HH:mm:ss");
+    public static SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
 
     @Hidden
     String buyTraderKey;

@@ -24,7 +24,10 @@ function MarketsController() {
     self.onInvite = function() {
         console.log("Invite:"+self.emailList() );
         Server.session().$sendMails(self.emailList()).then( function(r,e) {
-            console.log("result:"+r); // FIXME: Errors
+            if ( r )
+                model.postMessage(""+r);
+            if ( e )
+                model.postMessage(""+e);
             self.emailList("");
         });
     };

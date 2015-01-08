@@ -1,2 +1,2 @@
 # reallive-ko binding of jqGrid
-{ depends: [ kontraktor-ko, reallive ] }
+{ depends: [ kontraktor-ko, reallive, rlcomponents ] }

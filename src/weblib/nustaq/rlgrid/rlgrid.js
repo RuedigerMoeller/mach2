@@ -62,13 +62,6 @@ function RLGridModel(params,componentInfo) {
     }
     self.snapshotDone = false;
 
-    var showElem = function(elem) {
-        $(elem).hide().fadeIn(400);
-    };
-    var hideElem = function(elem) {
-        $(elem).fadeOut(400,function() { $(elem).remove(); });
-    };
-
     self.deselect = function(targetElem) {
         targetElem.__selected = false;
         $(targetElem).removeClass('rl-grid-sel');
@@ -80,6 +73,13 @@ function RLGridModel(params,componentInfo) {
             $(targetElem).addClass('rl-grid-row-even');
         } else
             $(targetElem).addClass('rl-grid-row');
+    };
+
+    self.showElem = function(elem) {
+        $(elem).hide().fadeIn(400);
+    };
+    self.hideElem = function(elem) {
+        $(elem).fadeOut(400,function() { $(elem).remove(); });
     };
 
     self.initTable = function( tableName ) {
@@ -173,10 +173,10 @@ function RLGridModel(params,componentInfo) {
             } else {
                 var title = colMeta.displayName;
                 var width = colMeta.displayWidth;
-                if ( ! width )
-                    width = '';
+                if ( width )
+                    width = "style: 'width:"+width+";'";
                 else
-                    width = "style: 'width:'"+width+";'";
+                    width = '';
                 if ( ! title ) {
                     title = colMeta.name;
                 }
@@ -261,11 +261,16 @@ function RLGridModel(params,componentInfo) {
                 data = "";
             }
             var align = tableMeta.columns[cn].align;
+            var width = tableMeta.columns[cn].displayWidth;
+            if ( width )
+                width = "style: 'width:"+width+";'";
+            else
+                width = '';
             if ( align ) {
                 align = " align='"+align+"' "
             } else
                 align = "";
-            res += "<td class='rl-grid-cell' id='"+cn+"'"+align+">"+ self.renderCell( tableMeta.columns[cn], cn, data, row )+"</td>";
+            res += "<td class='rl-grid-cell' "+width+" id='"+cn+"'"+align+">"+ self.renderCell( tableMeta.columns[cn], cn, data, row )+"</td>";
         }
         var elem = $("<tr class='rl-grid-row' id='" + rlEscapeId(row.recordKey) + "'>" + res + "</tr>");
         var insert = findPos(row);
@@ -278,7 +283,7 @@ function RLGridModel(params,componentInfo) {
         ko.applyBindings(row, elem.get(0));
 
         if ( self.snapshotDone )
-            showElem(elem);
+            self.showElem(elem);
         elem.get(0).__row = row;
     };
 
@@ -335,6 +340,13 @@ function RLGridModel(params,componentInfo) {
         return "<span id='hilight' style='padding: 4px; "+styleAdditions+" '>"+self.formatCell(meta,fieldName,celldata, row)+"</span>";
     };
 
+    self.showElem = function(elem) {
+        $(elem).hide().fadeIn(400);
+    };
+    self.hideElem = function(elem) {
+        $(elem).fadeOut(400,function() { $(elem).remove(); });
+    };
+
     this.subscribe = function( tableName, query ) {
         self.clear();
         if ( typeof(query) == 'function') {
@@ -354,7 +366,7 @@ function RLGridModel(params,componentInfo) {
             } else if ( change.type == RL_REMOVE ) {
                 var row = self.tbody.find("#"+rlEscapeId(change.recordKey));
                 if ( row ) {
-                    hideElem(row);
+                    self.hideElem(row);
                 }
                 if ( self.snapshotDone ) {
                     self.updateStripes(0);

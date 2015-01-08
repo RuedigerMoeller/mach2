@@ -11,18 +11,13 @@ model.isMarketAdmin = ko.observable(false);
 
 // navbar menu
 model.navs = ko.observableArray([
-    { title: 'Home',    link:'#home',  enabled: true, subs: [
-        { title: 'Profile', link:'#profile', enabled: Server.loggedIn },
-    ]},
-    { title: 'Trading',   link:'#tables', enabled: Server.loggedIn, subs: [
-        { title: 'Markets', link:'#tables', enabled: Server.loggedIn },
-        { title: 'Orders & Trades', link:'#own', enabled: Server.loggedIn },
-        { title: 'Cash', link:'#cash', enabled: Server.loggedIn }
-    ]},
-    { title: 'Admin', link:'#admin', enabled: model.isMarketAdmin, subs: [
-        { title: 'Users & Invites', link:'#users', enabled: Server.loggedIn },
-        { title: 'Assigned Markets', link:'#admin', enabled: Server.loggedIn }
-    ]},
+    { title: 'Home',    link:'#home',  enabled: true },
+    { title: 'Market', link:'#tables', enabled: Server.loggedIn },
+    { title: 'Orders', link:'#own', enabled: Server.loggedIn },
+    { title: 'Cash', link:'#cash', enabled: Server.loggedIn },
+    { title: 'Profile', link:'#profile', enabled: Server.loggedIn },
+    { title: 'Users', link:'#users', enabled: model.isMarketAdmin },
+    { title: 'MarketPlaces', link:'#admin', enabled: model.isMarketAdmin },
     { title: 'Showcase',link:'#show',  enabled: Server.loggedIn }
 ]);
 
@@ -43,6 +38,11 @@ model.availableMarkets = availableMarkets.list; // market templates
 model.userName = Server.userName;
 model.userList = user.list;
 
+model.postMessage = function (stringMsg) {
+    model.msgBoxController().setMessage(stringMsg);
+    model.chatController().postMessage(stringMsg,30000);
+};
+
 model.initView = function() {
     if ( window[ 'init'+model.currentView() ] )
         window[ 'init'+model.currentView() ].apply();
@@ -53,15 +53,12 @@ model.showElem = function(elem) {
 };
 model.hideElem = function(elem) {
     if (elem.nodeType === 1)
-        $(elem).fadeOut(200,function() { $(elem).remove();
-        });
+        $(elem).fadeOut(200,function() { $(elem).remove(); });
 };
 model.isMarketAssigned = function (marketPlaceKey) {
     // fixme: add original Id
     return assignedMarkets.containsKey( marketPlaceKey + '#' + model.userName() );
 };
-
-model.test = ko.observable("pok");
 
 // invitationstuff
 model.inviteController = new InviteController();
@@ -73,8 +70,9 @@ model.tradeController = new TradeController();
 model.ownController = new OwnController();
 
 model.registerController = new RegisterController();
-
 model.profileController = new ProfileController();
+model.chatController = ko.observable(null);
+model.msgBoxController = ko.observable(null);
 
 model.userString = ko.computed( function() {
     if ( Server.loggedIn() && model.userRecord().role != "NONE" ) {
@@ -93,18 +91,10 @@ model.delOrder = function( row ) {
         if (e)
             console.error("unhandled error "+e);
         if (r) {
-            //if ( row.buy ) {
-            //    self.buyOrderMsg(r);
-            //} else
-            //{
-            //    self.sellOrderMsg(r);
-            //}
+            model.postMessage(""+r);
         } else {
-            //if ( row.buy ) {
-            //    self.buyOrderMsg('');
-            //} else {
-            //    self.sellOrderMsg('');
-            //}
+            if ( e )
+                model.postMessage(""+r);
         }
     });
 };
@@ -113,9 +103,9 @@ ko.applyBindings(model);
 
 // init/overwrite formatters in rlgrid
 RLFormatterMap["Text15"] = function(meta, fieldName, celldata) {
-    if ( celldata.length < 30 )
-        return celldata;
-    return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,30)+ " ...</span>";
+    if ( celldata.length < 15 )
+        return "<span style='width:150px;'>"+celldata+"</span>";
+    return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,15)+ " ...</span>";
 };
 RLFormatterMap["Trader"] = function(meta, fieldName, celldata, row) {
     //return "<img src='img/user/"+celldata+".jpg' width='16' height='16'>&nbsp;<b>"+celldata+"</b>";

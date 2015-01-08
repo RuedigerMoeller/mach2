@@ -10,6 +10,7 @@ import org.nustaq.kontraktor.util.Log;
 import org.nustaq.fourk.FourKSession;
 import org.nustaq.reallive.*;
 import org.nustaq.reallive.queries.JSQuery;
+import org.nustaq.reallive.sys.SysMeta;
 import org.nustaq.reallive.sys.config.ConfigReader;
 import org.nustaq.reallive.sys.config.SchemaConfig;
 import org.nustaq.reallive.sys.metadata.Metadata;
@@ -21,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 /**
  * Created by ruedi on 23.10.2014.
@@ -72,25 +74,32 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
      * @return subsId
      */
     public Future<String> $subscribeMsg(String marketPlacePrefix, String userId, Callback cb) {
-        Subscription subs = realLive.stream("Message").subscribe(
-            rec -> {
-                Message m = (Message) rec;
-                String adminName = user.getAdminName();
-                if ( adminName == null )
-                    adminName = user.getName();
-                if ( (adminName.equals(m.getAdminId()) ) ||
-                     ( marketPlacePrefix == null || (m.getMarketId() != null && m.getMarketId().equals(marketPlacePrefix) ) ) ||
-                     ( m.getUserId() == null || (userId != null && m.getUserId().equals(user.getName()) ) )
-                   )
-                {
-                    return true;
-                }
+        long oldest = 0;//System.currentTimeMillis()-2*24*60*60*1000l;
+        Predicate matches = rec -> {
+            Message m = (Message) rec;
+            if ( m.getMsgTime() < oldest ) {
                 return false;
-            },
-            change -> {
-                cb.receive(change, CONT);
             }
+            String adminName = user.getAdminName();
+            if (adminName == null)
+                adminName = user.getName();
+            if ((adminName.equals(m.getAdminId())) ||
+                    (marketPlacePrefix == null || (m.getMarketId() != null && m.getMarketId().equals(marketPlacePrefix))) ||
+                    (m.getUserId() == null || (userId != null && m.getUserId().equals(user.getName())))
+                    ) {
+                return true;
+            }
+            return false;
+        };
+
+        ChangeBroadcastReceiver bcastRec = change -> cb.receive(change, CONT);
+        realLive.stream("Message").filterUntil(
+            matches,
+            (rec,i) -> ((Integer)i).intValue() > 20,
+            bcastRec
         );
+
+        Subscription subs =  realLive.stream("Message").listen(matches,bcastRec);
         String key = "subs" + subsCount++;
         subscriptions.put(key, subs);
         return new Promise<>(key);
@@ -152,23 +161,22 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
             String newMPKey = place.getRecordKey() + "#" + user.getRecordKey();
             mpTable.$put(newMPKey, place, 0);
             instrTable.stream().filter(
-                ins -> {
-                    if ( "admin".equals(ins.getOwner()) && mpRecordKey.equals(ins.getMarketPlace()) ) {
-                        return true;
-                    }
-                    return false;
-                },
-                change -> {
-                    if ( change.isAdd() ) {
-                        Instrument tpl = change.getRecord();
-                        tpl.setOwner(user.getRecordKey());
-                        tpl.setMarketPlace(newMPKey);
-                        instrTable.$put(tpl.getRecordKey() + "#" + user.getRecordKey(), tpl, 0);
-                    } else
-                    if ( ! change.isARU() ) {
-                        p.receive("ok", null); // signal finish
-                    }
-                });
+                    ins -> {
+                        if ("admin".equals(ins.getOwner()) && mpRecordKey.equals(ins.getMarketPlace())) {
+                            return true;
+                        }
+                        return false;
+                    },
+                    change -> {
+                        if (change.isAdd()) {
+                            Instrument tpl = change.getRecord();
+                            tpl.setOwner(user.getRecordKey());
+                            tpl.setMarketPlace(newMPKey);
+                            instrTable.$put(tpl.getRecordKey() + "#" + user.getRecordKey(), tpl, 0);
+                        } else if (!change.isARU()) {
+                            p.receive("ok", null); // signal finish
+                        }
+                    });
         });
         return p;
     }
@@ -240,7 +248,8 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         } else {
             message.setAdminId(user.getAdminName());
         }
-        message.setSenderId(user.getName());
+        if ( message.getSenderId() == null )
+            message.setSenderId(user.getName());
         message.setMsgTime(System.currentTimeMillis());
         message._setRecordKey(null);
         msgTab.$add(message,0);
@@ -285,7 +294,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
                 count++;
             }
         }
-        return new Promise<>( (count > 0) ? "SUCCESS" : "no message sent");
+        return new Promise<>( (count > 0) ? "Enqueud "+count+" mails." : "No message sent. Check addresses.");
     }
 
 }

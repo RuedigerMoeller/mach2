@@ -16,12 +16,19 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <textarea data-bind="textInput: emailList" cols="80" rows="3"></textarea><br>
+                    <textarea
+                            class="form-control"
+                            data-bind="resizableTA: true, value: emailList, valueUpdate: 'input'"
+                            placeholder="x@y.com foo@bar.org"
+                            maxlength="4000"
+                            cols="80"
+                            rows="2">
+                    </textarea>
                 </td>
             </tr>
             <tr>
                 <td></td>
-                <td align="right"><button type="button" class="btn btn-primary" data-bind="click: onInvite, enabled: emailList().length > 0">Send Invite</button></td>
+                <td style="padding-top: 8px;" align="right"><button type="button" class="btn btn-primary btn-sm" data-bind="click: onInvite, enabled: emailList().length > 0">Send Invite</button></td>
             </tr>
         </table>
         <br>

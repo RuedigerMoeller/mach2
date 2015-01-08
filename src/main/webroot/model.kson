@@ -3,23 +3,23 @@ schema {
     globals: {
         version:   { hidden: true }
         traderKey: { renderStyle: Trader }
-        text: { displayWidth: 100 }
+#        text: { displayWidth: 100px }
     }
 
     tables: {
         User: {
             columns: {
-                recordKey: { displayWidth: 70 }
-                name: { displayWidth: 80 }
-                adminName: { displayWidth: 80 }
-                role: { displayWidth: 95 }
+                recordKey: { displayWidth: 70px }
+                name: { displayWidth: 80px }
+                adminName: { displayWidth: 80px }
+                role: { displayWidth: 95px }
             }
         }
-#        Order: {
-#            columns: {
-#                text: { displayWidth: 100 }
-#            }
-#        }
+        Order: {
+            columns: {
+                text: { displayWidth: 150px }
+            }
+        }
 
     }
 

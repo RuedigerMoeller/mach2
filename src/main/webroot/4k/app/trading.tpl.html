@@ -2,20 +2,26 @@
     <br>
     <div data-bind="with: tradeController">
 
-        <div class="btn-group">
-            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-               data-bind="html: '<b>'+(selectedMP().description ? selectedMP().description : 'Select your Market')+'</b>'"></a>
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-            <ul class="dropdown-menu" style="cursor: pointer;">
-                <li data-bind="foreach: $parent.userMarkets">
-                    <a><i class="icon-list"></i><span data-bind="click: $parent.onMarketPlaceSelection, text: description"></span></a>
-                </li>
-            </ul>
-        </div>
-
+        <table>
+            <tr>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                           data-bind="html: '<b>'+(selectedMP().description ? selectedMP().description : 'Select your Market')+'</b>'"></a>
+                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                        <ul class="dropdown-menu" style="cursor: pointer;">
+                            <li data-bind="foreach: $parent.userMarkets">
+                                <a><i class="icon-list"></i><span data-bind="click: $parent.onMarketPlaceSelection, text: description"></span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+                <td style="padding-left: 8px;" valign="center">
+                    <button class="btn btn-success btn-xs" data-bind="click: goBack, visible: selectedInstr() != null"><b>Show Market</b></button>
+                </td>
+            </tr>
+        </table>
         <br>
-        <br>
-
         <div data-bind="flip: selectedInstr()">
             <div>
                 <div class="front">
@@ -92,7 +98,8 @@
                                         actions: buyActions,
                                         onAction: onTableAction,
                                         hoverSelection: true,
-                                        formatter: formatOrder
+                                        formatter: formatOrder,
+                                        width: '300px'
                                     ">
                                     </rl-grid>
                                 </div>
@@ -112,6 +119,7 @@
                                         actions: buyActions,
                                         onAction: onTableAction,
                                         hoverSelection: true,
+                                        width: '300px',
                                         formatter: formatOrder
                                     ">
                                     </rl-grid>

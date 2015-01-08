@@ -86,6 +86,39 @@ ns.validators.int = function(min,max) {
     };
 };
 
+ko.components.register('ns-msgbox', {
+    template:  { element: "msgbox-tpl" },
+    viewModel: {
+        createViewModel: function(params,componentInfo) {
+            return new MBoxModel(params,componentInfo);
+        }
+    }
+});
+
+function MBoxModel(params,componentInfo) {
+    var self = this;
+
+    self.msgText = ko.observable("");
+    self.isVisible = ko.observable(false);
+    var dontHide = 0;
+    self.setMessage = function( msg ) {
+        var timoutCount = ++dontHide;
+        self.msgText(msg);
+        self.isVisible(true);
+        setTimeout(function(){
+            if ( dontHide === timoutCount )
+                self.hideMe();
+        },3000);
+    };
+    self.hideMe = function() {
+        self.isVisible(false);
+    };
+    if ( params.assignTo ) {
+        params.assignTo.apply(null, [self] );
+    }
+
+}
+
 ko.components.register('ns-input', {
     template:  { element: "input-tpl" },
     viewModel: {
