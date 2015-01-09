@@ -4,7 +4,7 @@
         <b class="table-heading">Open orders</b>
         <br>
         <br>
-        <div class='table-scrollbox' style="height:200px;">
+        <div align="left" class='table-scrollbox' style="height:200px;">
             <rl-grid params="table: 'Order',
                              subscribe: 'it.traderKey==´'+model.userRecord().recordKey+'´',
                              columns: [ 'instrumentMnem', 'buy', 'limitPrice', 'qty', 'creationTimeString', 'text'  ],
@@ -43,7 +43,7 @@
             click: doTrades
             ">
         </ns-filterstrip>
-        <div class='table-scrollbox' style="height:400px;">
+        <div align="left" class='table-scrollbox' style="height:400px;">
             <rl-grid params="table: 'Trade',
                              subscribe: tradeFilter,
                              sortKey: '!tradeTime',
