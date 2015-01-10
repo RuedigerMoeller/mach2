@@ -9,6 +9,7 @@ function ProfileController() {
     self.email = ko.observable("");
     self.formError = ko.observable("");
     self.urec = ko.observable(null);
+    self.motto = ko.observable("");
 
     self.readData = function(usrec) {
         self.user(usrec.name);
@@ -16,6 +17,7 @@ function ProfileController() {
         self.confirmPwd(usrec.pwd);
         self.email(usrec.email);
         self.urec(usrec);
+        self.motto(usrec.motto);
     };
 
     self.confirmError = ko.computed( function() {
@@ -42,6 +44,15 @@ function ProfileController() {
     }, self);
 
     self.doSubmit = function() {
+        self.urec().pwd = self.pwd();
+        self.urec().motto = self.motto();
+        Server.session().$updateUser(self.urec()).then( function(r,e) {
+            if ( r ) {
+                model.postMessage("Profile changes submitted");
+            } else {
+                model.postMessage("An error occured submitting changes:"+e);
+            }
+        });
     };
 
 }

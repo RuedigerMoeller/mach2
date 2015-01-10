@@ -11,8 +11,8 @@ function NSChatModel(params, compinfo) {
     var self = this;
 
     self.msgBox = ko.observable("");
-    self.marketPlaceFilter = null;
-    self.userIdFilter = null;
+    self.marketPlaceFilter = __(null);
+    self.userIdFilter = __(null);
     self.isEditing = ko.observable(false);
     if ( params.assignTo ) { // expect binding
         params.assignTo.apply(null,[self]);
@@ -33,9 +33,22 @@ function NSChatModel(params, compinfo) {
         return true;
     };
 
+    self.prevFilter = null;
+
+    self.updateMarketFilter = function(newFilter) {
+        if ( newFilter == '' || ! newFilter ) {
+            newFilter = null;
+        }
+        if ( self.prevFilter != newFilter ) {
+            self.marketPlaceFilter(newFilter);
+            self.data.subscribe("Message", "");
+            self.prevFilter = newFilter;
+        }
+    };
+
     self.sendMsg = function(event) {
         var msg = new JMessage({
-            marketId: null,
+            marketId: self.marketPlaceFilter(),
             messageText: self.msgBox(),
             senderId: model.userRecord().name,
             userId: null
@@ -53,7 +66,7 @@ function NSChatModel(params, compinfo) {
     };
 
     self.data = new RLObservableResultSet(null, null, function(table, query, cb ) {
-        return Server.session().$subscribeMsg( self.marketPlaceFilter, self.userIdFilter, cb );
+        return Server.session().$subscribeMsg( self.marketPlaceFilter(), self.userIdFilter(), cb );
     });
 
     self.data.sortBy("msgTimeString", true);

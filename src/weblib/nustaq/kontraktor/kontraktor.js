@@ -72,6 +72,10 @@ var Kontraktor = new function() {
     };
 
     this.unregisterCB = function(cb) {
+        if ( cb == null ) {
+            console.log("remove cb, cb is null!");
+            return;
+        }
         console.log("remove cb "+cb.__cbid);
         console.log("callback size "+Object.keys(self.cbmap).length);
         delete self.cbmap[cb.__cbid];

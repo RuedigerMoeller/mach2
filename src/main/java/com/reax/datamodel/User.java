@@ -15,12 +15,22 @@ public class User extends Record {
     String adminName; // refers to owner in case
     String name;
     String pwd;
-    String lastLogin;
-    String creationTime;
+    long lastLogin;
+    long creationTime;
     String email;
+    String motto;
+
+    public String getMotto() {
+        return motto;
+    }
+
+    public void setMotto(String motto) {
+        this.motto = motto;
+    }
+
     UserRole role = UserRole.USER;
 
-    public User init(String name, String pwd, String lastLogin, String creationTime, UserRole role, String email) {
+    public User init(String name, String pwd, long lastLogin, long creationTime, UserRole role, String email) {
         this.name = name;
         this.pwd = pwd;
         this.lastLogin = lastLogin;
@@ -66,19 +76,19 @@ public class User extends Record {
         this.pwd = pwd;
     }
 
-    public String getLastLogin() {
+    public long getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(String lastLogin) {
+    public void setLastLogin(long lastLogin) {
         this.lastLogin = lastLogin;
     }
 
-    public String getCreationTime() {
+    public long getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(String creationTime) {
+    public void setCreationTime(long creationTime) {
         this.creationTime = creationTime;
     }
 

@@ -1,5 +1,7 @@
 var user = new RLObservableResultSet();
 var tableRS = new RLObservableResultSet();
+
+
 var assignedMarkets = new RLObservableResultSet();
 var availableMarkets = new RLObservableResultSet();
 var userMarkets = new RLObservableResultSet();
@@ -21,14 +23,6 @@ model.navs = ko.observableArray([
     { title: 'MarketPlaces', link:'#admin', enabled: model.isMarketAdmin },
     { title: 'Showcase',link:'#show',  enabled: Server.loggedIn }
 ]);
-
-// testing on home
-model.testInstrument = ko.observable("");
-model.testMarket = ko.observable("");
-model.testClick = function() {
-    console.log("testClick");
-};
-
 
 // appwide
 model.currentView = ko.observable("home");
@@ -155,9 +149,27 @@ Server.doOnceLoggedIn( function(bool) {
     user.subscribe("User","true");
 });
 
+{
+    function mpUpdate(newValue) {
+        var curMarketKey =  model.tradeController.selectedMP();
+        if ( curMarketKey )
+            curMarketKey = curMarketKey.recordKey;
+        if ( ! curMarketKey )
+            curMarketKey = null;
+        model.chatController().updateMarketFilter( model.currentView() == 'tables' ? curMarketKey : null );
+    }
+
+    model.currentView.subscribe( mpUpdate );
+    model.tradeController.selectedMP.subscribe( mpUpdate );
+
+}
+
+
+//
+// handle initial links from invitation/registration mail
+//
 var inviteString = window.location.hash;
 
-// handle links from invitation mail
 if ( inviteString.indexOf("invite$") >= 0 ) {
     model.inviteController.inviteId(inviteString.substring("invite$".length+1));
     Kontraktor.restGET('$isInviteValid/'+model.inviteController.inviteId())

@@ -76,11 +76,14 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
     protected void initRealLive() {
         realLive = new RLImpl("./reallive-data");
 
-        scanModelClasses( User.class.getPackage().getName() ).forEach(clazz -> realLive.createTable(clazz));
+        scanModelClasses( User.class.getPackage().getName() ).forEach(clazz -> {
+            if ( Record.class.isAssignableFrom(clazz))
+                realLive.createTable(clazz);
+        });
 
         realLive.getTable("User").$put(
             "admin",
-            new User().init("admin", "admin", new Date().toString(), new Date().toString(), UserRole.ADMIN, "me@me.com"),
+            new User().init("admin", "admin", System.currentTimeMillis(), System.currentTimeMillis(), UserRole.ADMIN, "me@me.com"),
             0
         );
 
@@ -170,11 +173,10 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                     User u = new User();
 //                    u.setAdminName("admin");
                     u.setName(inv.getUser());
-                    u.setCreationTime(Trade.df.format(new Date()));
                     u.setPwd(inv.getPwd());
                     u.setEmail(inv.getEmail());
                     u.setRole(UserRole.MARKET_OWNER);
-                    u.setLastLogin(u.getCreationTime());
+                    u.setCreationTime(u.getCreationTime());
                     RLTable users = realLive.getTable("User");
                     users.$putIfAbsent(u.getName(), u, 0);
                     users.$sync().onResult( r -> result.receive(new String[]{inv.getUser(), inv.getPwd()}, null) );
@@ -192,7 +194,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             invite.setUser(user);
             invite.setPwd(pwd);
             invite.setEmail(email);
-            invite.setHoursValid(24*5);
+            invite.setHoursValid(24 * 5);
             invite.setTimeSent(System.currentTimeMillis());
             String key = user+(""+Math.random()).substring(2);
             while( key.length() < 32 )
@@ -284,6 +286,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                     newOne.setPwd(pwd);
                     newOne.setName(nickname);
                     newOne.setRole(UserRole.USER);
+                    newOne.setCreationTime(System.currentTimeMillis());
                     invite.$remove( inv.getRecordKey(), 0);
                     ut.$put(nickname,newOne,0);
                     result.signal();

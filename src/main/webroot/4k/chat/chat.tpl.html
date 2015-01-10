@@ -34,7 +34,7 @@
         }
     </style>
     {{#if: Server.loggedIn}}
-    <table style="width: 300px; padding: 12px; border: solid #eee 1px;">
+    <table style="padding: 4px; border: solid #eee 1px; width: 100%;">
         <tr>
             <td>
                 <textarea
@@ -52,9 +52,14 @@
             </td>
         </tr>
         <tr>
+            <td data-bind="visible: marketPlaceFilter" valign="top" align="left">
+                <div style="font-size: small; color: gray;">current context: '{{marketPlaceFilter}}'</div>
+            </td>
+        </tr>
+        <tr>
             <td id="nschatcont" data-bind="foreach: { data: data.list, afterAdd: showElem, beforeRemove: hideElem }" style="padding-top: 4px;">
                 <!--<b data-bind="text: $data.senderId"></b>-->
-                <div style="padding-top: 4px; padding-right: 12px; padding-bottom: 4px;border-bottom: solid #eee 2px;"
+                <div style="padding-top: 4px; padding-right: 4px; padding-bottom: 4px;border-bottom: solid #eee 2px;"
                      data-bind="css:
                         {
                             nschatlocal: $data.senderId == 'local',
@@ -80,14 +85,15 @@
                                     <tr>
                                         <td valign="center" align="left" style="padding-bottom: 2px; border-bottom: solid #eee 1px;">
                                             by <b data-bind="text: $data.senderId"></b>
-                                            &nbsp;&nbsp;&nbsp;<span style="color: gray; font-size: smaller;" data-bind="text: msgTimeString"></span>
+                                            &nbsp;&nbsp;<span style="color: gray; font-size: smaller;" data-bind="text: msgTimeString"></span>
                                             <!--<span data-bind="if: ! $data.userId && $data.senderId != 'local' && $data.senderId != 'system'">-->
                                                 <!--<span class="tag-public">public</span>-->
                                             <!--</span>-->
-                                            <span data-bind="if: $data.userId == model.userRecord().name">
+                                            &nbsp;
+                                            <span data-bind="if: ($data.userId == model.userRecord().name) || ($data.userId && $data.senderId == model.userRecord().name)">
                                                 <span class="tag-private">private</span>
                                             </span>
-                                            <span data-bind="if: $data.senderId == model.userRecord().adminName">
+                                            <span data-bind="if: $data.senderId == model.userRecord().adminName && $data.senderId != model.userRecord().name ">
                                                 <span class="tag-admin">admin</span>
                                             </span>
                                         </td>

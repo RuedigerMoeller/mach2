@@ -1,19 +1,7 @@
 <template id="marketplace-tpl">
     <table
-        style="width: 250px;
-               display: inline-table;
-               /*-webkit-border-radius: 10px;*/
-               /*-moz-border-radius: 10px;*/
-               /*border-radius: 10px;*/
-               margin: 4px;
-               padding: 8px;
-               cursor: pointer;
-               color: #fff;
-               transition: background-color .3s;"
+        class="mplace-box"
         data-bind="
-          style: { backgroundColor: $parent.selectedMP().recordKey == $data.recordKey ? '#3299BB' : '#2F8BA9' ,
-                   border: $parent.selectedMP().recordKey == $data.recordKey ? 'solid rgba(0,0,0,0.0) 2px' : 'none'
-                 },
           bsttip: longDescription
         ">
         <!--onMouseOver="this.style.backgroundColor='#ddd'"-->

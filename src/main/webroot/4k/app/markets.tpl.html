@@ -1,18 +1,28 @@
 <template id="admin">
     <div data-bind="with: adminController">
+        {{#if: $parent.availableMarkets() && $parent.availableMarkets().length > 0}}
         <div data-bind="visible: $parent.availableMarkets().length > 0">
-        <b>Available Marketplaces</b>
+        <br>
+        <b class="table-heading">Available Marketplaces</b>
+        <br>
+            Click on the items below to create a market of this type. All invited users are capable to trade them.<br>
+            <b style="color: red;">Warning: This can't be undone !</b>
+        <br><br>
         <div data-bind="foreach: $parent.availableMarkets">
             <span data-bind="template: { name:'marketplace-tpl' }, click: $parent.addMarketPlace"
                   ></span>
         </div>
         <br>
         </div>
+        {{/if}}
         <br>
         <b class="table-heading">My Marketplaces</b>
         <br>
         <br>
-        <rl-grid params="table: 'MarketPlace', subscribe: 'it.admin==´'+$parent.userName()+'´', onSelection: onMarketPlaceSelection" ></rl-grid>
+        <rl-grid params="table: 'MarketPlace',
+                         subscribe: 'it.admin==´'+$parent.userName()+'´',
+                         onSelection: onMarketPlaceSelection,
+                         columns: [ 'recordKey' , 'description' , 'admin' ]" ></rl-grid>
 
         <br>
         <br>
@@ -21,7 +31,7 @@
         <br>
         <!--<div class='table-scrollbox' style="height:300px;">-->
             <rl-grid params="table: 'Instrument', subscribe: 'it.marketPlace==´'+$data.selectedMP().recordKey+'´',
-                             columns: [ 'recordKey', 'name', 'description', 'owner', 'marketPlace', 'bid', 'ask', 'lastPrc', 'contractsTraded' ] " >
+                             columns: [ 'name', 'owner', 'marketPlace', 'bid', 'ask', 'lastPrc', 'contractsTraded' ] " >
 
             </rl-grid>
         <!--</div>-->

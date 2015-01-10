@@ -32,11 +32,18 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
 
     RealLive realLive;
     User user;
+    long previousLogin;
 
     @Local
     public void $init(User user, RealLive realLive) {
         this.realLive = new RealLiveClientWrapper(realLive);
         this.user = user;
+        user.prepareForUpdate(true);
+        previousLogin = user.getLastLogin();
+        user.setLastLogin(System.currentTimeMillis());
+        if ( user.getAdminName() == null )
+            user.setAdminName(user.getName()); // fix import error
+        user.$apply(0);
     }
 
     //////////////////////////////////////////////////////
@@ -69,24 +76,39 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     }
 
     /**
-     * @param marketPlaceFilter - if != null, remove messages relevant to other MP
+     * @param marketPlaceFilter - if != null, remove messages not having this MP
+     * @param userFilter - if != null only allow messages for this user (+self)
      * @param cb
      * @return subsId
      */
     public Future<String> $subscribeMsg(String marketPlaceFilter, String userFilter, Callback cb) {
-        long oldest = 0;//System.currentTimeMillis()-2*24*60*60*1000l;
+        long oldest = Math.min(previousLogin,System.currentTimeMillis()-1*24*60*60*1000l);
         Predicate matches = rec -> {
             Message m = (Message) rec;
+            // check time window
             if ( m.getMsgTime() < oldest ) {
                 return false;
             }
-            String adminName = user.getAdminName();
-            if (adminName == null)
-                adminName = user.getName();
-            boolean isVisibleToMarket = adminName.equals(m.getAdminId()) || "system".equals(m.getAdminId());
-            boolean matchesMPFilter = marketPlaceFilter == null || (m.getMarketId() != null && m.getMarketId().equals(marketPlaceFilter));
-            boolean matchesUserFilter = m.getUserId() == null || (userFilter != null && m.getUserId().equals(user.getName()));
-            if ( isVisibleToMarket && (matchesMPFilter || matchesUserFilter) )
+            // check same exchange
+            String userAdminName = user.getAdminName();
+            if (userAdminName == null)
+                userAdminName = user.getName();
+            if ( ! userAdminName.equals(m.getAdminId()) )
+                return false;
+            // check for private or own
+            if ( m.getUserId() != null && ! m.getUserId().equals(user.getName()) && ! m.getSenderId().equals(user.getName() ) )
+                return false;
+            // system msg
+            if ( "system".equals(m.getAdminId()) )
+                return true;
+            // check filters
+            boolean matchesMPFilter = (marketPlaceFilter == null && m.getMarketId() == null) || (m.getMarketId() != null && m.getMarketId().equals(marketPlaceFilter));
+            boolean matchesUserFilter =
+                    m.getUserId() == null ||
+                    userFilter == null ||
+                    (userFilter != null && m.getUserId().equals(user.getName())) ||
+                    m.getSenderId().equals(user.getName());
+            if ( (matchesMPFilter && matchesUserFilter) )
             {
                 return true;
             }
@@ -96,7 +118,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         ChangeBroadcastReceiver bcastRec = change -> cb.receive(change, CONT);
         realLive.stream("Message").filterUntil(
             matches,
-            (rec,i) -> ((Integer)i).intValue() > 20,
+            (rec,i) -> ((Integer)i).intValue() > 2000,
             bcastRec
         );
 
@@ -246,6 +268,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
 
     public Future $sendMessage( Message message ) {
         RLTable<Message> msgTab = realLive.getTable("Message");
+        message.setMessageText("" + message.getMessageText());
         if ( user.getAdminName() == null ) {
             message.setAdminId(user.getName()); // market owner owns hisself
         } else {
@@ -255,6 +278,29 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
             message.setSenderId(user.getName());
         message.setMsgTime(System.currentTimeMillis());
         message._setRecordKey(null);
+
+        String t = message.getMessageText();
+        if ( t.startsWith("@") ) {
+            int nameIndex = t.indexOf(" ");
+            if ( nameIndex > 0 ) {
+                String name = t.substring(1,nameIndex);
+                realLive.getTable("User").$get(name).then( (targetUser,e) -> {
+                    if ( targetUser != null ) {
+                        User tu = (User) targetUser;
+                        String tuAdminName = tu.getAdminName();
+                        if ( tuAdminName == null ) // admins should have themself as admins. Autocorrect inport issues
+                            tuAdminName = tu.getName();
+                        if ( tuAdminName != null && tuAdminName.equals(user.getAdminName()) ) {
+                            message.setUserId(name);
+                        }
+                        msgTab.$add(message,0);
+                    } else {
+                        msgTab.$add(message,0);
+                    }
+                });
+                return new Promise<>(null);
+            }
+        }
         msgTab.$add(message,0);
         return new Promise(null);
     }
@@ -300,4 +346,11 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         return new Promise<>( (count > 0) ? "Enqueud "+count+" mails." : "No message sent. Check addresses.");
     }
 
+
+    public Future<String> $updateUser(User u) {
+        user.prepareForUpdate(false);
+        user.setMotto(u.getMotto());
+        user.setPwd(u.getPwd());
+        return user.$apply(0);
+    }
 }

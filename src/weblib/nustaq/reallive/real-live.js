@@ -12,7 +12,7 @@ var RealLive = new function() {
 
     var self = this;
 
-    this.getChangedFieldNames = function(change) {
+    self.getChangedFieldNames = function(change) {
         var res = [];
         if (change.appliedChange) {
             var changeArray = change.appliedChange.fieldIndex;
@@ -24,7 +24,7 @@ var RealLive = new function() {
         return res;
     };
 
-    this.getTableMeta = function(tableId,columnName) {
+    self.getTableMeta = function(tableId,columnName) {
         var res = Server.meta().tables[tableId];
         if ( columnName ) {
             return res.columns[columnName];
@@ -32,15 +32,15 @@ var RealLive = new function() {
         return res;
     };
 
-    this.getFieldName = function(tableId,fieldId) {
-        if ( this.getTableMeta( tableId) ) {
-            return this.getTableMeta(tableId).fieldId2Name[fieldId];
+    self.getFieldName = function(tableId,fieldId) {
+        if ( self.getTableMeta( tableId) ) {
+            return self.getTableMeta(tableId).fieldId2Name[fieldId];
         }
         console.log("unknown table "+tableId+" "+fieldId);
     };
 
     // compute ordered visible columns
-    this.visibleColumns = function( columns ) {
+    self.visibleColumns = function( columns ) {
         var result = [];
         for( key in columns ) {
             if ( columns.hasOwnProperty(key) ) {
@@ -62,7 +62,7 @@ var RealLive = new function() {
         return names;
     };
 
-    this.enrichModel = function (model) {
+    self.enrichModel = function (model) {
         console.log("model:"+model);
         model.tables.SysTable.columns.meta.hidden = true;
 
@@ -91,18 +91,18 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
 
     var self = this;
 
-    this.map = {};
-    this.preChangeHook = null;
-    this.postChangeHook = null;
-    this.snapFin = false;
-    this.subsId = null;
-    this.subsCB = null;
-    this.snapFinFun = null;
-    this.insertFun = null; // function(list,newItem) defining insert point in list.
+    self.map = {};
+    self.preChangeHook = null;
+    self.postChangeHook = null;
+    self.snapFin = false;
+    self.subsId = null;
+    self.subsCB = null;
+    self.snapFinFun = null;
+    self.insertFun = null; // function(list,newItem) defining insert point in list.
 
     // fnFronendquery: filterfunction(record)
-    this.subscribe = function( table, query, fnFrontendQuery ) {
-        self.unsubscribe();
+    self.subscribe = function( table, query, fnFrontendQuery ) {
+        self.unsubscribeAndClear();
         self.subscb = function (change, e) {
             if (fnFrontendQuery && change.type == RL_ADD) {
                 if (!fnFrontendQuery.apply(self, [change.newRecord])) {
@@ -115,23 +115,23 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
             self.subsId = subsId;
         };
         if ( subscribeFun ) {
-            subscribeFun.apply(null,[table, query, self.subscb]).then(cbProc)
+            subscribeFun.apply(null,[table, query, self.subscb]).then(cbProc);
         } else {
             Server.session().$subscribe( table, query, self.subscb ).then(cbProc);
         }
-        return this;
+        return self;
     };
 
-    this.query = function( table, query ) {
+    self.query = function( table, query ) {
         self.unsubscribe();
         Server.session().$query( table, query, self.subscb = function(change,e) {
             self.push(change);
         });
     };
 
-    this.unsubscribe = function() {
+    self.unsubscribe = function() {
         if ( self.subsId ) {
-            Server.unregisterCB(this.subsCB);
+            Server.unregisterCB(self.subsCB);
             Server.session().$unsubscribe(self.subsId);
             self.subsId = null;
             self.subsCB = null;
@@ -140,7 +140,7 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
         }
     };
 
-    this.onSnapFin = function( fun ) {
+    self.onSnapFin = function( fun ) {
         if ( self.snapFin )
             fun.apply();
         else {
@@ -148,25 +148,25 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
         }
     };
 
-    this.unsubscribeAndClear = function() {
-        this.unsubscribe();
-        this.map = {};
-        this.clearList();
-        this.snapFin = false;
-        this.subsId = null;
+    self.unsubscribeAndClear = function() {
+        self.unsubscribe();
+        self.map = {};
+        self.clearList();
+        self.snapFin = false;
+        self.subsId = null;
     };
 
-    this.clearList = function() {
-        this.list = [];
+    self.clearList = function() {
+        self.list = [];
     };
 
-    this.getList = function() {
-        return this.list;
+    self.getList = function() {
+        return self.list;
     };
 
     // rec =
-    this.containsRec = function (searchFun) {
-        var l = this.getList();
+    self.containsRec = function (searchFun) {
+        var l = self.getList();
         for ( i = 0; i < l.length; l++ ) {
             if ( searchFun.apply( null, [l[i]] ) )
                 return true;
@@ -174,46 +174,46 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
         return false;
     };
 
-    this.containsKey = function (key) {
+    self.containsKey = function (key) {
         return self.map[key] != null;
     };
 
-    this.removeKey = function(recordKey) {
-        var rec = this.map[recordKey];
+    self.removeKey = function(recordKey) {
+        var rec = self.map[recordKey];
         if ( rec !== 'undefined') {
-            delete this.map[recordKey];
-            var length = this.getList().length;
+            delete self.map[recordKey];
+            var length = self.getList().length;
             var x;
             for ( x = 0; x < length; x++) {
-                if ( this.getList()[x].recordKey == recordKey ) {
-                    this.list.splice(x,1);
+                if ( self.getList()[x].recordKey == recordKey ) {
+                    self.list.splice(x,1);
                     length--;
                 }
             }
         } else {
-            console.log('could not find removed rec '+recordKey+" "+this.map[recordKey]);
+            console.log('could not find removed rec '+recordKey+" "+self.map[recordKey]);
         }
     };
 
-    this.insertRec = function(rec) {
+    self.insertRec = function(rec) {
         self.map[rec.recordKey] = rec;
         if (self.insertFun) {
-            var idx = self.insertFun.apply(this, [this.getList(), rec]);
+            var idx = self.insertFun.apply(self, [self.getList(), rec]);
             self.list.splice(idx, 0, rec);
         } else {
             self.list.push(rec);
         }
     };
 
-    this.push = function(change) {
-        if (this.preChangeHook) {
-            this.preChangeHook.call(null,change,this.snapFin);
+    self.push = function(change) {
+        if (self.preChangeHook) {
+            self.preChangeHook.call(null,change,self.snapFin);
         }
         switch ( change.type ) {
             case RL_ADD: {
 //                console.log( "add "+change.recordKey);
                 var rec = change.newRecord;
-                if ( this.map[change.recordKey] ) {
+                if ( self.map[change.recordKey] ) {
                     console.log('double add rec '+change.recordKey);
                 }
                 self.insertRec(rec);
@@ -223,14 +223,14 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
                 self.removeKey(change.recordKey);
             } break;
             case RL_SNAPSHOT_DONE:
-                this.snapFin = true;
+                self.snapFin = true;
                 if ( self.snapFinFun ) {
                     self.snapFinFun.apply();
                     self.snapFinFun = null;
                 }
                 break;
             case RL_UPDATE: {
-                var rec = this.map[change.recordKey];
+                var rec = self.map[change.recordKey];
                 if ( rec ) {
                     var changeArray = change.appliedChange.fieldIndex;
                     for ( var i = 0; i < changeArray.length; i++ ) {
@@ -250,17 +250,17 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
 //                console.log(rec);
             } break;
         }
-        if (this.postChangeHook) {
-            this.postChangeHook.call(null,change,this.snapFin);
+        if (self.postChangeHook) {
+            self.postChangeHook.call(null,change,self.snapFin);
         }
     };
 
-    this.postUpdate = function( change, record ) {
+    self.postUpdate = function( change, record ) {
         //JSON.parse(JSON.stringify(rec));
         return record;
     };
 
-    this.getChangedFieldNames = function(change) {
+    self.getChangedFieldNames = function(change) {
         return RealLive.getChangedFieldNames(change);
     };
 
@@ -269,5 +269,5 @@ function RLResultSet( table, query, subscribeFun /*optional table, query, callba
         self.subscribe(table,query);
     }
 
-    this.clearList();
+    self.clearList();
 }

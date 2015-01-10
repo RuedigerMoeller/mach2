@@ -1,0 +1,19 @@
+- connect/disconnect
+- sticky login
+- activate autocomplete on login
+
+OK - add motto to user
+
+- log into bounded table
+- admin fe
+
+- after admin registration profile display, put next steps links in
+- after accept invite, show profile + hints
+
+- html mails wie ?
+
+- market close/halt
+- password encryption
+- captcha, lockout nach fehl login
+- cached client queries
+- MinBin boolean

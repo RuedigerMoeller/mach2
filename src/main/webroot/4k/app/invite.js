@@ -36,7 +36,14 @@ function InviteController() {
                 Server.loginComponent.user(self.inviteUser());
                 Server.loginComponent.pwd(self.invitePwd());
                 Server.loginComponent.login();
-                window.location.hash="#home";
+                var waitForUser = function() {
+                    if ( ! model.userRecord().name )
+                        setTimeout(waitForUser,500);
+                    else {
+                        window.location.hash="#profile";
+                    }
+                };
+                waitForUser();
             } else {
                 // fixme: internal error. Need msgbox component
                 model.postMessage(r+":"+e);

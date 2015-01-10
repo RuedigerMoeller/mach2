@@ -1,5 +1,7 @@
 var Server; // { facade: [facadeactor], session: [sessionActor], meta: [reallive datamodel] }
 
+var __ = ko.observable;
+
 Server = {
     facade:  ko.observable(null),
     session: ko.observable(null),

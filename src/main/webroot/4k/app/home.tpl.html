@@ -1,10 +1,11 @@
 <template id="home">
 
+
     <br>
     <br>
     <table>
         <tr>
-            <td valign="top"><a href="" class="circlelink">Register</a></td>
+            <td valign="top"><a href="#register" class="circlelink">Register</a></td>
             <td width="20px;">&nbsp;</td>
             <td class="home-paragraph">Register as private bet owner, then choose the bets you'd like to offer.</td>
         </tr>
@@ -16,14 +17,28 @@
             <td class="home-paragraph-right">Set limits and conditions, then invite friends to your private betting room.
                 Discuss latest sports news using the chat system.</td>
             <td width="20px;">&nbsp;</td>
-            <td valign="top"><a href="" class="circlelink">Invite</a></td>
+            <td valign="top">
+                {{#if:Server.loggedIn && model.isMarketAdmin}}
+                <a class="circlelink" href="#users">Invite</a>
+                {{/if}}
+                {{#ifnot:(Server.loggedIn && model.isMarketAdmin)}}
+                <a class="circlelink" >Invite</a>
+                {{/ifnot}}
+            </td>
         </tr>
     </table>
     <br>
     <br>
     <table>
         <tr>
-            <td valign="top"><a href="" class="circlelink">Trade!</a></td>
+            <td valign="top">
+            {{#if:(Server.loggedIn && model.isMarketAdmin)}}
+            <a href="#tables" class="circlelink">Trade!</a>
+            {{/if}}
+            {{#ifnot:(Server.loggedIn && model.isMarketAdmin)}}
+            <a href="#publicmarkets" class="circlelink">Trade!</a>
+            {{/ifnot}}
+            </td>
             <td width="20px;">&nbsp;</td>
             <td class="home-paragraph">Place bets, track prices with our advanced realtime live betting system.
                 You can go short long (back/lay). Once events finish, we help you in tracking win and loss of participating players.</td>
