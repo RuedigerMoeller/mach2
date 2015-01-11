@@ -234,20 +234,20 @@
 
     </style>
 </head>
-<body style="background-color: #F5F5F5; background-image: url('img/back.png')">
+<body style="background-color: #FfFfFf; background-image: url('img/back.png')">
 
 <navpane-ko params="{ navModel: navs, currentView: currentView }"></navpane-ko>
 <ns-msgbox params="{ assignTo: msgBoxController }"></ns-msgbox>
 
 
-<div style="padding-top: 36px; padding-left: 16px;">
+<div style="padding-top: 60px; padding-left: 16px;">
     <table>
         <tr>
-            <td data-bind="visible: Server.loggedIn(), style: { width: currentView() == 'home'? '300px':'300px' } " align="left" valign="top" style="wwidth: 300px; padding-top: 36px;">
+            <td data-bind="visible: Server.loggedIn(), style: { width: currentView() == 'home'? '300px':'300px' } " align="left" valign="top" style="wwidth: 300px;">
                 <ns-chat params="{ assignTo: chatController }"></ns-chat>
             </td>
             <td style="padding-left: 10px;" align="left" valign="top" data-bind="style: { width: Server.loggedIn() ? '700px':'100%' } ">
-                <div style="padding-left: 8px; padding-top: 20px; padding-right: 30px; "
+                <div style="padding-left: 8px; padding-right: 30px; "
                     data-bind="template: { name: currentView(), afterRender: initView }">
                 </div>
             </td>
