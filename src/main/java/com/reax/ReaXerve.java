@@ -290,7 +290,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                     invite.$remove( inv.getRecordKey(), 0);
                     ut.$put(nickname,newOne,0);
                     result.signal();
-                    postAdminMsg(inv.getAdmin(), nickname, "User " + nickname + " has confirmed his invitation !");
+                    postAdminMsg(inv.getAdmin(), nickname, "User " + nickname + " has confirmed your invitation !");
                 }
             }
         }).onError(err -> result.receive( ""+err, null));
