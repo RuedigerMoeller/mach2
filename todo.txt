@@ -15,5 +15,8 @@ OK - add motto to user
 - market close/halt
 - password encryption
 - captcha, lockout nach fehl login
-- cached client queries
+- rate limiting
 - MinBin boolean
+- cached client queries
+- query is broken
+- get original bootstrap theme

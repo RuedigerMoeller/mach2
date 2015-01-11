@@ -109,7 +109,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             for (int i = 0; i < records.length; i++) {
                 Record record = records[i];
                 if ( record.getRecordKey() != null ) {
-                    realLive.getTable(clz.getSimpleName()).$put(
+                    realLive.getTable(clz.getSimpleName()).$putIfAbsent(
                             record.getRecordKey(),
                             record,
                             0

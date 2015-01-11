@@ -30,7 +30,7 @@
             border-radius:3px 3px 3px 3px; padding: 4px; background-color: #3299BB; color: white; font-size: x-small; font-weight: bold;
         }
         .tag-admin {
-            border-radius:3px 3px 3px 3px; padding: 4px; background-color: #800; color: white; font-size: x-small; font-weight: bold;
+            border-radius:3px 3px 3px 3px; padding: 4px; background-color: #FF6347; color: white; font-size: x-small; font-weight: bold;
         }
     </style>
     {{#if: Server.loggedIn}}
@@ -53,7 +53,7 @@
         </tr>
         <tr>
             <td data-bind="visible: marketPlaceFilter" valign="top" align="left">
-                <div style="font-size: small; color: gray;">current context: '{{marketPlaceFilter}}'</div>
+                <div style="font-size: small; color: gray;">current context: <span data-bind="hilight: true">'{{marketPlaceFilter}}'</span></div>
             </td>
         </tr>
         <tr>

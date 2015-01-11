@@ -1,6 +1,6 @@
 <template id="home">
 
-
+    {{#ifnot: Server.loggedIn }}
     <br>
     <br>
     <table>
@@ -55,8 +55,23 @@
             <td width="300px;"><b>built with</b> <div class="circle4k">4K</span></div>
         </tr>
     </table>
+    {{/ifnot}}
 
+    <rl-grid params="{ table: 'Asset', subscribe: 'true' }">
+    </rl-grid>
 
+    <div data-bind="with: userRecord">
+        <table>
+            <tr>
+                <td>Name</td>
+                <td>{{ name }}</td>
+            </tr>
+            <tr>
+                <td>Cash</td>
+                <td>{{cash}}</td>
+            </tr>
+        </table>
+    </div>
     <!--<span class="tag-private">private</span>-->
     <!--<span class="tag-public">public</span>-->
     <!--<span class="tag-admin">admin</span>-->

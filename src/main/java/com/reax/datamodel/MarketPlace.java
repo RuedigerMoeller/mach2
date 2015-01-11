@@ -10,11 +10,17 @@ import org.nustaq.reallive.sys.annotations.KeyLen;
 @GenRemote @KeyLen(Keys.MARKET_PLACE)
 public class MarketPlace extends Record {
 
+    static final int ORDERED_BET = 1;
+
     String templateId; // the recId it was derived from
     String admin;
     String description;
     String longDescription;
     String img = "marketPlace.jpg";
+
+    // risk parameters
+    int numberOfInstruments;
+    int riskMethod = ORDERED_BET;
 
     public String getAdmin() {
         return admin;
@@ -54,5 +60,21 @@ public class MarketPlace extends Record {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getNumberOfInstruments() {
+        return numberOfInstruments;
+    }
+
+    public void setNumberOfInstruments(int numberOfInstruments) {
+        this.numberOfInstruments = numberOfInstruments;
+    }
+
+    public int getRiskMethod() {
+        return riskMethod;
+    }
+
+    public void setRiskMethod(int riskMethod) {
+        this.riskMethod = riskMethod;
     }
 }

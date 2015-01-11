@@ -5,6 +5,8 @@
         description: 'Bundesliga 2014: Wer wird Meister ?'
         longDescription: "Bla bla blubb BALAA !!"
         img: 'marketplace.png'
+        numberOfInstruments: 18
+        riskMethod: 1
     }
 
     {
@@ -13,6 +15,8 @@
         description: 'Wer wird Europameister 2016 ?'
         longDescription: "Bla bla blubb !"
         img: 'marketplace.png'
+        numberOfInstruments: 4
+        riskMethod: 1
     }
 
 ]

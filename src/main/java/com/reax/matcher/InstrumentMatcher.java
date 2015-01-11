@@ -1,9 +1,6 @@
 package com.reax.matcher;
 
-import com.reax.datamodel.Asset;
-import com.reax.datamodel.Instrument;
-import com.reax.datamodel.Order;
-import com.reax.datamodel.Trade;
+import com.reax.datamodel.*;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
 import org.nustaq.reallive.ChangeBroadcast;
@@ -50,52 +47,22 @@ public class InstrumentMatcher { // ready to be be an actor if needed
 
     }
 
-    // return null or error
-    public Future<String> addOrder(RLTable<Asset> assets, RLTable<Order> orders, Order order, Asset cashAsset, Asset positionAsset) {
+    // return null or error (FIXME: style)
+    public Future<String> addOrder(Order order, User enteringUser) {
         Promise<String> res = new Promise();
 
+        // TODO: calc risk in advance
+
         if ( order.isBuy() ) {
-            // cost of match must be added to cash margin
-            cashAsset.setMargined( cashAsset.getMargined() +  order.getQty() * order.getLimitPrice() );
-            // add to open order Qty
-            positionAsset.setOpenBuyQty( positionAsset.getOpenBuyQty() + order.getQty() );
-
-            // can we ensure there is a short position regardless of open orders ?
-            int worstCaseQty = positionAsset.getAvaiable() + positionAsset.getOpenBuyQty() + order.getQty();
-            if (cashAsset.getAvaiable() < 0 && worstCaseQty <= 0 ) {
-                res.receive(null, "Not enough cash avaiable to place Buy order.");
-                return res;
-            }
-
             // directly add
             buySet.onChangeReceived( ChangeBroadcast.NewAdd("Order", order, 0) );
             orders.$put( order.getRecordKey(), order, Matcher.MATCHER_ID ); // => will be ignored then
-
-            assets.$put(cashAsset.getRecordKey(),cashAsset, Matcher.MATCHER_ID);
-            assets.$put(positionAsset.getRecordKey(),positionAsset, Matcher.MATCHER_ID);
-
             res.signal();
 
         } else { // sell
-            // cost of match must be added to cash margin
-            cashAsset.setMargined( cashAsset.getMargined() +  order.getQty() * (1000-order.getLimitPrice()) );
-            // add to open order Qty
-            positionAsset.setOpenSellQty( positionAsset.getOpenSellQty() + order.getQty() );
-
-            // can we ensure there is a long position regardless of open orders ?
-            int worstCaseQty = positionAsset.getAvaiable() - positionAsset.getOpenSellQty() - order.getQty();
-            if ( cashAsset.getAvaiable() < 0 && worstCaseQty >= 0 ) {
-                res.receive(null, "Not enough cash avaiable to place Sell order.");
-                return res;
-            }
-
             // directly add
             sellSet.onChangeReceived( ChangeBroadcast.NewAdd("Order", order, 0) );
             orders.$put( order.getRecordKey(), order, Matcher.MATCHER_ID ); // => will be ignored then
-
-            assets.$put(cashAsset.getRecordKey(),cashAsset, Matcher.MATCHER_ID);
-            assets.$put(positionAsset.getRecordKey(),positionAsset, Matcher.MATCHER_ID);
-
             res.signal();
         }
 

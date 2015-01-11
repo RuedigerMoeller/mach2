@@ -28,7 +28,7 @@
                     ">
                 </ns-filterstrip>
         </span>
-    <div data-bind="visible: loggedIn()" style="padding-top: 10px; color: white; white-space: nowrap;">Welcome <b data-bind="text: user"></b></div>
+    <div data-bind="template: 'loggedin-tpl'"></div>
     <b style="color: white;"><span data-bind="text: resultMsg"></span></b>
     </span>
 </template>

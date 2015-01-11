@@ -6,6 +6,8 @@ import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.Description;
 import org.nustaq.reallive.sys.annotations.KeyLen;
 
+import java.util.HashMap;
+
 /**
  * Created by ruedi on 25.10.2014.
  */
@@ -19,16 +21,22 @@ public class User extends Record {
     long creationTime;
     String email;
     String motto;
-
-    public String getMotto() {
-        return motto;
-    }
-
-    public void setMotto(String motto) {
-        this.motto = motto;
-    }
+    int cash;
 
     UserRole role = UserRole.USER;
+
+    HashMap<String,MarketPosition> positions;
+
+    public MarketPosition getPos( String marketId, RLTable<Asset> assets ) {
+        if ( positions == null )
+            positions = new HashMap<>();
+        MarketPosition marketPosition = positions.get(marketId);
+        if ( marketPosition == null ) {
+            marketPosition = new MarketPosition(marketId,name);
+        }
+        marketPosition.setAssets(assets);
+        return marketPosition;
+    }
 
     public User init(String name, String pwd, long lastLogin, long creationTime, UserRole role, String email) {
         this.name = name;
@@ -38,6 +46,22 @@ public class User extends Record {
         this.role = role;
         this.email = email;
         return this;
+    }
+
+    public int getCash() {
+        return cash;
+    }
+
+    public void setCash(int cash) {
+        this.cash = cash;
+    }
+
+    public String getMotto() {
+        return motto;
+    }
+
+    public void setMotto(String motto) {
+        this.motto = motto;
     }
 
     public String getAdminName() {

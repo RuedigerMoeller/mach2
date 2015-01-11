@@ -9,7 +9,10 @@ var userMarkets = new RLObservableResultSet();
 var model = { test: ko.observable("POK")};
 ko.punches.enableAll();
 
-model.userRecord = ko.observable({ role: ['NONE'] });
+model.userRecord = ko.observable( new JUser() );
+model.userRecord().role = ['NONE'];
+model.userRecord().cash = 0;
+
 model.isMarketAdmin = ko.observable(false);
 
 // navbar menu
@@ -68,14 +71,6 @@ model.registerController = new RegisterController();
 model.profileController = new ProfileController();
 model.chatController = ko.observable(null);
 model.msgBoxController = ko.observable(null);
-
-model.userString = ko.computed( function() {
-    if ( Server.loggedIn() && model.userRecord().role != "NONE" ) {
-        var us = model.userRecord();
-        return "Welcome <b>"+us.name+"</b>, "+us.role[0];
-    }
-    return "";
-});
 
 model.onRegister = function() {
     window.location.hash = "register";

@@ -16,6 +16,5 @@ public class Keys {
     public static final int INVITE       = USER+16;  // user+random vals
     public static final int MARKET_PLACE = USER+PURE_MARKET_PLACE+1;    // admin#mptemplatekey
     public static final int INSTRUMENT   = USER+16+1;                   // admin#instrkey
-    public static final int ASSET        = USER+1+INSTRUMENT;        // user#instr
-
+    public static final int ASSET        = USER+1+INSTRUMENT;           // user#instr
 }

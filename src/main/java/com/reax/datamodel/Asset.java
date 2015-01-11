@@ -2,61 +2,58 @@ package com.reax.datamodel;
 
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
-import org.nustaq.reallive.sys.annotations.Description;
 import org.nustaq.reallive.sys.annotations.KeyLen;
 
 /**
- * Created by ruedi on 27.07.14.
+ * Created by ruedi on 10/01/15.
  *
- * Trader#InstrumentID
- *
+ * replication of a position (key is user#instrument)
  */
-@KeyLen(Keys.ASSET) @GenRemote @Description("refers to an asset of a trader. Key is Trader#InstrumentID special Trader#cash")
+@GenRemote @KeyLen(Keys.ASSET)
 public class Asset extends Record {
 
-    int qty;
-    int margined;
-    int openBuyQty;
-    int openSellQty;
+    int value;
+    // redundant for faster indexing
+    String userId;
+    String marketId;
+    String instrumentId;
 
-    public Asset(String key, int qty) {
-        super(key);
-        this.qty = qty;
+    public Asset(int value, String userId, String marketId, String instrumentId) {
+        this.value = value;
+        this.userId = userId;
+        this.marketId = marketId;
+        this.instrumentId = instrumentId;
     }
 
-    public int getOpenBuyQty() {
-        return openBuyQty;
+    public int getValue() {
+        return value;
     }
 
-    public void setOpenBuyQty(int openBuyQty) {
-        this.openBuyQty = openBuyQty;
+    public void setValue(int value) {
+        this.value = value;
     }
 
-    public int getOpenSellQty() {
-        return openSellQty;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setOpenSellQty(int openSellQty) {
-        this.openSellQty = openSellQty;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getMargined() {
-        return margined;
+    public String getMarketId() {
+        return marketId;
     }
 
-    public void setMargined(int margined) {
-        this.margined = margined;
+    public void setMarketId(String marketId) {
+        this.marketId = marketId;
     }
 
-    public int getQty() {
-        return qty;
+    public String getInstrumentId() {
+        return instrumentId;
     }
 
-    public void setQty(int qty) {
-        this.qty = qty;
-    }
-
-    public int getAvaiable() {
-        return qty-margined;
+    public void setInstrumentId(String instrumentId) {
+        this.instrumentId = instrumentId;
     }
 }
