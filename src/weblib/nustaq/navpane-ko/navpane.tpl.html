@@ -50,15 +50,16 @@
                     <table><tr>
                         <td><kr-login params="facade: 'JReaXerve'" ></kr-login></td>
                         <td style="padding: 4px;">
-                            <button data-bind="visible: !Server.loggedIn()"
+                            <a data-bind="visible: !Server.loggedIn()" data-scroll href="#register-home"
                                     class="sub-menu"
                                     style="padding: 0; border: none; background: none;"
                                     onmouseover="this.style.color='#fff'"
                                     onmouseout="this.style.color='#ddd'"
                                     style="transition: color .6s ease-in-out;"
                                     >
-                                <b data-bind="click: $root.onRegister">Register</b>
-                            </button>
+                                <!--<b data-bind="click: $root.onRegister">Register</b>-->
+                                <b>Register</b>
+                            </a>
                         </td>
                     </tr></table>
 

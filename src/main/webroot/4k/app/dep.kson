@@ -1,5 +1,6 @@
 {
     depends: [
+        smooth-scroll
         bootstrap
         bootstrap-ko
         punches

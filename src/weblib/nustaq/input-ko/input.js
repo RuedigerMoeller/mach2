@@ -16,7 +16,7 @@ if ( window.ns ) {
     window.ns = { validators: {} };
 }
 
-ns.invalidColor = '#FFFFCC';
+ns.invalidColor = '#f3fafc';
 
 ko.extenders.editor = function(target, option) {
     target.editor = option;

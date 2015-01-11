@@ -5,6 +5,7 @@ import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.Description;
 import org.nustaq.reallive.sys.annotations.KeyLen;
+import org.nustaq.reallive.sys.annotations.RenderStyle;
 
 import java.util.HashMap;
 
@@ -20,6 +21,8 @@ public class User extends Record {
     long lastLogin;
     long creationTime;
     String email;
+
+    @RenderStyle("Text15")
     String motto;
     int cash;
 

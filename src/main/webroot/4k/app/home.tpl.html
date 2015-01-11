@@ -1,102 +1,108 @@
 <template id="home">
 
     {{#ifnot: Server.loggedIn }}
-    <br>
-    <br>
-    <table>
-        <tr>
-            <td valign="top"><a href="#register" class="circlelink">Register</a></td>
-            <td width="20px;">&nbsp;</td>
-            <td class="home-paragraph">Register as private bet owner, then choose the bets you'd like to offer.</td>
-        </tr>
-    </table>
-    <br>
-    <br>
-    <table>
-        <tr>
-            <td class="home-paragraph-right">Set limits and conditions, then invite friends to your private betting room.
-                Discuss latest sports news using the chat system.</td>
-            <td width="20px;">&nbsp;</td>
-            <td valign="top">
-                {{#if:Server.loggedIn && model.isMarketAdmin}}
-                <a class="circlelink" href="#users">Invite</a>
-                {{/if}}
-                {{#ifnot:(Server.loggedIn && model.isMarketAdmin)}}
-                <a class="circlelink" >Invite</a>
-                {{/ifnot}}
-            </td>
-        </tr>
-    </table>
-    <br>
-    <br>
-    <table>
-        <tr>
-            <td valign="top">
-            {{#if:(Server.loggedIn && model.isMarketAdmin)}}
-            <a href="#tables" class="circlelink">Trade!</a>
-            {{/if}}
-            {{#ifnot:(Server.loggedIn && model.isMarketAdmin)}}
-            <a href="#publicmarkets" class="circlelink">Trade!</a>
-            {{/ifnot}}
-            </td>
-            <td width="20px;">&nbsp;</td>
-            <td class="home-paragraph">Place bets, track prices with our advanced realtime live betting system.
-                You can go short long (back/lay). Once events finish, we help you in tracking win and loss of participating players.</td>
-        </tr>
-    </table>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <table>
-        <tr>
-            <td width="300px;"><b>built with</b> <div class="circle4k">4K</span></div>
-        </tr>
-    </table>
-    {{/ifnot}}
-
-    <rl-grid params="{ table: 'Asset', subscribe: 'true' }">
-    </rl-grid>
-
-    <div data-bind="with: userRecord">
-        <table>
+    <div align="center" style="height: 1024px;">
+        <table style="background-image: url('img/homeback.jpg'); width: 800px; height: 486px; align-content: center;">
             <tr>
-                <td>Name</td>
-                <td>{{ name }}</td>
+                <td align="center" valign="bottom">
+                    <div class="front-text">Private Betting</div>
+                </td>
+            </tr>
+            <tr style="height: 20px;">
+                <td>&nbsp;</td>
             </tr>
             <tr>
-                <td>Cash</td>
-                <td>{{cash}}</td>
+                <td align="center" valign="top">
+                    <div class="front-text-sm">
+                        Your very own Bet Exchange.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" valign="top"><a data-scroll href="#how-it-works" class="circlelink-grey">&#x25bc;</a></td>
             </tr>
         </table>
     </div>
-    <!--<span class="tag-private">private</span>-->
-    <!--<span class="tag-public">public</span>-->
-    <!--<span class="tag-admin">admin</span>-->
-    <!--<b data-bind="bsttip: 'Hallo Hallo'">POK</b>-->
+    <div id='how-it-works' align="center" style="height: 1024px;">
+        <table>
+            <tr>
+                <td valign="top"><a href="#register" class="circlelink">Register</a></td>
+                <td width="20px;">&nbsp;</td>
+                <td class="home-paragraph">Register as private bet owner, then choose the bets you'd like to offer.</td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <table>
+            <tr>
+                <td class="home-paragraph-right">Set limits and conditions, then invite friends to your private betting room.
+                    Discuss latest sports news using the chat system.</td>
+                <td width="20px;">&nbsp;</td>
+                <td valign="top">
+                    <b class="circlelink" >Invite</b>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <table>
+            <tr>
+                <td valign="top">
+                <b href="#publicmarkets" class="circlelink">Trade!</b>
+                </td>
+                <td width="20px;">&nbsp;</td>
+                <td class="home-paragraph">Place bets, track prices with our advanced realtime live betting system.
+                    You can go short long (back/lay). Once events finish, we help you in tracking win and loss of participating players.</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td align="center" valign="top"><a data-scroll href="#register-home" class="circlelink-grey">&#x25bc;</a></td>
+            </tr>
+        </table>
+    </div>
+    <div id='register-home' align="center">
+        <table>
+            <tr>
+                <td>
+                    <div data-bind="template: { name: 'register' }"></div>
+                </td>
+                <td align="center" style="width: 50%; padding-left: 50px;">
+                    What's in there ?<br>
+                    [IMG, TBD]
+                </td>
+            </tr>
+        </table>
 
-    <!--<ns-upload params="{ image: 'img/user.png' }">-->
-    <!--</ns-upload>-->
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div style="background: #e0e0e0; height: 1024px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="padding: 16px;" align="top" >
+                        <table><tr><td><b>built with &nbsp;</b></td><td><div class="circle4k">4K</div></td></tr></table>
+                    </td>
+                    <td align="top">Copyright 2014, Dipl. Inf. (FH) Rüdiger Möller. All rights reserved.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    {{/ifnot}}
 
-    <!--<ns-filterstrip params="-->
-        <!--filter: [-->
-            <!--{-->
-                <!--placeHolder: 'Contract Name',-->
-                <!--maxLength: 30,-->
-                <!--width: '140px',-->
-                <!--value: testInstrument-->
-            <!--},-->
-            <!--{-->
-                <!--placeHolder: 'Market',-->
-                <!--width: '60px',-->
-                <!--maxLength: 50,-->
-                <!--value: testMarket-->
-            <!--}-->
-        <!--],-->
-        <!--click: testClick-->
-    <!--">-->
+    {{#if: Server.loggedIn}}
+    <rl-grid params="{ table: 'Asset', subscribe: 'true' }">
+    </rl-grid>
+    {{/if}}
 
-    </ns-filterstrip>
 </template>
