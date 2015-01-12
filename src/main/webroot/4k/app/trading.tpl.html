@@ -9,7 +9,7 @@
                         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
                         <ul class="dropdown-menu" style="cursor: pointer;">
                             <li data-bind="foreach: $parent.userMarkets">
-                                <a><i class="icon-list"></i><span data-bind="click: $parent.onMarketPlaceSelection, text: description"></span></a>
+                                <a><i class="icon-list"></i><span data-bind="click: $parent.onMarketPlaceSelection, text: $data.description"></span></a>
                             </li>
                         </ul>
                     </div>

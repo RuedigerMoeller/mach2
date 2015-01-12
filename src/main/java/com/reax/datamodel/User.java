@@ -8,6 +8,7 @@ import org.nustaq.reallive.sys.annotations.KeyLen;
 import org.nustaq.reallive.sys.annotations.RenderStyle;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by ruedi on 25.10.2014.
@@ -25,6 +26,7 @@ public class User extends Record {
     @RenderStyle("Text15")
     String motto;
     int cash;
+    int risk;
 
     UserRole role = UserRole.USER;
 
@@ -36,6 +38,7 @@ public class User extends Record {
         MarketPosition marketPosition = positions.get(marketId);
         if ( marketPosition == null ) {
             marketPosition = new MarketPosition(marketId,name);
+            positions.put(marketId,marketPosition);
         }
         marketPosition.setAssets(assets);
         return marketPosition;
@@ -127,4 +130,22 @@ public class User extends Record {
         this.role = role;
     }
 
+    public int getRisk() {
+        return risk;
+    }
+
+    public void setRisk(int risk) {
+        this.risk = risk;
+    }
+
+    public void updateRisk() {
+        if ( positions == null || positions.size() == 0)
+            risk = 0;
+        int max = 0;
+        for (Iterator<MarketPosition> iterator = positions.values().iterator(); iterator.hasNext(); ) {
+            MarketPosition next = iterator.next();
+            max = Math.max(next.getRisk(),max);
+        }
+        risk = max;
+    }
 }

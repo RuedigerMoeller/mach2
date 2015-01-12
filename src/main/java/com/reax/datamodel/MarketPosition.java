@@ -20,12 +20,21 @@ public class MarketPosition {
     String userId;
     HashMap<String,Integer> instrKeyToPosition;
     HashMap<String,Integer> instrKeyToOrderPosition;
+    int risk;
 
     transient RLTable<Asset> assets;
 
     public MarketPosition(String marketKey, String userId) {
         this.marketKey = marketKey;
         this.userId = userId;
+    }
+
+    public int getRisk() {
+        return risk;
+    }
+
+    public void setRisk(int risk) {
+        this.risk = risk;
     }
 
     public RLTable<Asset> getAssets() {
@@ -142,6 +151,31 @@ public class MarketPosition {
         }
         instrKeyToOrderPosition.put(instrKey,newVal);
         return newVal;
+    }
+
+    /**
+     * Assumption
+     * 1 st value = N-1
+     * 2          = N-2
+     *
+     * last       = 0
+     *
+     * @param numberOfContracts
+     * @return
+     */
+    public void updateRiskInOrderedBet( int numberOfContracts ) {
+        if ( instrKeyToPosition == null || instrKeyToPosition.size() == 0) {
+            risk = 0;
+            return;
+        }
+        int res[] = {Integer.MIN_VALUE};
+        // very simplified: for each shorted position, assume win.
+        instrKeyToPosition.entrySet().forEach(entry -> {
+            if (entry.getValue() < 0) {
+                res[0] = Math.max(entry.getValue() * (numberOfContracts-1) * 100, res[0]);
+            }
+        });
+        risk = res[0];
     }
 
 }

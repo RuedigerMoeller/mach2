@@ -54,7 +54,7 @@
                         <tr>
                             <td>Role:</td>
                             <td style="padding: 4px;">
-                                <input class="form-control" data-bind="value: urec().role[0]" readonly>
+                                <input class="form-control" data-bind="value: urec() ? urec().role[0] : 'NONE'" readonly>
                             </td>
                         </tr>
                         <tr>

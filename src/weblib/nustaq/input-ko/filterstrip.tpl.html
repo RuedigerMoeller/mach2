@@ -7,7 +7,7 @@
 <template id="filterstrip">
     <table>
         <tr>
-            <td class="nsfilter-cell" data-bind="foreach: filter">
+            <td class="nsfilter-cell" data-bind="foreach: $data.filter">
                 <!--<p data-bind="text: JSON.stringify($data)"></p>-->
                 <ns-input params="
                     placeHolder: $data.placeHolder,

@@ -1,9 +1,6 @@
 package com.reax.matcher;
 
-import com.reax.datamodel.Instrument;
-import com.reax.datamodel.Order;
-import com.reax.datamodel.Trade;
-import com.reax.datamodel.User;
+import com.reax.datamodel.*;
 import org.nustaq.kontraktor.Actor;
 import org.nustaq.kontraktor.Future;
 import org.nustaq.kontraktor.Promise;
@@ -125,16 +122,22 @@ public class Matcher extends Actor<Matcher> {
     public void $processMatch( Order ord, int matchedQty, int matchPrice ) {
         tickets.getTicket(ord.getTraderKey()).then( (finished,e) -> {
             Future<User> userFuture = rl.getTable("User").$get(ord.getTraderKey());
-            yield(userFuture).then( (r,e1) -> {
+            Future<MarketPlace> marketFuture = rl.getTable("MarketPlace").$get(ord.getMarketKey());
+            yield(userFuture,marketFuture).then( (r,e1) -> {
                 User user = userFuture.getResult();
+                MarketPlace md = marketFuture.getResult();
                 if ( user != null ) {
                     user.prepareForUpdate(true);
-                    user.getPos(ord.getMarketKey(), rl.getTable("Asset"))
-                        .addPosition(
-                            ord.getInstrumentKey(),
-                            ord.isBuy() ? matchedQty : -matchedQty
-                        );
+                    MarketPosition asset = user.getPos(ord.getMarketKey(), rl.getTable("Asset"));
+                    asset.addPosition(
+                        ord.getInstrumentKey(),
+                        ord.isBuy() ? matchedQty : -matchedQty
+                    );
+
                     user.setCash(user.getCash() + (ord.isBuy() ? -matchedQty : matchedQty) * matchPrice);
+                    asset.updateRiskInOrderedBet( md.getNumberOfInstruments() );
+                    user.updateRisk();
+
                     // else concurrency issues !
                     user.$apply(MATCHER_ID).then( (sig,e2) -> finished.signal() );
                     return;

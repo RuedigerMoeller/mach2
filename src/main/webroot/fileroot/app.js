@@ -24,7 +24,6 @@ model.navs = ko.observableArray([
     { title: 'Profile', link:'#profile', enabled: Server.loggedIn },
     { title: 'Users', link:'#users', enabled: model.isMarketAdmin },
     { title: 'MarketPlaces', link:'#admin', enabled: model.isMarketAdmin },
-    { title: 'Showcase',link:'#show',  enabled: Server.loggedIn }
 ]);
 
 // appwide

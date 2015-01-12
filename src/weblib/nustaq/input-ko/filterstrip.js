@@ -9,7 +9,7 @@ ko.components.register('ns-filterstrip', {
 
 function FilterStripModel(params, compInfo) {
     var self = this;
-    self.filter = params.filter;
+    self.filter = params.filter ? params.filter : [];
     self.values = [];
     self.label = params.label ? params.label : "Go!"; //"&#9654";
     self.btnClass = params.btnClass ? params.btnClass : 'btn btn-default';
