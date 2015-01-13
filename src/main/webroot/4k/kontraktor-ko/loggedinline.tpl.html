@@ -1,6 +1,6 @@
 <template id="loggedin-tpl">
     <div data-bind="visible: loggedIn()" style="padding-top: 10px; color: white; white-space: nowrap;">
-        <span data-bind="rlrecord: { table: 'User', key: Server.userName }">
+        <span data-bind="rlrecord: { table: 'User', key: Server.userName, assignTo: 'userSubscribe' }">
             Welcome <b>{{ $data().name }}</b>, cash:
             <span style="padding: 2px 3px;background-color: rgba(255,255,255,.4); color: #000;"
                  data-bind="hilight: true"><b>{{ ($data().cash/100).toFixed(2) }}</b>

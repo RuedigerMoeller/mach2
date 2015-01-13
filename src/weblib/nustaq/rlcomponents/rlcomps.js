@@ -6,6 +6,39 @@
 //};
 
 // <div data-bind='rlrecord: { table: '', key: '' }'
+RealLive.applyChangeToObservable = function(change, observable) {
+    switch (change.type) {
+        case RL_ADD:
+        {
+            observable(change.newRecord);
+        }
+            break;
+        case RL_REMOVE:
+        {
+            observable(null);
+        }
+            break;
+        case RL_SNAPSHOT_DONE:
+            //$scope.snapFin = true;
+            break;
+        case RL_UPDATE:
+        {
+            var rec = observable();
+            if (rec) {
+                var changeArray = change.appliedChange.fieldIndex;
+                for (var i = 0; i < changeArray.length; i++) {
+                    var fieldId = changeArray[i];
+                    var newValue = change.appliedChange.newVal[i];
+                    var fieldName = RealLive.getFieldName(change.tableId, fieldId);
+                    rec[fieldName] = newValue;
+                }
+                observable(JSON.parse(JSON.stringify(rec)));
+            }
+        }
+        break;
+    }
+};
+
 ko.bindingHandlers.rlrecord = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
 
@@ -52,36 +85,7 @@ ko.bindingHandlers.rlrecord = {
 
         subscribeFun = function() { Server.doOnceLoggedIn( function() {
             Server.session().$subscribeKey(table, key, callback = function( change,err) {
-                switch (change.type) {
-                    case RL_ADD:
-                    {
-                        recordObj(change.newRecord);
-                    }
-                    break;
-                    case RL_REMOVE:
-                    {
-                        recordObj(null);
-                    }
-                    break;
-                    case RL_SNAPSHOT_DONE:
-                        //$scope.snapFin = true;
-                        break;
-                    case RL_UPDATE:
-                    {
-                        var rec = recordObj();
-                        if (rec) {
-                            var changeArray = change.appliedChange.fieldIndex;
-                            for (var i = 0; i < changeArray.length; i++) {
-                                var fieldId = changeArray[i];
-                                var newValue = change.appliedChange.newVal[i];
-                                var fieldName = RealLive.getFieldName(change.tableId, fieldId);
-                                rec[fieldName] = newValue;
-                            }
-                            recordObj( JSON.parse(JSON.stringify(rec)) );
-                        }
-                    }
-                    break;
-                }
+                RealLive.applyChangeToObservable(change, recordObj);
             }).then( function(skey, e) {
                 functionsOnUnsubscribe.push(function() {
                     Server.session().$unsubscribe(skey);

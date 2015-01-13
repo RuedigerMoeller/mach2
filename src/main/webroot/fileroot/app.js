@@ -1,4 +1,3 @@
-var user = new RLObservableResultSet();
 var tableRS = new RLObservableResultSet();
 
 
@@ -33,7 +32,8 @@ model.userMarkets = userMarkets.list;   // markets available for trading
 model.assignedMarkets = assignedMarkets.list;   // markets assigned to an admin
 model.availableMarkets = availableMarkets.list; // market templates
 model.userName = Server.userName;
-model.userList = user.list;
+// a bit of chaos here: userRec is static, userSubscribe dynamic, userName just string
+model.subscribedUser = ko.observable(null);
 
 model.postMessage = function (stringMsg) {
     model.msgBoxController().setMessage(stringMsg);
@@ -126,6 +126,9 @@ RLFormatterMap["BS"] = function(meta, fieldName, celldata, row) {
     }
 };
 
+
+model.markets = ko.observableArray([]);
+
 // subscribe sets on login
 Server.doOnceLoggedIn( function(bool) {
     tableRS.subscribe("SysTable", "true");
@@ -137,10 +140,22 @@ Server.doOnceLoggedIn( function(bool) {
             userMarkets.subscribe("MarketPlace", "it.admin=='"+userRec.adminName+"' || it.admin=='"+userRec.name+"'");
             model.userRecord(userRec);
             model.isMarketAdmin( (userRec.role[0] == 'ADMIN' || userRec.role[0] == 'MARKET_OWNER'));
-            model.profileController.readData(model.userRecord());
+            model.profileController.readData(model.userRecord()); // FIXME: user record chaos needs cleanup
+            Server.session().$subscribeKey( "User", userRec.recordKey, function(change, error) {
+                RealLive.applyChangeToObservable(change,model.subscribedUser);
+                var user = model.subscribedUser();
+                var positions = user.positions;
+                var markets = [];
+                for (var property in positions) {
+                    if (positions.hasOwnProperty(property)) {
+                        markets.push({ name: property.substring(0,property.indexOf('#')), risk: positions[property].risk });
+                    }
+                }
+                markets.sort(function(x,y) { return x.name > y.name; })
+                model.markets(markets);
+            });
         }
     });
-    user.subscribe("User","true");
 });
 
 {

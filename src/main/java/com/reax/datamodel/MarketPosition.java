@@ -1,20 +1,23 @@
 package com.reax.datamodel;
 
+import com.reax.matcher.RiskCalculator;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.KeyLen;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by ruedi on 08/01/15.
  *
  * tracks positions resulting from trades and open order positions of
- * a market. Results are propragated to realLive
+ * a market. Results are propagated to realLive
+ *
  */
 @GenRemote
-public class MarketPosition {
+public class MarketPosition implements Serializable {
 
     String marketKey;
     String userId;
@@ -69,14 +72,6 @@ public class MarketPosition {
         return instrKeyToOrderPosition;
     }
 
-    public void setInstrKeyToOrderPosition(HashMap<String, Integer> instrKeyToOrderPosition) {
-        this.instrKeyToOrderPosition = instrKeyToOrderPosition;
-    }
-
-    public void setInstrKeyToPosition(HashMap<String, Integer> instrKeyToPosition) {
-        this.instrKeyToPosition = instrKeyToPosition;
-    }
-
     public int getMarketPosition(String instrKey) {
         if ( instrKeyToPosition == null ) {
             return 0;
@@ -88,14 +83,7 @@ public class MarketPosition {
         return integer;
     }
 
-    public void setMarketPosition(String instrKey, int pos) {
-        if ( instrKeyToPosition == null ) {
-            instrKeyToPosition = new HashMap<>();
-        }
-        instrKeyToPosition.put(instrKey, pos);
-    }
-
-    public int addPosition(String instrKey, int toAdd) {
+    public int addPosition(String instrKey, int toAdd, String assetName, RiskCalculator riskCalculator) {
         int newVal = 0;
         if ( instrKeyToPosition == null ) {
             instrKeyToPosition = new HashMap<>();
@@ -111,7 +99,7 @@ public class MarketPosition {
         if ( newVal == 0 ) {
             assets.$remove(userId+"#"+instrKey,0);
         } else {
-            assets.$put(userId + "#" + instrKey, new Asset(newVal,userId,marketKey,instrKey), 0);
+            assets.$put(userId + "#" + instrKey, new Asset(newVal,userId,marketKey,instrKey, assetName, riskCalculator.calcRisk(newVal)), 0);
         }
         instrKeyToPosition.put(instrKey, newVal);
         return newVal;
@@ -127,13 +115,6 @@ public class MarketPosition {
             return 0;
         }
         return integer;
-    }
-
-    public void setOrderPosition(String instrKey, int pos) {
-        if ( instrKeyToOrderPosition == null ) {
-            instrKeyToOrderPosition = new HashMap<>();
-        }
-        instrKeyToOrderPosition.put(instrKey, pos);
     }
 
     public int addOrderPosition(String instrKey, int toAdd) {
@@ -159,11 +140,8 @@ public class MarketPosition {
      * 2          = N-2
      *
      * last       = 0
-     *
-     * @param numberOfContracts
-     * @return
      */
-    public void updateRiskInOrderedBet( int numberOfContracts ) {
+    public void updateRiskInOrderedBet( RiskCalculator calc ) {
         if ( instrKeyToPosition == null || instrKeyToPosition.size() == 0) {
             risk = 0;
             return;
@@ -172,7 +150,8 @@ public class MarketPosition {
         // very simplified: for each shorted position, assume win.
         instrKeyToPosition.entrySet().forEach(entry -> {
             if (entry.getValue() < 0) {
-                res[0] = Math.max(entry.getValue() * (numberOfContracts-1) * 100, res[0]);
+//                res[0] = Math.max(entry.getValue() * (numberOfContracts-1) * 100, res[0]);
+                res[0] = Math.max( calc.calcRisk(entry.getValue()), res[0]);
             }
         });
         risk = res[0];

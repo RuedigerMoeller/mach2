@@ -10,7 +10,6 @@ import org.nustaq.kontraktor.util.Log;
 import org.nustaq.fourk.FourKSession;
 import org.nustaq.reallive.*;
 import org.nustaq.reallive.queries.JSQuery;
-import org.nustaq.reallive.sys.SysMeta;
 import org.nustaq.reallive.sys.config.ConfigReader;
 import org.nustaq.reallive.sys.config.SchemaConfig;
 import org.nustaq.reallive.sys.metadata.Metadata;
@@ -232,7 +231,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         o.setCreationTime(System.currentTimeMillis());
         o.setMarketKey(marketId);
         o.setInstrumentKey(instrId);
-        o.setInstrumentMnem(instrName);
+        o.setInstrumentName(instrName);
         o.setLimitPrice(price);
         o.setQty(qty);
         o.setText(text);

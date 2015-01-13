@@ -111,6 +111,10 @@ public class Matcher extends Actor<Matcher> {
         return result;
     }
 
+    protected RiskCalculator getRiskCalculator(MarketPlace m,Order o) {
+        return i -> i >= 0 ? 0 : i * (m.getNumberOfInstruments()-1) * 100;
+    }
+
     /**
      * post process mactch for orders, trade + market update already done
      *
@@ -124,22 +128,26 @@ public class Matcher extends Actor<Matcher> {
             Future<User> userFuture = rl.getTable("User").$get(ord.getTraderKey());
             Future<MarketPlace> marketFuture = rl.getTable("MarketPlace").$get(ord.getMarketKey());
             yield(userFuture,marketFuture).then( (r,e1) -> {
+
                 User user = userFuture.getResult();
                 MarketPlace md = marketFuture.getResult();
                 if ( user != null ) {
                     user.prepareForUpdate(true);
+                    RiskCalculator riskCalculator = getRiskCalculator(md, ord);
                     MarketPosition asset = user.getPos(ord.getMarketKey(), rl.getTable("Asset"));
                     asset.addPosition(
                         ord.getInstrumentKey(),
-                        ord.isBuy() ? matchedQty : -matchedQty
+                        ord.isBuy() ? matchedQty : -matchedQty,
+                        ord.getInstrumentName()+" of "+ord.getMarketKey().substring(0,ord.getMarketKey().indexOf("#")).toUpperCase(),
+                        riskCalculator
                     );
 
                     user.setCash(user.getCash() + (ord.isBuy() ? -matchedQty : matchedQty) * matchPrice);
-                    asset.updateRiskInOrderedBet( md.getNumberOfInstruments() );
+                    asset.updateRiskInOrderedBet(riskCalculator);
                     user.updateRisk();
 
                     // else concurrency issues !
-                    user.$apply(MATCHER_ID).then( (sig,e2) -> finished.signal() );
+                    user.$applyForced(MATCHER_ID, new String[] {"positions"}).then( (sig,e2) -> finished.signal() );
                     return;
                 } else {
                     if ( ! "Feed0".equals(ord.getTraderKey()) && ! "Feed1".equals(ord.getTraderKey()) )

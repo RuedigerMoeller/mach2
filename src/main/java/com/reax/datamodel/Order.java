@@ -4,7 +4,6 @@ import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
 import org.nustaq.reallive.sys.annotations.*;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 /**
@@ -17,7 +16,7 @@ import java.util.Date;
 public class Order extends Record {
 
     String instrumentKey;
-    String instrumentMnem;
+    String instrumentName;
 
     @RenderStyle("BS")
     boolean buy; // else sell
@@ -45,12 +44,12 @@ public class Order extends Record {
         setTimeStringFrom(creationTime);
     }
 
-    public String getInstrumentMnem() {
-        return instrumentMnem;
+    public String getInstrumentName() {
+        return instrumentName;
     }
 
-    public void setInstrumentMnem(String instrumentMnem) {
-        this.instrumentMnem = instrumentMnem;
+    public void setInstrumentName(String instrumentName) {
+        this.instrumentName = instrumentName;
     }
 
     public String getCreationTimeString() {
