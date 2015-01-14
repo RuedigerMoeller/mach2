@@ -10,6 +10,8 @@
             <td class="nsfilter-cell" data-bind="foreach: $data.filter">
                 <!--<p data-bind="text: JSON.stringify($data)"></p>-->
                 <ns-input params="
+                    name: $data.autocomplete,
+                    autocomplete: $data.autocomplete,
                     placeHolder: $data.placeHolder,
                     size: $data.size,
                     maxLength: $data.maxLength,

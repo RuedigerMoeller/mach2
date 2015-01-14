@@ -101,21 +101,7 @@
     {{/ifnot}}
 
     {{#if: Server.loggedIn}}
-    <rl-grid params="{
-        table: 'Asset', subscribe: 'true',
-        columns: [ 'displayString', 'value', 'risk' ]
-    }">
-    </rl-grid>
-
-    <table>
-    {{#foreach: $data.markets}}
-        <tr>
-            <td>{{$data.name}}</td>
-            <td>{{$data.risk}}</td>
-        </tr>
-    {{/foreach}}
 
     {{/if}}
-    </table>
 
 </template>

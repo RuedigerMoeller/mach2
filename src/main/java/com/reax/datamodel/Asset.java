@@ -2,6 +2,7 @@ package com.reax.datamodel;
 
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.Record;
+import org.nustaq.reallive.sys.annotations.Align;
 import org.nustaq.reallive.sys.annotations.KeyLen;
 import org.nustaq.reallive.sys.annotations.RenderStyle;
 
@@ -13,8 +14,9 @@ import org.nustaq.reallive.sys.annotations.RenderStyle;
 @GenRemote @KeyLen(Keys.ASSET)
 public class Asset extends Record {
 
+    @Align("right")
     int value;
-    @RenderStyle("Price")
+    @RenderStyle("Price") @Align("right")
     int risk;
     // redundant for faster indexing
     String userId;

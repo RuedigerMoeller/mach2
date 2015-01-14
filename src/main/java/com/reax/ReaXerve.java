@@ -147,13 +147,8 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             if (inv == null) {
                 result.receive( null, null);
             } else {
-                if (System.currentTimeMillis() > inv.getTimeSent() + inv.getHoursValid() * 60l * 60 * 1000) {
-                    invite.$remove( inv.getRecordKey(), 0);
-                    result.receive( null, null);
-                } else {
-                    result.receive( inv, null);
-                }
-            }
+                result.receive( inv, null);
+           }
         }).onError(err -> result.receive( null, null));
         return result;
     }
@@ -194,7 +189,6 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             invite.setUser(user);
             invite.setPwd(pwd);
             invite.setEmail(email);
-            invite.setHoursValid(24 * 5);
             invite.setTimeSent(System.currentTimeMillis());
             String key = user+(""+Math.random()).substring(2);
             while( key.length() < 32 )
@@ -220,9 +214,19 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
     @Override
     protected Future<Object> isLoginValid(String user, String pwd) {
         Promise p = new Promise();
+        if ( user != null && user.length() == 32 ) // cookie
+        {
+            realLive.getTable("Invite").$get(user).then((invite, error) -> {
+                if ( invite != null ) {
+                    isLoginValid( ((Invite)invite).getUser(), ((Invite) invite).getPwd() ).then( (r,e) -> p.receive(r,e) );
+                }
+            });
+            return p;
+        }
         realLive.getTable("User").$get(user.trim().toLowerCase()).then((userRecord, error) -> {
             if ( userRecord != null && pwd.equals(((User) userRecord).getPwd())) {
                 String name = ((User) userRecord).getName();
+                // copy defualt image if none exists
                 String pathname = "fileroot/img/user/" + name + ".png";
                 if ( ! new File(pathname).exists() ) {
                     Path from = Paths.get("fileroot/img/user.png");
@@ -274,24 +278,19 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
             if (inv == null) {
                 result.receive( "no valid invitation found for given id.", null);
             } else {
-                if (System.currentTimeMillis() > inv.getTimeSent() + inv.getHoursValid() * 60l * 60 * 1000) {
-                    invite.$remove( inv.getRecordKey(), 0);
-                    result.receive( "invitation already timed out.", null);
-                } else {
-                    RLTable<User> ut = realLive.getTable("User");
-                    User newOne = new User();
-                    newOne._setRecordKey(nickname);
-                    newOne.setAdminName(inv.getAdmin());
-                    newOne.setEmail(inv.getEmail());
-                    newOne.setPwd(pwd);
-                    newOne.setName(nickname);
-                    newOne.setRole(UserRole.USER);
-                    newOne.setCreationTime(System.currentTimeMillis());
-                    invite.$remove( inv.getRecordKey(), 0);
-                    ut.$put(nickname,newOne,0);
-                    result.signal();
-                    postAdminMsg(inv.getAdmin(), nickname, "User " + nickname + " has confirmed your invitation !");
-                }
+                RLTable<User> ut = realLive.getTable("User");
+                User newOne = new User();
+                newOne._setRecordKey(nickname);
+                newOne.setAdminName(inv.getAdmin());
+                newOne.setEmail(inv.getEmail());
+                newOne.setPwd(pwd);
+                newOne.setName(nickname);
+                newOne.setRole(UserRole.USER);
+                newOne.setCreationTime(System.currentTimeMillis());
+                invite.$remove( inv.getRecordKey(), 0);
+                ut.$put(nickname,newOne,0);
+                result.signal();
+                postAdminMsg(inv.getAdmin(), nickname, "User " + nickname + " has confirmed your invitation !");
             }
         }).onError(err -> result.receive( ""+err, null));
         return result;

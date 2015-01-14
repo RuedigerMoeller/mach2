@@ -137,6 +137,16 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         }
     }
 
+    public Future<String> $getCookieID() {
+        Invite inv = new Invite();
+        inv.setUser(user.getName());
+        inv.setPwd(user.getPwd());
+        String inviteId = createInviteId();
+        inv._setRecordKey(inviteId);
+        realLive.getTable("Invite").$put(inviteId,inv,0);
+        return new Promise<>(inviteId);
+    }
+
     public Future<Metadata> $getRLMeta() {
         // DEV ONLY: read for each login
         try {
@@ -321,11 +331,8 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
                 Invite invite = (Invite) inviteTable.createForAdd();
                 invite.setAdmin(user.getName());
                 invite.setEmail(s);
-                invite.setHoursValid(24*5);
                 invite.setTimeSent(System.currentTimeMillis());
-                String key = user.getName()+(""+Math.random()).substring(2);
-                while( key.length() < 32 )
-                    key+=""+(int)(Math.random()*10);
+                String key = createInviteId();
                 invite._setRecordKey(key);
                 inviteTable.$put(key,invite,0);
                 String url = MailSettings.load().getAppurl()+"#invite$"+key;
@@ -343,6 +350,13 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
             }
         }
         return new Promise<>( (count > 0) ? "Enqueud "+count+" mails." : "No message sent. Check addresses.");
+    }
+
+    protected String createInviteId() {
+        String key = user.getName()+(""+Math.random()).substring(2);
+        while( key.length() < 32 )
+            key+=""+(int)(Math.random()*10);
+        return key;
     }
 
 

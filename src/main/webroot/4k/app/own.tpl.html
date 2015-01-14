@@ -1,6 +1,37 @@
 <template id="own">
     <div data-bind="with: ownController">
-        <b class="table-heading">Open orders</b>
+        <div class="table-heading">Position</div>
+        <br>
+        <rl-grid params="{
+            table: 'Asset', subscribe: 'it.userId == ´'+model.userRecord().recordKey+'´',
+            columns: [ 'displayString', 'value', 'risk' ]
+        }">
+        </rl-grid>
+
+        <br>
+        <br>
+        <div class="table-heading">Markets & Risk</div>
+        <br>
+        <table>
+            <thead>
+            <tr>
+                <td style="border-bottom: solid black 2px;" align="center">
+                    Market
+                </td>
+                <td style="border-bottom: solid black 2px;" align="center">
+                    &nbsp;Risk&nbsp;
+                </td>
+            </tr>
+            </thead>
+            <tbody data-bind="foreach: $parent.markets">
+            <tr>
+                <td>{{name}}</td>
+                <td align="right"><b>{{(risk/100).toFixed(2)}}</b></td>
+            </tr>
+            </tbody>
+        </table>
+        <br><br>
+        <b class="table-heading">Open Orders</b>
         <br>
         <br>
         <div align="left" class='table-scrollbox' style="height:200px;">

@@ -19,7 +19,6 @@ model.navs = ko.observableArray([
     { title: 'Home',    link:'#home',  enabled: true },
     { title: 'Market', link:'#tables', enabled: Server.loggedIn },
     { title: 'Orders', link:'#own', enabled: Server.loggedIn },
-    { title: 'Cash', link:'#cash', enabled: Server.loggedIn },
     { title: 'Profile', link:'#profile', enabled: Server.loggedIn },
     { title: 'Users', link:'#users', enabled: model.isMarketAdmin },
     { title: 'MarketPlaces', link:'#admin', enabled: model.isMarketAdmin },
@@ -145,14 +144,13 @@ Server.doOnceLoggedIn( function(bool) {
                 RealLive.applyChangeToObservable(change,model.subscribedUser);
                 var user = model.subscribedUser();
                 var positions = user.positions;
-                var markets = [];
+                model.markets.removeAll();
                 for (var property in positions) {
                     if (positions.hasOwnProperty(property)) {
-                        markets.push({ name: property.substring(0,property.indexOf('#')), risk: positions[property].risk });
+                        model.markets.push({ name: property.substring(0,property.indexOf('#')), risk: positions[property].risk });
                     }
                 }
-                markets.sort(function(x,y) { return x.name > y.name; })
-                model.markets(markets);
+                model.markets.sort(function(x,y) { return x.name > y.name; })
             });
         }
     });

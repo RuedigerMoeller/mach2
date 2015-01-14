@@ -19,4 +19,4 @@ OK - add motto to user
 - MinBin boolean
 - cached client queries
 - query is broken
-- get original bootstrap theme
+OK - get original bootstrap theme

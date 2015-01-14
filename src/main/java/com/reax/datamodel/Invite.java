@@ -8,29 +8,29 @@ import java.util.Date;
 
 /**
  * Created by ruedi on 23.11.14.
+ *
+ * invites + pending registrations
  */
 @GenRemote
 @KeyLen(Keys.INVITE)
 public class Invite extends Record {
 
-    String admin;    // done by
+    String admin;    // done by (null on autologin)
     String email;    // email of user invited
-    String user;     // name of user (only in case of registration)
+    String user;     // name of user (only in case of registration or autologin).
     String pwd;      // pwd in case of registration
     String timeSentString;
     long timeSent;
-    int hoursValid;
     boolean mailSent = false;
 
     public Invite() {
     }
 
-    public Invite(String admin, String email, String user, long timeSent, int hoursValid) {
+    public Invite(String admin, String email, String user, long timeSent) {
         this.admin = admin;
         this.email = email;
         this.user = user;
         setTimeSent(timeSent);
-        this.hoursValid = hoursValid;
     }
 
     public boolean isMailSent() {
@@ -80,14 +80,6 @@ public class Invite extends Record {
     public void setTimeSent(long timeSent) {
         this.timeSent = timeSent;
         timeSentString = Trade.df.format(new Date(timeSent));
-    }
-
-    public int getHoursValid() {
-        return hoursValid;
-    }
-
-    public void setHoursValid(int hoursValid) {
-        this.hoursValid = hoursValid;
     }
 
     public String getTimeSentString() {

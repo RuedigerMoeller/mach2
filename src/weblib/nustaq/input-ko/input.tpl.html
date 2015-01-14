@@ -1,6 +1,8 @@
 <template id="input-tpl">
     <input class="form-control" style="display: inline;" data-bind="
         attr: {
+            name: $data.name,
+            autocomplete: $data.autocomplete,
             placeholder: $data.placeHolder(),
             size: size(),
             maxlength: maxLength(),

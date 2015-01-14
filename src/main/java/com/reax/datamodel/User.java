@@ -3,6 +3,7 @@ package com.reax.datamodel;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.reallive.RLTable;
 import org.nustaq.reallive.Record;
+import org.nustaq.reallive.sys.annotations.Align;
 import org.nustaq.reallive.sys.annotations.Description;
 import org.nustaq.reallive.sys.annotations.KeyLen;
 import org.nustaq.reallive.sys.annotations.RenderStyle;
@@ -25,7 +26,9 @@ public class User extends Record {
 
     @RenderStyle("Text15")
     String motto;
+    @RenderStyle("Price") @Align("right")
     int cash;
+    @RenderStyle("Price") @Align("right")
     int risk;
 
     UserRole role = UserRole.USER;

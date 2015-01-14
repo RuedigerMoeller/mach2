@@ -48,6 +48,7 @@ ko.components.register( 'kr-login', {
                 Server.loggedIn(true);
                 self.doSpin(false);
             };
+
             // expect $authenticate(), FIXME: define webfacade iface
             this.login = function () {
                 self.resultMsg('');
@@ -55,6 +56,10 @@ ko.components.register( 'kr-login', {
                 Kontraktor.restGET('$authenticate/'+self.user()+'/'+self.pwd()).then( function(r,e) {
                     if ( e ) {
                         self.doSpin(false);
+                        if (localStorage.loginKey && localStorage.loginKey != "") {
+                            self.user("");
+                            localStorage.loginKey = "";
+                        }
                         self.resultMsg(e);
                     } else {
                         Kontraktor.connectHome( function() {
@@ -69,6 +74,15 @@ ko.components.register( 'kr-login', {
                                     self.resultMsg('unable to create session');
                                 } else {
                                     Server.session(r);
+                                    if ( self.user().length == 32 ) {
+                                        self.user( localStorage.uname );
+                                    }
+                                    if ( Server.session().$getCookieID ) {
+                                        Server.session().$getCookieID().then( function(cookie,e) {
+                                            localStorage.loginKey = cookie;
+                                            localStorage.uname = self.user();
+                                        });
+                                    }
                                     if (typeof RealLive !== 'undefined') { // load model
                                         Server.session().$getRLMeta().then( function(model,err) {
                                             if ( err ) {
@@ -88,6 +102,18 @@ ko.components.register( 'kr-login', {
                     }
                 });
             }.bind(this);
+
+            // autologin
+            if ( localStorage.loginKey &&
+                 localStorage.loginKey != "" &&
+                 localStorage.uname &&
+                 localStorage.uname.length != 32 &&
+                 localStorage.uname != "null"
+            )
+            {
+                self.user(localStorage.loginKey);
+                self.login();
+            }
         },
         template: { element: 'login-template'}
     }

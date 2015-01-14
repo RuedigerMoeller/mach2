@@ -136,6 +136,8 @@ function InputModel(params, compInfo) {
     this.inpId = params.inpId ? params.inpId : null;
     this.value = params.value ? params.value : ko.observable('-');
     this.width = params.width ? params.width : '';
+    this.autocomplete = params.autocomplete ? params.autocomplete : '';
+    this.name = params.name ? params.name : this.autocomplete;
     this.align = params.align ? params.align : 'left';
     this.validator = ns.validators.safestring(100);
     this.inputtype = params.inputtype ? params.inputtype : '';
