@@ -1,9 +1,10 @@
 - connect/disconnect
-- sticky login
 - activate autocomplete on login
 
+OK - sticky login
 OK - add motto to user
 
+- debug tables rauswerfen
 - log into bounded table
 - admin fe
 

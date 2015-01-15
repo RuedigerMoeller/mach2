@@ -128,6 +128,31 @@ RLFormatterMap["BS"] = function(meta, fieldName, celldata, row) {
 
 model.markets = ko.observableArray([]);
 
+model.logout = function() {
+    localStorage.loginKey = '';
+    window.location.reload(true);
+};
+
+model.showInstrument = function(instrument) {
+    $.each( model.availableMarkets(), function(i,mp) {
+        if ( mp.recordKey == instrument.marketPlace ) {
+            window.location.hash = "#tables";
+            model.tradeController.selectedMP(mp);
+            model.tradeController.selectedInstr(instrument);
+        }
+    });
+};
+
+model.showMarket = function(marketId) {
+    $.each( model.availableMarkets(), function(i,mp) {
+        if ( mp.recordKey == marketId ) {
+            window.location.hash = "#tables";
+            model.tradeController.selectedMP(mp);
+            model.tradeController.selectedInstr(null);
+        }
+    });
+};
+
 // subscribe sets on login
 Server.doOnceLoggedIn( function(bool) {
     tableRS.subscribe("SysTable", "true");

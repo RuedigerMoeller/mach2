@@ -146,12 +146,12 @@ public class MarketPosition implements Serializable {
             risk = 0;
             return;
         }
-        int res[] = {Integer.MIN_VALUE};
+        int res[] = {Integer.MAX_VALUE};
         // very simplified: for each shorted position, assume win.
         instrKeyToPosition.entrySet().forEach(entry -> {
             if (entry.getValue() < 0) {
 //                res[0] = Math.max(entry.getValue() * (numberOfContracts-1) * 100, res[0]);
-                res[0] = Math.max( calc.calcRisk(entry.getValue()), res[0]);
+                res[0] = Math.min( calc.calcRisk(entry.getValue()), res[0]);
             }
         });
         risk = res[0];

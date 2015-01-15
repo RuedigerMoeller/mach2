@@ -111,8 +111,10 @@ ko.components.register( 'kr-login', {
                  localStorage.uname != "null"
             )
             {
-                self.user(localStorage.loginKey);
-                self.login();
+                setTimeout( function() {
+                    self.user(localStorage.loginKey);
+                    self.login();
+                }, 2000 );
             }
         },
         template: { element: 'login-template'}

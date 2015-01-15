@@ -1,7 +1,7 @@
 <template id="own">
     <div data-bind="with: ownController">
-        <div class="table-heading">Position</div>
-        <br>
+        <b class="table-heading">Position</b>
+        <br><br>
         <rl-grid params="{
             table: 'Asset', subscribe: 'it.userId == ´'+model.userRecord().recordKey+'´',
             columns: [ 'displayString', 'value', 'risk' ]
@@ -10,8 +10,8 @@
 
         <br>
         <br>
-        <div class="table-heading">Markets & Risk</div>
-        <br>
+        <b class="table-heading">Markets & Risk</b>
+        <br><br>
         <table>
             <thead>
             <tr>
