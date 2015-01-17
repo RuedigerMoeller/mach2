@@ -21,7 +21,7 @@ model.navs = ko.observableArray([
     { title: 'Orders', link:'#own', enabled: Server.loggedIn },
     { title: 'Profile', link:'#profile', enabled: Server.loggedIn },
     { title: 'Users', link:'#users', enabled: model.isMarketAdmin },
-    { title: 'MarketPlaces', link:'#admin', enabled: model.isMarketAdmin },
+    { title: 'MarketPlaces', link:'#admin', enabled: model.isMarketAdmin }
 ]);
 
 // appwide
@@ -101,6 +101,28 @@ RLFormatterMap["Trader"] = function(meta, fieldName, celldata, row) {
     return "<b id='_ns_userLink' class='userLink'>"+celldata+"</b>";
 };
 
+RLFormatterMap["MarketLink"] = function(meta, fieldName, celldata, row) {
+    //return "<img src='img/user/"+celldata+".jpg' width='16' height='16'>&nbsp;<b>"+celldata+"</b>";
+    if ( row instanceof JOrder || row instanceof JTrade) {
+        if ( celldata.indexOf("#") >= 0 ) {
+            celldata = celldata.substring(0,celldata.indexOf("#"));
+        }
+        return "<b id='_ns_marketLink' class='userLink'>"+celldata+"</b>";
+    }
+    return celldata;
+};
+
+RLFormatterMap["InstrumentLink"] = function(meta, fieldName, celldata, row) {
+    //return "<img src='img/user/"+celldata+".jpg' width='16' height='16'>&nbsp;<b>"+celldata+"</b>";
+    if ( row instanceof JOrder ) {
+        return "<b id='_ns_instrumentLinkFromOrder' class='userLink'>"+celldata+"</b>";
+    }
+    if ( row instanceof JTrade ) {
+        return "<b id='_ns_instrumentLinkFromTrade' class='userLink'>"+celldata+"</b>";
+    }
+    return celldata;
+};
+
 RLFormatterMap["Price"] = function(meta, fieldName, celldata, row) {
     if ( row instanceof JOrder ) {
         if ( row.buy ) {
@@ -125,6 +147,19 @@ RLFormatterMap["BS"] = function(meta, fieldName, celldata, row) {
     }
 };
 
+RLGlobalActionTarget = function(actionId, row ) {
+    if ( actionId == '_ns_marketLink') {
+        if ( row.marketKey ) {
+            model.showMarket(row.marketKey);
+        } else if ( row.marketId ) {
+            model.showMarket(row.marketId);
+        }
+    } else if ( actionId == '_ns_instrumentLinkFromOrder' ) {
+        model.showInstrument( row.marketKey, row.instrumentKey );
+    } else if ( actionId == '_ns_instrumentLinkFromTrade' ) {
+        model.showInstrument( row.marketId, row.instrumentKey );
+    }
+};
 
 model.markets = ko.observableArray([]);
 
@@ -133,23 +168,27 @@ model.logout = function() {
     window.location.reload(true);
 };
 
-model.showInstrument = function(instrument) {
-    $.each( model.availableMarkets(), function(i,mp) {
-        if ( mp.recordKey == instrument.marketPlace ) {
+model.showInstrument = function(marketId, instrumentId) {
+    $.each( model.userMarkets(), function(i,mp) {
+        if ( mp.recordKey == marketId || mp.recordKey.indexOf(marketId+"#") == 0 ) {
             window.location.hash = "#tables";
             model.tradeController.selectedMP(mp);
-            model.tradeController.selectedInstr(instrument);
+            Server.session().$getInstrument(instrumentId).then(function (r, e) {
+                model.tradeController.selectedInstr(r);
+            });
         }
     });
 };
 
 model.showMarket = function(marketId) {
-    $.each( model.availableMarkets(), function(i,mp) {
-        if ( mp.recordKey == marketId ) {
+    $.each( model.userMarkets(), function(i,mp) {
+        if ( mp.recordKey == marketId || mp.recordKey.indexOf( marketId+"#" ) == 0 ) {
             window.location.hash = "#tables";
             model.tradeController.selectedMP(mp);
             model.tradeController.selectedInstr(null);
+            return false;
         }
+        return true;
     });
 };
 

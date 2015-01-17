@@ -151,10 +151,14 @@ public class MarketPosition implements Serializable {
         instrKeyToPosition.entrySet().forEach(entry -> {
             if (entry.getValue() < 0) {
 //                res[0] = Math.max(entry.getValue() * (numberOfContracts-1) * 100, res[0]);
-                res[0] = Math.min( calc.calcRisk(entry.getValue()), res[0]);
+                res[0] = Math.min(calc.calcRisk(entry.getValue()), res[0]);
             }
         });
-        risk = res[0];
+        if ( res[0] == Integer.MAX_VALUE ) {
+            risk = 0;
+        } else {
+            risk = res[0];
+        }
     }
 
 }

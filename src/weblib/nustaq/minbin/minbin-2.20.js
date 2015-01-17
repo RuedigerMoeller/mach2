@@ -149,6 +149,8 @@ var MinBin = new function MinBin() {
     };
 
     this.jmap = function(map) {
+        if ( ! map )
+            return null;
         if( Object.prototype.toString.call( map ) === '[object Array]' ) {
             return map;// already converted
         }

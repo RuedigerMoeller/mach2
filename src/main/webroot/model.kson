@@ -18,6 +18,14 @@ schema {
         Order: {
             columns: {
                 text: { displayWidth: 150px }
+                instrumentName: { renderStyle: InstrumentLink }
+                marketKey: { renderStyle: MarketLink }
+            }
+        }
+        Trade: {
+            columns: {
+                instrumentName: { renderStyle: InstrumentLink }
+                marketId: { renderStyle: MarketLink }
             }
         }
 

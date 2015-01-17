@@ -158,6 +158,10 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         return new Promise<>(realLive.getMetadata());
     }
 
+    public Future<Instrument> $getInstrument( String id ) {
+        return realLive.getTable("Instrument").$get(id);
+    }
+
 //    // expect [tableName,filterString]
 //    Object listen(Invocation<QueryTuple> inv) {
 //        QueryTuple argument = inv.getArgument();

@@ -36,6 +36,8 @@ var RLFormatterMap = {
     }
 };
 
+var RLGlobalActionTarget;
+
 // table
 function RLGridModel(params,componentInfo) {
     var self = this;
@@ -103,10 +105,13 @@ function RLGridModel(params,componentInfo) {
                 if ( target.nodeName == "TR" ) {
                     console.log("found row "+target.__row);
                     if (actionId) {
-                        if (!self.onAction) {
-                            console.error("no onAction function set")
+                        if (self.onAction && self.onAction.apply( self, [actionId, target.__row]) ) {
+                            return;
                         }
-                        if (self.onAction.apply( self, [actionId, target.__row]) ) {
+                        if ( ! RLGlobalActionTarget ) {
+                            console.error("no onAction function set. set onAction property or RLGlobalActionTarget");
+                        } else {
+                            RLGlobalActionTarget.apply( self, [actionId, target.__row] );
                             return;
                         }
                     }
