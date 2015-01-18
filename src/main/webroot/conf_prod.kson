@@ -1,0 +1,49 @@
+# see class ServerConf
+{
+    #devmode: false
+
+    port: 7777
+
+    clientThreads:   2
+    clientQSize:   500
+
+    # specify a list of packages containing remoted classes
+    scan4Remote: [ com.reax ]
+
+    # define lookup order. In case a filename contains '.', file lookup is done, else all js/html's inside a dir
+    # will be added+concatenated (however no double files to enable file-level override)
+    componentPath: [
+        ./application            # application (+overrides)
+        ./tmp                    # generated stuff
+        ./weblib
+        ./weblib/nustaq       # enable scan of nustaq subcomps
+        ./weblib/knockout     # enable scan of knockout subcomps
+    ]
+
+    # modules to load
+    components: [
+        app       # app dependencies (see ./4k/app/dep.kson) actually contain all required js-modules
+    ]
+
+    # network exposed messages
+
+    # ignored if empty for an actor
+    allowedMethods: {
+        ReaXerve : [
+            $getSession
+            $authenticate
+            $httpRedirectInvite
+            $test
+            $isInviteValid
+            $userExists
+            $createUserFromInvite
+            $registerUser
+            $validateRegistration
+        ]
+    }
+
+    # ignored if empty for an actor
+    forbiddenMethods: {
+        ActorName: [ bla ]
+    }
+}

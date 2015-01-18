@@ -19,14 +19,14 @@ public class Mailer extends Actor<Mailer> {
 
     public Future<Boolean> $sendMail( String receiver, String subject, String content ) {
         try {
-            Properties props = new Properties();
-
-            props.put("mail.smtp.auth", "true");
-		    props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.host", "smtp.gmail.com");
-		    props.put("mail.smtp.port", "587");
-
             MailSettings set = (MailSettings) new Kson().map(MailSettings.class).readObject(new File("./mail.kson"));
+
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", set.getSmtpAuth() );
+            props.put("mail.smtp.starttls.enable", set.getStartTls());
+            props.put("mail.smtp.host", set.getSmtpHost());
+            props.put("mail.smtp.port", set.getSmtpPort());
+
             Session session = Session.getInstance(props);
             Message message = new MimeMessage(session);
             message.setFrom();

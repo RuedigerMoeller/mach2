@@ -1,0 +1,11 @@
+MailSettings {
+    appurl: "http://46.4.83.116/"
+    user:     mailuser
+    password: mailpwd
+
+    smtpHost: smtp.gmail.com
+    smtpPort: 587
+    smtpAuth: true
+    startTls: true
+
+}

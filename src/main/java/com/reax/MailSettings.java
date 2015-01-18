@@ -21,6 +21,11 @@ public class MailSettings {
     String appurl;
     String user;
     String password;
+    String smtpHost;
+    String smtpPort;
+    String smtpAuth;
+    String startTls;
+
 
     public String getUser() {
         return user;
@@ -44,5 +49,37 @@ public class MailSettings {
 
     public void setAppurl(String appurl) {
         this.appurl = appurl;
+    }
+
+    public String getSmtpHost() {
+        return smtpHost;
+    }
+
+    public void setSmtpHost(String smtpHost) {
+        this.smtpHost = smtpHost;
+    }
+
+    public String getSmtpPort() {
+        return smtpPort;
+    }
+
+    public void setSmtpPort(String smtpPort) {
+        this.smtpPort = smtpPort;
+    }
+
+    public String getSmtpAuth() {
+        return smtpAuth;
+    }
+
+    public void setSmtpAuth(String smtpAuth) {
+        this.smtpAuth = smtpAuth;
+    }
+
+    public String getStartTls() {
+        return startTls;
+    }
+
+    public void setStartTls(String startTls) {
+        this.startTls = startTls;
     }
 }
