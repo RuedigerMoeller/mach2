@@ -37,7 +37,7 @@
         <div align="left" class='table-scrollbox' style="height:200px;">
             <rl-grid params="table: 'Order',
                              subscribe: 'it.traderKey==´'+model.userRecord().recordKey+'´',
-                             columns: [ 'instrumentName', 'buy', 'limitPrice', 'qty', 'marketKey', 'creationTimeString', 'text'  ],
+                             columns: [ 'recordKey', 'instrumentName', 'buy', 'limitPrice', 'qty', 'marketKey', 'creationTimeString', 'text'  ],
                              sortKey: '!creationTimeString',
                              actions: orderActions,
                              onAction: onTableAction

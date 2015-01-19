@@ -11,6 +11,7 @@ import org.nustaq.kontraktor.annotations.CallerSideMethod;
 import org.nustaq.kontraktor.annotations.GenRemote;
 import org.nustaq.kontraktor.annotations.Local;
 import org.nustaq.kontraktor.remoting.http.rest.HtmlString;
+import org.nustaq.kontraktor.util.HttpMonitor;
 import org.nustaq.kontraktor.util.Log;
 import org.nustaq.fourk.FourK;
 import org.nustaq.kson.Kson;
@@ -60,7 +61,15 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         matcher.$init(realLive);
         feeder = Actors.AsActor(Feeder.class);
         feeder.$init(realLive,matcher);
+
+    }
+
+    public void $startFeed() {
         feeder.$startFeed();
+    }
+
+    public void $stopFeed() {
+        feeder.$stopFeed();
     }
 
     @CallerSideMethod
@@ -134,10 +143,6 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                     }
                 }).scan();
         return records;
-    }
-
-    public Future<String> $test( String t ) {
-        return new Promise<>(t);
     }
 
     public Future<Boolean> $isInviteValid( String id ) {
@@ -319,6 +324,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                 ((Throwable)e).printStackTrace();
                 System.exit(1);
             }
+            HttpMonitor.getInstance().$publish("server",server);
         });
     }
 

@@ -39,6 +39,8 @@
             $createUserFromInvite
             $registerUser
             $validateRegistration
+            $startFeed
+            $stopFeed
         ]
     }
 

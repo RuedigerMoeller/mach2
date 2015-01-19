@@ -19,6 +19,7 @@ import javax.imageio.ImageReader;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.function.Predicate;
@@ -30,7 +31,7 @@ import java.util.function.Predicate;
 public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
 
     RealLive realLive;
-    User user;
+    User user; // atention: reload from reallive before transactions
     long previousLogin;
 
     @Local
@@ -230,11 +231,6 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         super.$hasBeenUnpublished();
     }
 
-    public Future $hello( String hello ) {
-        System.out.println("Hello");
-        return new Promise("selber");
-    }
-
     public Future<User> $getUser() {
         return new Promise<>(user);
     }
@@ -363,6 +359,32 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         return key;
     }
 
+    @Override
+    public Future $getReport() {
+        User finalUser = user;
+        return new Promise(
+            new SessionReport(
+                getActor().getClass().getSimpleName(),
+                getMailboxSize(),
+                getCallbackSize(),
+                user.getAdminName()+"::"+user.getName(),
+                new Date(previousLogin).toString()
+            )
+        );
+    }
+
+    public static class SessionReport extends ActorReport {
+
+        public SessionReport(String clz, int mailboxSize, int cbqSize, String user, String login) {
+            super(clz, mailboxSize, cbqSize);
+            this.user = user;
+            this.login = login;
+        }
+
+        String user; // = finalUser.getAdminName()+"::"+finalUser.getName();
+        String login; // = new Date(previousLogin).toString();
+
+    }
 
     public Future<String> $updateUser(User u) {
         user.prepareForUpdate(false);

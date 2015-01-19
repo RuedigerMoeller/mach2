@@ -242,6 +242,7 @@ Server.doOnceLoggedIn( function(bool) {
 var inviteString = window.location.hash;
 
 if ( inviteString.indexOf("invite$") >= 0 ) {
+    localStorage.loginKey = '';
     model.inviteController.inviteId(inviteString.substring("invite$".length+1));
     Kontraktor.restGET('$isInviteValid/'+model.inviteController.inviteId())
         .then( function (r,e) {
@@ -258,6 +259,7 @@ if ( inviteString.indexOf("invite$") >= 0 ) {
     );
 } else if ( inviteString.indexOf("register$") >= 0 ) {
     var regID = inviteString.substring("register$".length+1);
+    localStorage.loginKey = '';
     Kontraktor.restGET( '$validateRegistration/'+regID )
         .then( function (r,e) {
             if (r!=null) {
