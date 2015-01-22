@@ -330,6 +330,7 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                 ((Throwable)e).printStackTrace();
                 System.exit(1);
             }
+            HttpMonitor.DEFAULT_PORT = 8886;
             HttpMonitor.getInstance().$publish("server",server);
         });
     }

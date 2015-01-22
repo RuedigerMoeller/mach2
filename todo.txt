@@ -21,3 +21,4 @@ OK - add motto to user
 - cached client queries
 - query is broken
 OK - get original bootstrap theme
+huhu
