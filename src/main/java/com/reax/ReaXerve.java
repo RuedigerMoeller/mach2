@@ -52,8 +52,9 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         Self = self();
         mailer = Actors.AsActor(Mailer.class);
         super.$init(clientScheduler);
-        initRealLive();
-        initMatcher();
+        initRealLive()
+            .onResult( r -> initMatcher() )
+            .onError( e -> System.out.println("init failure: "+e) );
     }
 
     protected void initMatcher() {
@@ -82,33 +83,38 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
         return getActor().matcher;
     }
 
-    protected void initRealLive() {
+    protected Future initRealLive() {
+        Promise p = new Promise();
         realLive = new RLImpl("./reallive-data");
+        realLive.$init().onResult(r -> {
 
-        scanModelClasses( User.class.getPackage().getName() ).forEach(clazz -> {
-            if ( Record.class.isAssignableFrom(clazz))
-                realLive.createTable(clazz);
-        });
+            scanModelClasses(User.class.getPackage().getName()).forEach(clazz -> {
+                if (Record.class.isAssignableFrom(clazz))
+                    realLive.createTable(clazz);
+            });
 
-        realLive.getTable("User").$put(
-            "admin",
-            new User().init("admin", "admin", System.currentTimeMillis(), System.currentTimeMillis(), UserRole.ADMIN, "me@me.com"),
-            0
-        );
+            realLive.getTable("User").$put(
+                    "admin",
+                    new User().init("admin", "admin", System.currentTimeMillis(), System.currentTimeMillis(), UserRole.ADMIN, "me@me.com"),
+                    0
+            );
 
-        importInitialData(User.class);
-        importInitialData(MarketPlace.class);
-        importInitialData(Instrument.class);
+            importInitialData(User.class);
+            importInitialData(MarketPlace.class);
+            importInitialData(Instrument.class);
 
-        try {
-            SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");
+            try {
+                SchemaConfig schemaProps = ConfigReader.readConfig("./model.kson");
 //            realLive.getMetadata().overrideWith(schemaProps); // FIXME: side effecting
 //            done per login for dynamic update
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        // TODO: remove old invites
+            p.signal();
+        })
+        .onError( e -> p.receive(null,e) );
+        return p;
     }
 
     private void importInitialData( Class<? extends Record> clz) {
