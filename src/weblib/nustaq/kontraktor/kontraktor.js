@@ -180,14 +180,14 @@ var Kontraktor = new function() {
             this.socketConnected = false;
             this.close();
             if ( onOpen != null )
-                onOpen.apply("socket error");
+                onOpen.apply(null,["error"]);
         };
 
         this.ws.onclose = function () {
             console.log("connection closed");
             self.socketConnected = false;
             if ( onOpen != null )
-                onOpen.apply("socket closed");
+                onOpen.apply(null,["closed"]);
         };
 
         this.ws.onmessage = function (message) {

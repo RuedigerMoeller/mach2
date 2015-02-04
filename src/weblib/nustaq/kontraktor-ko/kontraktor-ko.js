@@ -62,7 +62,7 @@ ko.components.register( 'kr-login', {
                         }
                         self.resultMsg(e);
                     } else {
-                        Kontraktor.connectHome( function() {
+                        Kontraktor.connectHome( function(event) { // true = opened succ, 'closed', 'error'
                             var facadeClz = window[self.facadeClass];
                             Server.facade(new facadeClz(1));
                             Server.facade().$getSession(r).then( function(r,e) {
