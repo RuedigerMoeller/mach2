@@ -114,7 +114,7 @@ ko.components.register( 'kr-login', {
                 setTimeout( function() {
                     self.user(localStorage.loginKey);
                     self.login();
-                }, 2000 );
+                }, 1 );
             }
         },
         template: { element: 'login-template'}
