@@ -90,7 +90,7 @@ model.delOrder = function( row ) {
 ko.applyBindings(model);
 
 // init/overwrite formatters in rlgrid
-RLFormatterMap["Text15"] = function(meta, fieldName, celldata) {
+RLFormatterMap["Text15"] = function(meta, fieldName, celldata, row) {
     if ( celldata.length < 15 )
         return "<span style='width:150px;'>"+celldata+"</span>";
     return "<span data-bind='bsttip: \""+celldata+"\"'>" + celldata.substring(0,15)+ " ...</span>";

@@ -232,6 +232,8 @@ public class ReaXerve extends FourK<ReaXerve,ReaXession> {
                 if ( invite != null ) {
                     realLive.getTable("Invite").$remove(user,0);
                     isLoginValid( ((Invite)invite).getUser(), ((Invite) invite).getPwd() ).then( (r,e) -> p.receive(r,e) );
+                } else {
+                    p.receive( null, "invalid login");
                 }
             });
             return p;

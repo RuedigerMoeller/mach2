@@ -1,6 +1,6 @@
 <template id="home">
 
-    {{#ifnot: Server.loggedIn }}
+    {{#if: ! Server.loggedIn() && (typeof localStorage.loginKey === 'undefined' || localStorage.loginKey == null || localStorage.loginKey == '') }}
     <div align="center" style="height: 1024px;">
         <table style="background-image: url('img/homeback.jpg'); width: 800px; height: 486px; align-content: center;">
             <tr>
@@ -98,7 +98,7 @@
             </table>
         </div>
     </div>
-    {{/ifnot}}
+    {{/if}}
 
     {{#if: Server.loggedIn}}
 

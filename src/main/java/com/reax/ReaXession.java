@@ -19,6 +19,7 @@ import javax.imageio.ImageReader;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,7 +83,7 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
      * @return subsId
      */
     public Future<String> $subscribeMsg(String marketPlaceFilter, String userFilter, Callback cb) {
-        long oldest = Math.min(previousLogin,System.currentTimeMillis()-1*24*60*60*1000l);
+        long oldest = Math.min(previousLogin,System.currentTimeMillis()-60*24*60*60*1000l);
         Predicate matches = rec -> {
             Message m = (Message) rec;
             // check time window
@@ -116,16 +117,29 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
         };
 
         ChangeBroadcastReceiver bcastRec = change -> cb.receive(change, CONT);
+        ArrayList<Message> messages = new ArrayList<>();
+        Promise pres = new Promise();
         realLive.stream("Message").filterUntil(
             matches,
             (rec,i) -> ((Integer)i).intValue() > 2000,
-            bcastRec
-        );
+            change -> {
+                if (change.isAdd())
+                    messages.add((Message) change.getRecord());
+            }
+        ).onResult( res -> {
+                messages.sort( (a,b) -> (int) (b.getMsgTime() - a.getMsgTime()) );
+                for (int i = 0; i < 50 && i < messages.size(); i++) {
+                    final Message rec = messages.get(i);
+                    cb.receive(ChangeBroadcast.NewAdd("Messages",rec,0),CONT);
+                }
 
-        Subscription subs =  realLive.stream("Message").listen(matches,bcastRec);
-        String key = "subs" + subsCount++;
-        subscriptions.put(key, subs);
-        return new Promise<>(key);
+                Subscription subs =  realLive.stream("Message").listen(matches,bcastRec);
+                String key = "subs" + subsCount++;
+                subscriptions.put(key, subs);
+                pres.receive(key,null);
+            }
+        );
+        return pres;
     }
 
     public void $unsubscribe(String subsKey) {

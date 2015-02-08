@@ -16,7 +16,15 @@ ko.bindingHandlers.flip = {
         console.log("flip update"+valueAccessor());
         if ( valueAccessor() ) {
             element.classList.add("flip-container-flip");
+            setTimeout( function() {
+                element.children[0].children[0].visibility = "hidden";
+                element.children[0].children[1].visibility = "visible";
+            }, 600);
         } else {
+//            setTimeout( function() {
+                element.children[0].children[1].visibility = "hidden";
+                element.children[0].children[0].visibility = "visible";
+//            }, 600);
             element.classList.remove("flip-container-flip");
         }
     }
