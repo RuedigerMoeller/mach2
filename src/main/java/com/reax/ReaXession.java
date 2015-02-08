@@ -387,9 +387,9 @@ public class ReaXession extends FourKSession<ReaXerve,ReaXession> {
     }
 
     public Future<String> $updateUser(User u) {
-        user.prepareForUpdate(false);
-        user.setMotto(u.getMotto());
-        user.setPwd(u.getPwd());
-        return user.$apply(0);
+        User updUser = (User) realLive.getTable("User").createForUpdate(user.getRecordKey(), true);
+        updUser.setMotto(u.getMotto());
+        updUser.setPwd(u.getPwd());
+        return updUser.$apply(0);
     }
 }
